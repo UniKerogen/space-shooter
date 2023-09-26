@@ -10,7 +10,7 @@ import pygame
 import random
 import time
 
-from casklist import CaskList
+from structures import CaskList
 from settings import *
 
 ##################################################
