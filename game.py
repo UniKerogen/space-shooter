@@ -24,14 +24,19 @@ pygame.display.set_caption("Top-Down Shooter")
 # Score System
 font = pygame.font.Font(None, 24)
 score = 0
-# Player Value
+# Explosion
+explosion_img = pygame.image.load('resources/explosion.png')
+# Background
+background = pygame.image.load('resources/background.png')
+
+##################################################
+# Structures Setting
+##################################################
+# Player
 player = PlayerBlock(name='player',
                      position=[SCREEN_WIDTH // 2 - PLAYER_SIZE / 2, SCREEN_HEIGHT - 128],
                      image=pygame.image.load('resources/player.png'),
                      speed=PLAYER_SPEED)
-# Explosion
-EXPLOSION_TIME = 0.5  # second
-explosion_img = pygame.image.load('resources/explosion.png')
 # Enemy
 enemy_img = []
 for i in range(ENEMY_TYPE):
@@ -41,23 +46,22 @@ for i in range(ENEMY_TYPE):
 enemies = EnemyList()
 for num_enemy in range(ENEMY_NUMBER):
     enemies.append(name='enemy' + str(num_enemy),
-                      index=num_enemy,
-                      position=[random.randint(0, SCREEN_WIDTH - ENEMY_SIZE),
-                                random.randint(ENEMY_SPAWN[0], ENEMY_SPAWN[1])],
-                      speed=random.randint(1, ENEMY_SPEED_MAX) / 1000,
-                      active=True,
-                      image=enemy_img[random.randint(0, ENEMY_TYPE - 1)],
-                      )
-# Bullet$
+                   index=num_enemy,
+                   position=[random.randint(0, SCREEN_WIDTH - ENEMY_SIZE),
+                             random.randint(ENEMY_SPAWN[0], ENEMY_SPAWN[1])],
+                   speed=random.randint(1, ENEMY_SPEED_MAX) / 1000,
+                   active=True,
+                   image=enemy_img[random.randint(0, ENEMY_TYPE - 1)],
+                   )
+# Armory
 BULLET_ORIGIN_X = player.position[0]
 BULLET_ORIGIN_Y = player.position[1]
-# Bullet Cask
 armory = Amory()
 armory.append(name='bullet0',
               index=0,
               position=[BULLET_ORIGIN_X, BULLET_ORIGIN_Y],
               speed=BULLET_SPEED_BASE,
-              range=BULLET_EXPLOSION_RANGE,
+              exp_range=BULLET_EXPLOSION_RANGE,
               contact=[[BULLET_ORIGIN_X + 28, BULLET_ORIGIN_Y + 30], [BULLET_ORIGIN_X + 32, BULLET_ORIGIN_Y + 30]],
               active=True,
               image=pygame.image.load('resources/bullet0.png'),
@@ -67,7 +71,7 @@ armory.append(name='bullet1',
               index=1,
               position=[BULLET_ORIGIN_X, BULLET_ORIGIN_Y],
               speed=BULLET_SPEED_BASE,
-              range=BULLET_EXPLOSION_RANGE * 0.8,
+              exp_range=BULLET_EXPLOSION_RANGE * 0.8,
               contact=[[BULLET_ORIGIN_X + 18, BULLET_ORIGIN_Y + 23], [BULLET_ORIGIN_X + 42, BULLET_ORIGIN_Y + 23]],
               active=False,
               image=pygame.image.load('resources/bullet1.png'),
@@ -75,8 +79,7 @@ armory.append(name='bullet1',
               )
 # On Screen Bullet
 bullets = BulletList()  # To Store Bullet
-# Background
-background = pygame.image.load('resources/background.png')
+
 
 ####################################################################################################
 # Function Prototype
@@ -93,7 +96,8 @@ def enemy(enemy_block):
 
 def fire_bullet(bullet_block):
     global screen, armory
-    screen.blit(armory.search_index(index=bullet_block.index).image, (bullet_block.position[0], bullet_block.position[1]))
+    screen.blit(armory.search_index(index=bullet_block.index).image,
+                (bullet_block.position[0], bullet_block.position[1]))
 
 
 def collide(enemy_block, bullet_block):
@@ -102,7 +106,7 @@ def collide(enemy_block, bullet_block):
         distance = (((enemy_block.position[0] + ENEMY_SIZE / 2) - coordinates[0]) ** 2 +
                     ((enemy_block.position[1] + ENEMY_SIZE / 2) - coordinates[1]) ** 2
                     ) ** 0.5
-        if distance < armory.search_index(index=bullet_block.index).range:
+        if distance < armory.search_index(index=bullet_block.index).exp_range:
             return True
     return False
 

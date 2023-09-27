@@ -3,11 +3,6 @@
 # A Modified Linked List for Storage
 
 ##################################################
-# Libraries
-##################################################
-from settings import *
-
-##################################################
 # Class Prototype - Player
 ##################################################
 class PlayerBlock:
@@ -19,6 +14,7 @@ class PlayerBlock:
         self.speed = speed
         # Storage Information
         self.x_change = 0
+
 
 ##################################################
 # Class Prototype - Bullet
@@ -94,7 +90,7 @@ class BulletList:
 # Class Prototype - Amory
 ##################################################
 class AmoryBlock:
-    def __init__(self, name, index, position, speed, range, contact, active, image, cooldown):
+    def __init__(self, name, index, position, speed, exp_range, contact, active, image, cooldown):
         # Linkage
         self.next = None
         # Format Data
@@ -102,7 +98,7 @@ class AmoryBlock:
         self.index = index
         self.position = position
         self.speed = speed
-        self.range = range
+        self.exp_range = exp_range
         self.contact = tuple(tuple(i) for i in contact) if contact is not None else None
         self.active = active
         self.image = image
@@ -123,8 +119,8 @@ class Amory:
         return count
 
     # Add Element at the end
-    def append(self, name, index, position, speed, range, contact, active, image, cooldown):
-        new_node = AmoryBlock(name, index, position, speed, range, contact, active, image, cooldown)
+    def append(self, name, index, position, speed, exp_range, contact, active, image, cooldown):
+        new_node = AmoryBlock(name, index, position, speed, exp_range, contact, active, image, cooldown)
         if not self.head:
             self.head = new_node
             return

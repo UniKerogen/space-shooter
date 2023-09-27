@@ -3,11 +3,6 @@
 # Store settings for game
 
 ##################################################
-# Libraries
-##################################################
-from structures import *
-
-##################################################
 # Variable Definition
 ##################################################
 # Constants
@@ -23,6 +18,8 @@ BULLET_SPEED_BASE = 1  # Bullet Moving Speed
 BULLET_EXPLOSION_RANGE = 25  # Bullet Explosion Range
 BULLET_TYPE = 2  # Total Number of Bullet
 MAX_BULLET_ON_SCREEN = 10
+# Explosion
+EXPLOSION_TIME = 0.5  # second
 # Enemy Modification
 ENEMY_SIZE = 50  # Enemy Image Size 50x50 Pixel
 ENEMY_SPEED_MAX = 100  # /1000 -> Max of 0.1
