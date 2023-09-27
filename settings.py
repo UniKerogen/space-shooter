@@ -1,7 +1,15 @@
 # Settings File
-# Version 2.0
+# Version 3.0
 # Store settings for game
 
+##################################################
+# Libraries
+##################################################
+from structures import *
+
+##################################################
+# Variable Definition
+##################################################
 # Constants
 SCREEN_WIDTH = 400
 SCREEN_HEIGHT = 800
@@ -9,7 +17,7 @@ SCREEN_HEIGHT = 800
 PLAYER_SPEED = 0.5
 PLAYER_SIZE = 60  # Player Image Size 50x50 Pixel
 # Bullet Modification
-AUTO_FIRE =  False
+AUTO_FIRE = False
 BULLET_FIRE = False
 BULLET_SPEED_BASE = 1  # Bullet Moving Speed
 BULLET_EXPLOSION_RANGE = 25  # Bullet Explosion Range

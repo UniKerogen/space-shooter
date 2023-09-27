@@ -5,7 +5,20 @@
 ##################################################
 # Libraries
 ##################################################
+from settings import *
 
+##################################################
+# Class Prototype - Player
+##################################################
+class PlayerBlock:
+    def __init__(self, name, position, image, speed):
+        # Input Information
+        self.name = name
+        self.position = position
+        self.image = image
+        self.speed = speed
+        # Storage Information
+        self.x_change = 0
 
 ##################################################
 # Class Prototype - Bullet
@@ -19,9 +32,19 @@ class BulletBlock:
         self.position = position
         self.contact = contact
 
+
 class BulletList:
     def __init__(self):
         self.head = None
+
+    # Length of the List
+    def __len__(self):
+        count = 0
+        current = self.head
+        while current:
+            count += 1
+            current = current.next
+        return count
 
     def append(self, index, position, contact):
         new_node = BulletBlock(index=index, position=position, contact=contact)
@@ -46,15 +69,6 @@ class BulletList:
                 return
             current = current.next
 
-    # Length of the List
-    def length(self):
-        count = 0
-        current = self.head
-        while current:
-            count += 1
-            current = current.next
-        return count
-
     def get_element_at(self, position):
         if position < 0:
             return None  # Invalid position
@@ -75,15 +89,16 @@ class BulletList:
             current = current.next
         return current
 
+
 ##################################################
-# Class Prototype - CaskList for Amory and Enemy
+# Class Prototype - Amory
 ##################################################
-class Node:
-    def __init__(self, name, index=None, position=None, speed=None, range=None, contact=None, active=None, image=None,
-                 cooldown=None):
-        self.name = name
+class AmoryBlock:
+    def __init__(self, name, index, position, speed, range, contact, active, image, cooldown):
+        # Linkage
         self.next = None
         # Format Data
+        self.name = name
         self.index = index
         self.position = position
         self.speed = speed
@@ -94,14 +109,22 @@ class Node:
         self.cooldown = cooldown
 
 
-class CaskList:
+class Amory:
     def __init__(self):
         self.head = None
 
+    # Length of the List
+    def __len__(self):
+        count = 0
+        current = self.head
+        while current:
+            count += 1
+            current = current.next
+        return count
+
     # Add Element at the end
-    def append(self, data, index, position, speed, range, contact, active, image, cooldown):
-        new_node = Node(name=data, index=index, position=position, speed=speed, range=range, contact=contact,
-                        active=active, image=image, cooldown=cooldown)
+    def append(self, name, index, position, speed, range, contact, active, image, cooldown):
+        new_node = AmoryBlock(name, index, position, speed, range, contact, active, image, cooldown)
         if not self.head:
             self.head = new_node
             return
@@ -109,44 +132,6 @@ class CaskList:
         while current.next:
             current = current.next
         current.next = new_node
-
-    # Add Element at the head
-    def prepend(self, data, index, position, speed, range, contact, active, image, cooldown):
-        new_node = Node(name=data, index=index, position=position, speed=speed, range=range, contact=contact,
-                        active=active, image=image, cooldown=cooldown)
-        new_node.next = self.head
-        self.head = new_node
-
-    # Delete Element
-    def delete(self, data):
-        if not self.head:
-            return
-        if self.head.name == data:
-            self.head = self.head.next
-            return
-        current = self.head
-        while current.next:
-            if current.next.name == data:
-                current.next = current.next.next
-                return
-            current = current.next
-
-    # Show Whole List
-    def display(self):
-        current = self.head
-        while current:
-            print(current.name, end=" -> ")
-            current = current.next
-        print("None")
-
-    # Length of the List
-    def length(self):
-        count = 0
-        current = self.head
-        while current:
-            count += 1
-            current = current.next
-        return count
 
     # Search via Index
     def search_index(self, index):
@@ -166,9 +151,53 @@ class CaskList:
             current = current.next
         return self.head
 
+
 ##################################################
-# Function Prototype
+# Class Prototype - Enemy
 ##################################################
+class EnemyBlock:
+    def __init__(self, name, index, position, speed, active, image):
+        self.name = name
+        self.index = index
+        self.position = position
+        self.speed = speed
+        self.active = active
+        self.image = image
+        self.explode_at = None
+        # Connection
+        self.next = None
+
+
+class EnemyList:
+    def __init__(self):
+        self.head = None
+
+    def __len__(self):
+        count = 0
+        current = self.head
+        while current:
+            count += 1
+            current = current.next
+        return count
+
+    def append(self, name, index, position, speed, active, image):
+        new_node = EnemyBlock(name, index, position, speed, active, image)
+        if not self.head:
+            self.head = new_node
+        else:
+            current = self.head
+            while current.next:
+                current = current.next
+            current.next = new_node
+
+    # Search via Index
+    def search_index(self, index):
+        current = self.head
+        while current:
+            if current.index == index:
+                return current
+            current = current.next
+        return False
 
 
 ##################################################
