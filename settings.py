@@ -10,7 +10,7 @@ PLAYER_SPEED = 0.5
 PLAYER_SIZE = 60  # Player Image Size 50x50 Pixel
 # Bullet Modification
 BULLET_SPEED_BASE = 1  # Bullet Moving Speed
-BULLET_EXPLOSION_RANGE = 20  # Bullet Explosion Range
+BULLET_EXPLOSION_RANGE = 25  # Bullet Explosion Range
 BULLET_TYPE = 2  # Total Number of Bullet
 # Enemy Modification
 ENEMY_SIZE = 50  # Enemy Image Size 50x50 Pixel

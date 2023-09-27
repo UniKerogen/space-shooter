@@ -24,6 +24,12 @@ class Node:
         self.active = active
         self.image = image
 
+    def contact_reset(self):
+        if self.contact is not None and self.contact_origin is not None:
+            for index in range(len(self.contact_origin)):
+                self.contact[index] = list(self.contact_origin[index])
+
+
 
 class CaskList:
     def __init__(self):

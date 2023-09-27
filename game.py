@@ -1,10 +1,9 @@
 # Top Down Shooter Game
 # A Simple Top Down Shooter for Raiden Mockup
-# Version 4.0
-# Add: Score System & Background
-
 # Version 5.0
 # Add Weapon Switch
+
+
 ##################################################
 # Libraries
 ##################################################
@@ -12,7 +11,7 @@ import pygame
 import random
 import time
 
-from structures import CaskList
+from structures import *
 from settings import *
 
 ##################################################
@@ -60,13 +59,13 @@ bullet_list = CaskList()
 bullet_list.append(data='bullet0', index=0, position=[BULLET_ORIGIN_X, BULLET_ORIGIN_Y],
                    speed=BULLET_SPEED_BASE,
                    range=BULLET_EXPLOSION_RANGE,
-                   contact=[[BULLET_ORIGIN_X + 28, BULLET_ORIGIN_Y], [BULLET_ORIGIN_X + 32, BULLET_ORIGIN_Y]],
+                   contact=[[BULLET_ORIGIN_X + 28, BULLET_ORIGIN_Y + 30], [BULLET_ORIGIN_X + 32, BULLET_ORIGIN_Y + 30]],
                    active=True,
                    image=pygame.image.load('resources/bullet0.png'))
 bullet_list.append(data='bullet1', index=1, position=[BULLET_ORIGIN_X, BULLET_ORIGIN_Y],
                    speed=BULLET_SPEED_BASE,
                    range=BULLET_EXPLOSION_RANGE * 0.8,
-                   contact=[[BULLET_ORIGIN_X + 18, BULLET_ORIGIN_Y + 2], [BULLET_ORIGIN_X + 42, BULLET_ORIGIN_Y + 2]],
+                   contact=[[BULLET_ORIGIN_X + 18, BULLET_ORIGIN_Y + 23], [BULLET_ORIGIN_X + 42, BULLET_ORIGIN_Y + 23]],
                    active=False,
                    image=pygame.image.load('resources/bullet1.png'))
 # Background
@@ -93,12 +92,12 @@ def enemy(enemy_node):
 def fire_bullet(bullet):
     global bullet_state, screen
     bullet_state = 'fire'
-    screen.blit(bullet.image, (bullet.position[0], bullet.position[1] - 10))
+    screen.blit(bullet.image, (bullet.position[0], bullet.position[1]))
 
 
 def collide(enemy_x, enemy_y, bullet_x, bullet_y, explosion_range):
-    distance = (((enemy_x + ENEMY_SIZE / 2) - (bullet_x + PLAYER_SIZE / 2)) ** 2 +
-                ((enemy_y + ENEMY_SIZE / 2) - (bullet_y + PLAYER_SIZE / 2)) ** 2
+    distance = (((enemy_x + ENEMY_SIZE / 2) - (bullet_x)) ** 2 +
+                ((enemy_y + ENEMY_SIZE / 2) - (bullet_y)) ** 2
                 ) ** 0.5
     return distance < explosion_range
 
@@ -127,19 +126,29 @@ def main():
                 running = False
             # Event of Key Press
             if event.type == pygame.KEYDOWN:
+                # Player Movement
                 if event.key == pygame.K_LEFT:
                     player_x_change = -PLAYER_SPEED
                 elif event.key == pygame.K_RIGHT:
                     player_x_change = PLAYER_SPEED
+                # Fire Bullet
                 elif event.key == pygame.K_SPACE and bullet_state == 'ready':
                     # Bullet Fire at Current Player_X
                     bullet.position[0] = player_x
                     # Bullet contact set
                     for item in bullet.contact:
-                        item[0] = player_x
+                        item[0] = player_x + item[0] - BULLET_ORIGIN_X
                     fire_bullet(bullet=bullet)
+                # Weapon Switch
+                elif event.key == pygame.K_1:
+                    bullet_list.search_active().active = False
+                    bullet_list.search_index(index=0).active = True
+                elif event.key == pygame.K_2:
+                    bullet_list.search_active().active = False
+                    bullet_list.search_index(index=1).active = True
             # Event of Key Release
             if event.type == pygame.KEYUP:
+                # Stop Player Movement
                 if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                     player_x_change = 0
         # Player Movement
@@ -167,8 +176,7 @@ def main():
             if bullet.position[1] <= 0:
                 bullet_state = "ready"
                 bullet.position[1] = player_y
-                for index in range(len(bullet.contact_origin)):
-                    bullet.contact[index] = list(bullet.contact_origin[index])
+                bullet.contact_reset()
         # Collision
         for enemy_index in range(enemy_list.length()):
             current_enemy = enemy_list.search_index(enemy_index)
@@ -188,8 +196,7 @@ def main():
                     # Bullet Reset after Collision
                     bullet.position[1] = SCREEN_HEIGHT - 64
                     bullet_state = 'ready'
-                    for index in range(len(bullet.contact_origin)):
-                        bullet.contact[index] = list(bullet.contact_origin[index])
+                    bullet.contact_reset()
                 if current_enemy.range is not None:
                     # Reset Enemy after Explosion of EXPLOSION_TIME
                     if time.time() - current_enemy.range >= EXPLOSION_TIME:
@@ -201,8 +208,7 @@ def main():
         # Update New Location
         player(player_x, player_y)
         for enemy_index in range(enemy_list.length()):
-            current_enemy = enemy_list.search_index(index=enemy_index)
-            enemy(enemy_node=current_enemy)
+            enemy(enemy_node=enemy_list.search_index(index=enemy_index))
         # Update Display Element
         score_text = font.render("Score: " + str(score), True, WHITE)
         screen.blit(score_text, (10, 10))
