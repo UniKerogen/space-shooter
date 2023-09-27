@@ -1,8 +1,10 @@
 # Top Down Shooter Game
-# Version 3.0
 # A Simple Top Down Shooter for Raiden Mockup
-# Add: Relocate Settings to setting.py
+# Version 4.0
+# Add: Score System & Background
 
+# Version 5.0
+# Add Weapon Switch
 ##################################################
 # Libraries
 ##################################################
@@ -22,6 +24,9 @@ pygame.init()
 # Create Screen
 screen = pygame.display.set_mode(size=(SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Top-Down Shooter")
+# Score System
+font = pygame.font.Font(None, 24)
+score = 0
 # Player Value
 player_img = pygame.image.load('resources/player.png')
 player_x = SCREEN_WIDTH // 2 - PLAYER_SIZE / 2  # Middle of Screen
@@ -64,6 +69,8 @@ bullet_list.append(data='bullet1', index=1, position=[BULLET_ORIGIN_X, BULLET_OR
                    contact=[[BULLET_ORIGIN_X + 18, BULLET_ORIGIN_Y + 2], [BULLET_ORIGIN_X + 42, BULLET_ORIGIN_Y + 2]],
                    active=False,
                    image=pygame.image.load('resources/bullet1.png'))
+# Background
+background = pygame.image.load('resources/background.png')
 
 ##################################################
 # Class Prototype
@@ -101,15 +108,16 @@ def collide(enemy_x, enemy_y, bullet_x, bullet_y, explosion_range):
 ##################################################
 def main():
     # Global Variable
-    global EXPLOSION
     global screen
     global player_x, player_y, player_x_change
     global enemy_list
     global bullet_list, bullet_state
+    global score
     # Running Game
     running = True
     while running:
-        screen.fill((0, 0, 0))
+        # Display Background
+        screen.blit(background, (0, 0))
         # FInd Active Bullet
         bullet = bullet_list.search_active()
         # Obtain Keyboard Event
@@ -175,6 +183,8 @@ def main():
                         current_enemy.image = explosion_img
                         current_enemy.range = time.time()
                         current_enemy.active = False
+                        # Update Score
+                        score += 1
                     # Bullet Reset after Collision
                     bullet.position[1] = SCREEN_HEIGHT - 64
                     bullet_state = 'ready'
@@ -193,7 +203,10 @@ def main():
         for enemy_index in range(enemy_list.length()):
             current_enemy = enemy_list.search_index(index=enemy_index)
             enemy(enemy_node=current_enemy)
-        # Update Display
+        # Update Display Element
+        score_text = font.render("Score: " + str(score), True, WHITE)
+        screen.blit(score_text, (10, 10))
+        # Update Pygame Screen
         pygame.display.update()
         # Break Point
     # Quit
