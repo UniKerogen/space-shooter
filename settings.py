@@ -1,5 +1,5 @@
 # Settings File
-# Version 3.0
+# Version - Alpha 6.4
 # Store settings for game
 
 ##################################################
@@ -19,6 +19,7 @@ PLAYER_HEALTH_BAR_SHIFT = PLAYER_SIZE + 5
 BULLET_SPEED_BASE = 1  # Bullet Moving Speed
 BULLET_EXPLOSION_RANGE = 25  # Bullet Explosion Range
 BULLET_TYPE = 2  # Total Number of Bullet
+BULLET_COOLDOWN_BASE = 100  # Base for bullet cooldown
 # Explosion
 EXPLOSION_TIME = 0.5  # second
 # Enemy Modification
@@ -30,6 +31,9 @@ ENEMY_SPAWN = (50, 250)  # Enemy Spawn Range
 ENEMY_BASE_HEALTH = (80, 150)  # Enemy Base Health Range
 ENEMY_HEALTH_BAR = (ENEMY_SIZE, 5)  # Enemy Health Bar Width x Height
 ENEMY_HEALTH_BAR_SHIFT = -10  # Distance Between Enemy and Health Bar Display
+ENEMY_WEAPON_TYPE = 2  # Type of Weapon Enemy can use
+ENEMY_BULLET_SPEED_BASE = 0.5  # Base speed of enemy bullet
+ENEMY_BULLET_COOLDOWN_BASE = 250  # Bullet Cooldown for Enemy
 # Boss Modification
 BOSS_SIZE = 100
 BOSS_SPEED_MAX = 50  # /100 -> Max of 0.05

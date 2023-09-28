@@ -1,5 +1,5 @@
 # Structure File
-# Version 3.0
+# Version - Alpha 6.4
 # A Modified Linked List for Storage
 
 ##################################################
@@ -111,7 +111,7 @@ class AmoryBlock:
         self.damage = damage
 
 
-class Amory:
+class Armory:
     def __init__(self):
         self.head = None
 
@@ -158,7 +158,7 @@ class Amory:
 # Class Prototype - Enemy
 ##################################################
 class EnemyBlock:
-    def __init__(self, name, index, position, speed, active, image, health, direction):
+    def __init__(self, name, index, position, speed, active, image, health, direction, weapon):
         self.name = name
         self.index = index
         # To Update Element
@@ -168,6 +168,7 @@ class EnemyBlock:
         self.active = active
         self.image = image
         self.health = [health, health]
+        self.weapon = weapon
         # Self Start Element
         self.explode_at = None
         self.health_show = True
@@ -187,8 +188,8 @@ class EnemyList:
             current = current.next
         return count
 
-    def append(self, name, index, position, speed, active, image, health, direction):
-        new_node = EnemyBlock(name, index, position, speed, active, image, health, direction)
+    def append(self, name, index, position, speed, active, image, health, direction, weapon):
+        new_node = EnemyBlock(name, index, position, speed, active, image, health, direction, weapon)
         if not self.head:
             self.head = new_node
         else:

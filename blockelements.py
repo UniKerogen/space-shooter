@@ -1,5 +1,5 @@
 # Block Element File
-# Version 1.0
+# Version - Alpha 6.4
 # Storage for block elements
 
 ##################################################
@@ -21,6 +21,37 @@ player = PlayerBlock(name='player',
                      health=100)
 
 ##################################################
+# Player Armory Block
+##################################################
+BULLET_ORIGIN_X = player.position[0]
+BULLET_ORIGIN_Y = player.position[1]
+player_armory = Armory()
+player_armory.append(name='bullet0',
+                     index=0,
+                     position=[BULLET_ORIGIN_X, BULLET_ORIGIN_Y],
+                     speed=BULLET_SPEED_BASE,
+                     exp_range=BULLET_EXPLOSION_RANGE,
+                     contact=[[BULLET_ORIGIN_X + 28, BULLET_ORIGIN_Y],
+                              [BULLET_ORIGIN_X + 32, BULLET_ORIGIN_Y]],
+                     active=True,
+                     image=pygame.image.load('resources/player/bullet0.png'),
+                     cooldown=[BULLET_COOLDOWN_BASE, BULLET_COOLDOWN_BASE],
+                     damage=50
+                     )
+player_armory.append(name='bullet1',
+                     index=1,
+                     position=[BULLET_ORIGIN_X, BULLET_ORIGIN_Y],
+                     speed=BULLET_SPEED_BASE,
+                     exp_range=BULLET_EXPLOSION_RANGE * 0.8,
+                     contact=[[BULLET_ORIGIN_X + 18, BULLET_ORIGIN_Y + 20],
+                              [BULLET_ORIGIN_X + 42, BULLET_ORIGIN_Y + 20]],
+                     active=False,
+                     image=pygame.image.load('resources/player/bullet1.png'),
+                     cooldown=[BULLET_COOLDOWN_BASE * 0.5, BULLET_COOLDOWN_BASE * 0.5],
+                     damage=20
+                     )
+
+##################################################
 # Enemy Block
 ##################################################
 # Enemy Image Storage
@@ -39,39 +70,42 @@ for num_enemy in range(ENEMY_NUMBER):
                    active=True,
                    image=enemy_img[random.randint(0, ENEMY_TYPE - 1)],
                    health=random.randint(ENEMY_BASE_HEALTH[0], ENEMY_BASE_HEALTH[1]),
-                   direction=-1 if random.randint(0, 1) == 0 else 1)
+                   direction=-1 if random.randint(0, 1) == 0 else 1,
+                   weapon=random.randint(0, ENEMY_WEAPON_TYPE - 1))
 
 ##################################################
-# Armory Block
+# Enemy Armory Block
 ##################################################
-BULLET_ORIGIN_X = player.position[0]
-BULLET_ORIGIN_Y = player.position[1]
-player_armory = Amory()
-player_armory.append(name='bullet0',
-                     index=0,
-                     position=[BULLET_ORIGIN_X, BULLET_ORIGIN_Y],
-                     speed=BULLET_SPEED_BASE,
-                     exp_range=BULLET_EXPLOSION_RANGE,
-                     contact=[[BULLET_ORIGIN_X + 28, BULLET_ORIGIN_Y + 12],
-                              [BULLET_ORIGIN_X + 32, BULLET_ORIGIN_Y + 12]],
-                     active=True,
-                     image=pygame.image.load('resources/player/bullet0.png'),
-                     cooldown=[100, 100],
-                     damage=50
-                     )
-player_armory.append(name='bullet1',
-                     index=1,
-                     position=[BULLET_ORIGIN_X, BULLET_ORIGIN_Y],
-                     speed=BULLET_SPEED_BASE,
-                     exp_range=BULLET_EXPLOSION_RANGE * 0.8,
-                     contact=[[BULLET_ORIGIN_X + 18, BULLET_ORIGIN_Y + 20],
-                              [BULLET_ORIGIN_X + 42, BULLET_ORIGIN_Y + 20]],
-                     active=False,
-                     image=pygame.image.load('resources/player/bullet1.png'),
-                     cooldown=[50, 50],
-                     damage=20
-                     )
+enemy_armory = Armory()
+enemy_armory.append(name='bullet0',
+                    index=0,
+                    position=[0, 0],
+                    speed=ENEMY_BULLET_SPEED_BASE,
+                    exp_range=BULLET_EXPLOSION_RANGE,
+                    contact=[[24, 45], [26, 45]],
+                    active=False,
+                    image=pygame.image.load('resources/enemy/bullet0.png'),
+                    cooldown=[ENEMY_BULLET_COOLDOWN_BASE, ENEMY_BULLET_COOLDOWN_BASE],
+                    damage=10)
+enemy_armory.append(name='bullet1',
+                    index=1,
+                    position=[0, 0],
+                    speed=ENEMY_BULLET_SPEED_BASE * 0.1,
+                    exp_range=BULLET_EXPLOSION_RANGE * 0.5,
+                    contact=[[24, 45], [26, 45]],
+                    active=False,
+                    image=pygame.image.load('resources/enemy/bullet1.png'),
+                    cooldown=[ENEMY_BULLET_COOLDOWN_BASE * 3, ENEMY_BULLET_COOLDOWN_BASE * 3],
+                    damage=30)
 
+
+##################################################
+# Boss Block
+##################################################
+
+##################################################
+# Boss Armory Block
+##################################################
 
 ##################################################
 # Main Function
