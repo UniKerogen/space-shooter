@@ -46,29 +46,31 @@ for num_enemy in range(ENEMY_NUMBER):
 ##################################################
 BULLET_ORIGIN_X = player.position[0]
 BULLET_ORIGIN_Y = player.position[1]
-armory = Amory()
-armory.append(name='bullet0',
-              index=0,
-              position=[BULLET_ORIGIN_X, BULLET_ORIGIN_Y],
-              speed=BULLET_SPEED_BASE,
-              exp_range=BULLET_EXPLOSION_RANGE,
-              contact=[[BULLET_ORIGIN_X + 28, BULLET_ORIGIN_Y + 12], [BULLET_ORIGIN_X + 32, BULLET_ORIGIN_Y + 12]],
-              active=True,
-              image=pygame.image.load('resources/player/bullet0.png'),
-              cooldown=[100, 100],
-              damage=50
-              )
-armory.append(name='bullet1',
-              index=1,
-              position=[BULLET_ORIGIN_X, BULLET_ORIGIN_Y],
-              speed=BULLET_SPEED_BASE,
-              exp_range=BULLET_EXPLOSION_RANGE * 0.8,
-              contact=[[BULLET_ORIGIN_X + 18, BULLET_ORIGIN_Y + 20], [BULLET_ORIGIN_X + 42, BULLET_ORIGIN_Y + 20]],
-              active=False,
-              image=pygame.image.load('resources/player/bullet1.png'),
-              cooldown=[50, 50],
-              damage=20
-              )
+player_armory = Amory()
+player_armory.append(name='bullet0',
+                     index=0,
+                     position=[BULLET_ORIGIN_X, BULLET_ORIGIN_Y],
+                     speed=BULLET_SPEED_BASE,
+                     exp_range=BULLET_EXPLOSION_RANGE,
+                     contact=[[BULLET_ORIGIN_X + 28, BULLET_ORIGIN_Y + 12],
+                              [BULLET_ORIGIN_X + 32, BULLET_ORIGIN_Y + 12]],
+                     active=True,
+                     image=pygame.image.load('resources/player/bullet0.png'),
+                     cooldown=[100, 100],
+                     damage=50
+                     )
+player_armory.append(name='bullet1',
+                     index=1,
+                     position=[BULLET_ORIGIN_X, BULLET_ORIGIN_Y],
+                     speed=BULLET_SPEED_BASE,
+                     exp_range=BULLET_EXPLOSION_RANGE * 0.8,
+                     contact=[[BULLET_ORIGIN_X + 18, BULLET_ORIGIN_Y + 20],
+                              [BULLET_ORIGIN_X + 42, BULLET_ORIGIN_Y + 20]],
+                     active=False,
+                     image=pygame.image.load('resources/player/bullet1.png'),
+                     cooldown=[50, 50],
+                     damage=20
+                     )
 
 
 ##################################################

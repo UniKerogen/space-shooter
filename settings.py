@@ -13,6 +13,8 @@ BOUNDARY_RIGHT = SCREEN_WIDTH - BOUNDARY_LEFT
 # Player Modification
 PLAYER_SPEED = 0.5
 PLAYER_SIZE = 60  # Player Image Size 50x50 Pixel
+PLAYER_HEALTH_BAR = (PLAYER_SIZE, 5)
+PLAYER_HEALTH_BAR_SHIFT = PLAYER_SIZE + 5
 # Bullet Modification
 BULLET_SPEED_BASE = 1  # Bullet Moving Speed
 BULLET_EXPLOSION_RANGE = 25  # Bullet Explosion Range

@@ -16,6 +16,7 @@ class PlayerBlock:
         # Background Information
         self.shield = None
         self.invincible = False
+        self.health_show = True
         # Storage Information
         self.x_change = 0
 
