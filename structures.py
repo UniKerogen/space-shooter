@@ -6,12 +6,16 @@
 # Class Prototype - Player
 ##################################################
 class PlayerBlock:
-    def __init__(self, name, position, image, speed):
+    def __init__(self, name, position, image, speed, health):
         # Input Information
         self.name = name
         self.position = position
         self.image = image
         self.speed = speed
+        self.health = health
+        # Background Information
+        self.shield = None
+        self.invincible = False
         # Storage Information
         self.x_change = 0
 
@@ -90,7 +94,7 @@ class BulletList:
 # Class Prototype - Amory
 ##################################################
 class AmoryBlock:
-    def __init__(self, name, index, position, speed, exp_range, contact, active, image, cooldown):
+    def __init__(self, name, index, position, speed, exp_range, contact, active, image, cooldown, damage):
         # Linkage
         self.next = None
         # Format Data
@@ -103,6 +107,7 @@ class AmoryBlock:
         self.active = active
         self.image = image
         self.cooldown = cooldown
+        self.damage = damage
 
 
 class Amory:
@@ -119,8 +124,8 @@ class Amory:
         return count
 
     # Add Element at the end
-    def append(self, name, index, position, speed, exp_range, contact, active, image, cooldown):
-        new_node = AmoryBlock(name, index, position, speed, exp_range, contact, active, image, cooldown)
+    def append(self, name, index, position, speed, exp_range, contact, active, image, cooldown, damage):
+        new_node = AmoryBlock(name, index, position, speed, exp_range, contact, active, image, cooldown, damage)
         if not self.head:
             self.head = new_node
             return
@@ -152,7 +157,7 @@ class Amory:
 # Class Prototype - Enemy
 ##################################################
 class EnemyBlock:
-    def __init__(self, name, index, position, speed, active, image):
+    def __init__(self, name, index, position, speed, active, image, health, direction):
         self.name = name
         self.index = index
         self.position = position
@@ -160,6 +165,8 @@ class EnemyBlock:
         self.active = active
         self.image = image
         self.explode_at = None
+        self.health = health
+        self.direction = direction
         # Connection
         self.next = None
 
@@ -176,8 +183,8 @@ class EnemyList:
             current = current.next
         return count
 
-    def append(self, name, index, position, speed, active, image):
-        new_node = EnemyBlock(name, index, position, speed, active, image)
+    def append(self, name, index, position, speed, active, image, health, direction):
+        new_node = EnemyBlock(name, index, position, speed, active, image, health, direction)
         if not self.head:
             self.head = new_node
         else:
