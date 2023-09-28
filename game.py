@@ -1,6 +1,6 @@
 # Top Down Shooter Game
 # A Simple Top Down Shooter for Raiden Mockup
-# Version 6.0
+# Version 6.2.1
 
 
 ####################################################################################################
@@ -12,6 +12,7 @@ import time
 
 from structures import *
 from settings import *
+from blockelements import *
 
 ####################################################################################################
 # Settings
@@ -32,57 +33,8 @@ background = pygame.image.load('resources/background.png')
 ##################################################
 # Structures Setting
 ##################################################
-# Player
-player = PlayerBlock(name='player',
-                     position=[SCREEN_WIDTH // 2 - PLAYER_SIZE / 2, SCREEN_HEIGHT - 128],
-                     image=pygame.image.load('resources/player/player.png'),
-                     speed=PLAYER_SPEED,
-                     health=100)
-# Enemy
-enemy_img = []
-for i in range(ENEMY_TYPE):
-    file = 'resources/enemy/enemy' + str(i) + '.png'
-    enemy_img.append(pygame.image.load(file))
-# Enemy Cask - [x, y, type, speed]
-enemies = EnemyList()
-for num_enemy in range(ENEMY_NUMBER):
-    enemies.append(name='enemy' + str(num_enemy),
-                   index=num_enemy,
-                   position=[random.randint(BOUNDARY_LEFT, BOUNDARY_RIGHT - ENEMY_SIZE),
-                             random.randint(ENEMY_SPAWN[0], ENEMY_SPAWN[1])],
-                   speed=random.randint(1, ENEMY_SPEED_MAX) / 1000,
-                   active=True,
-                   image=enemy_img[random.randint(0, ENEMY_TYPE - 1)],
-                   health=100,
-                   direction=-1 if random.randint(0,1) == 0 else 1)
-# Armory
-BULLET_ORIGIN_X = player.position[0]
-BULLET_ORIGIN_Y = player.position[1]
-armory = Amory()
-armory.append(name='bullet0',
-              index=0,
-              position=[BULLET_ORIGIN_X, BULLET_ORIGIN_Y],
-              speed=BULLET_SPEED_BASE,
-              exp_range=BULLET_EXPLOSION_RANGE,
-              contact=[[BULLET_ORIGIN_X + 28, BULLET_ORIGIN_Y + 12], [BULLET_ORIGIN_X + 32, BULLET_ORIGIN_Y + 12]],
-              active=True,
-              image=pygame.image.load('resources/player/bullet0.png'),
-              cooldown=[100, 100],
-              damage=50
-              )
-armory.append(name='bullet1',
-              index=1,
-              position=[BULLET_ORIGIN_X, BULLET_ORIGIN_Y],
-              speed=BULLET_SPEED_BASE,
-              exp_range=BULLET_EXPLOSION_RANGE * 0.8,
-              contact=[[BULLET_ORIGIN_X + 18, BULLET_ORIGIN_Y + 20], [BULLET_ORIGIN_X + 42, BULLET_ORIGIN_Y + 20]],
-              active=False,
-              image=pygame.image.load('resources/player/bullet1.png'),
-              cooldown=[50, 50],
-              damage=20
-              )
-# On Screen Bullet
-bullets = BulletList()  # To Store Bullet
+# On Screen Bullet Storage
+bullets = BulletList()
 
 
 ####################################################################################################
@@ -93,7 +45,7 @@ def show_player(player_block):
     screen.blit(player_block.image, (player_block.position[0], player_block.position[1]))
 
 
-def enemy(enemy_block):
+def show_enemy(enemy_block):
     global screen
     screen.blit(enemy_block.image, (enemy_block.position[0], enemy_block.position[1]))
 
@@ -252,7 +204,7 @@ def main():
         show_player(player_block=player)
         # Update Enemy
         for enemy_index in range(len(enemies)):
-            enemy(enemy_block=enemies.search_index(index=enemy_index))
+            show_enemy(enemy_block=enemies.search_index(index=enemy_index))
         # Update Bullet when Available
         if len(bullets) > 0:
             for bullet_index in range(0, len(bullets)):
