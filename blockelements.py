@@ -38,7 +38,7 @@ for num_enemy in range(ENEMY_NUMBER):
                    speed=random.randint(1, ENEMY_SPEED_MAX) / 1000,
                    active=True,
                    image=enemy_img[random.randint(0, ENEMY_TYPE - 1)],
-                   health=100,
+                   health=random.randint(ENEMY_BASE_HEALTH[0], ENEMY_BASE_HEALTH[1]),
                    direction=-1 if random.randint(0, 1) == 0 else 1)
 
 ##################################################

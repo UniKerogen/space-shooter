@@ -1,6 +1,6 @@
 # Top Down Shooter Game
 # A Simple Top Down Shooter for Raiden Mockup
-# Version 6.2.1
+# Version 6.2.2 - Enemy Health
 
 
 ####################################################################################################
@@ -48,11 +48,20 @@ def show_player(player_block):
 def show_enemy(enemy_block):
     global screen
     screen.blit(enemy_block.image, (enemy_block.position[0], enemy_block.position[1]))
+    if enemy_block.health_show:
+        pygame.draw.rect(screen,
+                         color=(255, 0, 0),
+                         rect=(enemy_block.position[0], enemy_block.position[1] + ENEMY_HEALTH_BAR_SHIFT,
+                               ENEMY_HEALTH_BAR[0], ENEMY_HEALTH_BAR[1]))
+        pygame.draw.rect(screen,
+                         color=(0, 255, 0),
+                         rect=(enemy_block.position[0], enemy_block.position[1] + ENEMY_HEALTH_BAR_SHIFT,
+                               enemy_block.health[1] / enemy_block.health[0] * ENEMY_HEALTH_BAR[0], ENEMY_HEALTH_BAR[1]))
 
 
 def fire_bullet(bullet_block):
     global screen, armory
-    screen.blit(armory.search_index(index=bullet_block.index).image,
+    screen.blit(armory.index_at(index=bullet_block.index).image,
                 (bullet_block.position[0], bullet_block.position[1]))
 
 
@@ -62,7 +71,7 @@ def collide(enemy_block, bullet_block):
         distance = (((enemy_block.position[0] + ENEMY_SIZE / 2) - coordinates[0]) ** 2 +
                     ((enemy_block.position[1] + ENEMY_SIZE / 2) - coordinates[1]) ** 2
                     ) ** 0.5
-        if distance < armory.search_index(index=bullet_block.index).exp_range:
+        if distance < armory.index_at(index=bullet_block.index).exp_range:
             return True
     return False
 
@@ -75,11 +84,12 @@ def main():
     global screen
     global player
     global enemies
-    global armory, bullets, BULLET_FIRE
+    global armory, bullets
     global score
     # Running Game
-    running = True
-    while running:
+    RUNNING = True
+    BULLET_FIRE = False
+    while RUNNING:
         # Display Background
         screen.blit(background, (0, 0))
         # Find Active Bullet
@@ -90,7 +100,7 @@ def main():
         for event in pygame.event.get():
             # Event of Quiting
             if event.type == pygame.QUIT:
-                running = False
+                RUNNING = False
             # Event of Key Press
             if event.type == pygame.KEYDOWN:
                 # Player Movement
@@ -104,10 +114,10 @@ def main():
                 # Weapon Switch
                 elif event.key == pygame.K_1:
                     armory.search_active().active = False
-                    armory.search_index(index=0).active = True
+                    armory.index_at(index=0).active = True
                 elif event.key == pygame.K_2:
                     armory.search_active().active = False
-                    armory.search_index(index=1).active = True
+                    armory.index_at(index=1).active = True
             # Event of Key Release
             if event.type == pygame.KEYUP:
                 # Stop Player Movement
@@ -142,7 +152,7 @@ def main():
             player.position[0] = SCREEN_WIDTH - PLAYER_SIZE
         # Movement of Each Enemy
         for enemy_index in range(len(enemies)):
-            current_enemy = enemies.search_index(index=enemy_index)
+            current_enemy = enemies.index_at(index=enemy_index)
             current_enemy.position[0] += current_enemy.speed * current_enemy.direction
             # Far Left Side
             if current_enemy.position[0] <= BOUNDARY_LEFT:
@@ -168,24 +178,30 @@ def main():
         ################################################################################
         # Collision
         for enemy_index in range(len(enemies)):
-            current_enemy = enemies.search_index(enemy_index)
+            current_enemy = enemies.index_at(enemy_index)
             # Collide only when enemy is active and there is a bullet
             if len(bullets) > 0 and current_enemy.active:
                 for bullet_index in range(len(bullets)):
                     bullet0 = bullets.get_element_at(bullet_index)
                     if bullet0 is not None:
                         if collide(enemy_block=current_enemy, bullet_block=bullet0):
-                            if current_enemy.active:  # Active Enemy Explode
-                                current_enemy.speed = 0  # Stop Moving
-                                current_enemy.image = explosion_img
-                                current_enemy.explode_at = time.time()
-                                current_enemy.active = False
-                                score += 1  # Update Score
-                            bullets.delete(bullet0)  # Bullet Reset after Collision
+                            if current_enemy.active:  # Active Enemy
+                                # Enemy Health Decrease
+                                current_enemy.health[1] -= armory.index_at(index=bullet0.index).damage
+                                # Enemy Health Check
+                                if current_enemy.health[1] <= 0:  # Explode at Health of 0
+                                    current_enemy.speed = 0  # Stop Moving
+                                    current_enemy.image = explosion_img
+                                    current_enemy.explode_at = time.time()
+                                    current_enemy.active = False
+                                    current_enemy.health_show = False
+                                    score += 1  # Update Score
+                                bullets.delete(bullet0)  # Bullet Reset after Collision
             # Reset enemy to active after some time
             if not current_enemy.active and current_enemy.explode_at is not None:
                 # Reset Enemy after Explosion of EXPLOSION_TIME
                 if time.time() - current_enemy.explode_at >= EXPLOSION_TIME:
+                    # Update Element Reset
                     current_enemy.direction = -1 if random.randint(0, 1) == 0 else 1
                     if current_enemy.direction == -1:
                         current_enemy.position = [BOUNDARY_RIGHT - ENEMY_SIZE,
@@ -195,8 +211,12 @@ def main():
                                                   random.randint(ENEMY_SPAWN[0], ENEMY_SPAWN[1])]
                     current_enemy.speed = random.randint(1, ENEMY_SPEED_MAX) / 1000
                     current_enemy.image = enemy_img[random.randint(0, ENEMY_TYPE - 1)]
+                    current_enemy.health[1] = current_enemy.health[0]
                     current_enemy.active = True
+                    # Self Start Element Reset
                     current_enemy.explode = None
+                    current_enemy.health_show = True
+
 
         ########################################
         ########################################
@@ -204,7 +224,7 @@ def main():
         show_player(player_block=player)
         # Update Enemy
         for enemy_index in range(len(enemies)):
-            show_enemy(enemy_block=enemies.search_index(index=enemy_index))
+            show_enemy(enemy_block=enemies.index_at(index=enemy_index))
         # Update Bullet when Available
         if len(bullets) > 0:
             for bullet_index in range(0, len(bullets)):

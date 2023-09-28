@@ -12,7 +12,7 @@ class PlayerBlock:
         self.position = position
         self.image = image
         self.speed = speed
-        self.health = health
+        self.health = [health, health]
         # Background Information
         self.shield = None
         self.invincible = False
@@ -135,7 +135,7 @@ class Amory:
         current.next = new_node
 
     # Search via Index
-    def search_index(self, index):
+    def index_at(self, index):
         current = self.head
         while current:
             if current.index == index:
@@ -160,13 +160,16 @@ class EnemyBlock:
     def __init__(self, name, index, position, speed, active, image, health, direction):
         self.name = name
         self.index = index
+        # To Update Element
+        self.direction = direction
         self.position = position
         self.speed = speed
         self.active = active
         self.image = image
+        self.health = [health, health]
+        # Self Start Element
         self.explode_at = None
-        self.health = health
-        self.direction = direction
+        self.health_show = True
         # Connection
         self.next = None
 
@@ -194,7 +197,7 @@ class EnemyList:
             current.next = new_node
 
     # Search via Index
-    def search_index(self, index):
+    def index_at(self, index):
         current = self.head
         while current:
             if current.index == index:

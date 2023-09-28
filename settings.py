@@ -14,8 +14,6 @@ BOUNDARY_RIGHT = SCREEN_WIDTH - BOUNDARY_LEFT
 PLAYER_SPEED = 0.5
 PLAYER_SIZE = 60  # Player Image Size 50x50 Pixel
 # Bullet Modification
-AUTO_FIRE = False
-BULLET_FIRE = False
 BULLET_SPEED_BASE = 1  # Bullet Moving Speed
 BULLET_EXPLOSION_RANGE = 25  # Bullet Explosion Range
 BULLET_TYPE = 2  # Total Number of Bullet
@@ -27,6 +25,9 @@ ENEMY_SPEED_MAX = 100  # /1000 -> Max of 0.1
 ENEMY_NUMBER = 5  # On Screen Enemy Number
 ENEMY_TYPE = 3  # Total Number of Enemy
 ENEMY_SPAWN = (50, 250)  # Enemy Spawn Range
+ENEMY_BASE_HEALTH = (80, 150)  # Enemy Base Health Range
+ENEMY_HEALTH_BAR = (ENEMY_SIZE, 5)  # Enemy Health Bar Width x Height
+ENEMY_HEALTH_BAR_SHIFT = -10  # Distance Between Enemy and Health Bar Display
 # Boss Modification
 BOSS_SIZE = 100
 BOSS_SPEED_MAX = 50  # /100 -> Max of 0.05
