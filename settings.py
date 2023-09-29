@@ -10,6 +10,8 @@ SCREEN_WIDTH = 400
 SCREEN_HEIGHT = 800
 BOUNDARY_LEFT = 5
 BOUNDARY_RIGHT = SCREEN_WIDTH - BOUNDARY_LEFT
+BACKGROUND_SCROLL_SPEED = 1  # Pixel
+BACKGROUND_REFRESH_TIME = 0.1  # Second
 # Player Modification
 PLAYER_SPEED = 0.5
 PLAYER_SIZE = 60  # Player Image Size 50x50 Pixel
@@ -26,7 +28,7 @@ EXPLOSION_TIME = 0.5  # second
 # Enemy Modification
 ENEMY_SIZE = 50  # Enemy Image Size 50x50 Pixel
 ENEMY_SPEED_MAX = 100  # /1000 -> Max of 0.1
-ENEMY_NUMBER = 10  # On Screen Enemy Number
+ENEMY_NUMBER = 3  # On Screen Enemy Number
 ENEMY_TYPE = 3  # Total Number of Enemy
 ENEMY_SPAWN = (50, 250)  # Enemy Spawn Range
 ENEMY_BASE_HEALTH = (80, 150)  # Enemy Base Health Range

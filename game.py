@@ -29,7 +29,10 @@ score = 0
 explosion_img = pygame.image.load('resources/explosion.png')
 # Background
 background = pygame.image.load('resources/background.png')
-
+background_rect1 = background.get_rect()
+background_rect2 = background.get_rect()
+background_rect1.topleft = (0, 0)
+background_rect2.topleft = (0, -SCREEN_HEIGHT)
 ##################################################
 # Structures Setting
 ##################################################
@@ -117,9 +120,24 @@ def main():
     # Running Game
     RUNNING = True
     BULLET_FIRE = False
+    background_timer = time.time()
     while RUNNING:
-        # Display Background
-        screen.blit(background, (0, 0))
+        ################################################################################
+        ################################################################################
+        if time.time() - background_timer > BACKGROUND_REFRESH_TIME:
+            background_timer = time.time()
+            # Scroll the background
+            background_rect1.y += BACKGROUND_SCROLL_SPEED
+            background_rect2.y += BACKGROUND_SCROLL_SPEED
+            if background_rect1.y >= SCREEN_HEIGHT:
+                background_rect1.topleft = (0, 0)
+            if background_rect2.y >= SCREEN_HEIGHT:
+                background_rect2.topleft = (0, -SCREEN_HEIGHT)
+        # Draw the background
+        screen.blit(background, background_rect1)
+        screen.blit(background, background_rect2)
+        ################################################################################
+        ################################################################################
         # Find Active Bullet
         active_bullet = player_armory.search_active()
         ################################################################################
