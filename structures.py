@@ -1,5 +1,5 @@
 # Structure File
-# Version - Alpha 6.4
+# Version - Alpha 6.5
 # A Modified Linked List for Storage
 
 ##################################################
@@ -14,11 +14,29 @@ class PlayerBlock:
         self.speed = speed
         self.health = [health, health]
         # Background Information
-        self.shield = None
+        self.shield = 0
         self.invincible = False
         self.health_show = True
+        self.active = True
+        self.life = [3, 3]
+        self.explode_at = None
+        self.invincible_at = None
         # Storage Information
         self.x_change = 0
+        # Save Input Data
+        self.data = [name, position, image, speed, health]
+
+    # Reset Player
+    def reset(self):
+        self.name = self.data[0]
+        self.position = self.data[1]
+        self.image = self.data[2]
+        self.speed = self.data[3]
+        self.health = [self.data[4], self.data[4]]
+        self.invincible = True
+        self.explode_at = None
+        self.active = True
+        self.health_show = True
 
 
 ##################################################
@@ -172,6 +190,8 @@ class EnemyBlock:
         # Self Start Element
         self.explode_at = None
         self.health_show = True
+        self.fire_bullet = True
+        self.fire_cooldown = None
         # Connection
         self.next = None
 

@@ -1,5 +1,5 @@
 # Block Element File
-# Version - Alpha 6.4
+# Version - Alpha 6.5
 # Storage for block elements
 
 ##################################################
@@ -85,7 +85,7 @@ enemy_armory.append(name='bullet0',
                     contact=[[24, 45], [26, 45]],
                     active=False,
                     image=pygame.image.load('resources/enemy/bullet0.png'),
-                    cooldown=[ENEMY_BULLET_COOLDOWN_BASE, ENEMY_BULLET_COOLDOWN_BASE],
+                    cooldown=ENEMY_BULLET_COOLDOWN_BASE,
                     damage=10)
 enemy_armory.append(name='bullet1',
                     index=1,
@@ -95,7 +95,7 @@ enemy_armory.append(name='bullet1',
                     contact=[[24, 45], [26, 45]],
                     active=False,
                     image=pygame.image.load('resources/enemy/bullet1.png'),
-                    cooldown=[ENEMY_BULLET_COOLDOWN_BASE * 3, ENEMY_BULLET_COOLDOWN_BASE * 3],
+                    cooldown=ENEMY_BULLET_COOLDOWN_BASE * 3,
                     damage=30)
 
 
