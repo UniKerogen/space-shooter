@@ -54,11 +54,6 @@ player_armory.append(name='bullet1',
 ##################################################
 # Enemy Block
 ##################################################
-# Enemy Image Storage
-enemy_img = []
-for i in range(ENEMY_TYPE):
-    file = 'resources/enemy/enemy' + str(i) + '.png'
-    enemy_img.append(pygame.image.load(file))
 # Enemy List
 enemies = EnemyList()
 for num_enemy in range(ENEMY_NUMBER):
@@ -68,10 +63,30 @@ for num_enemy in range(ENEMY_NUMBER):
                              random.randint(ENEMY_SPAWN[0], ENEMY_SPAWN[1])],
                    speed=random.randint(1, ENEMY_SPEED_MAX) / 1000,
                    active=True,
-                   image=enemy_img[random.randint(0, ENEMY_TYPE - 1)],
+                   image=pygame.image.load('resources/enemy/enemy' + str(random.randint(0, ENEMY_TYPE - 1)) + '.png'),
                    health=random.randint(ENEMY_BASE_HEALTH[0], ENEMY_BASE_HEALTH[1]),
                    direction=-1 if random.randint(0, 1) == 0 else 1,
                    weapon=random.randint(0, ENEMY_WEAPON_TYPE - 1))
+
+
+def enemy_reset(enemy_block):
+    # Reset Enemy Information
+    enemy_block.direction = -1 if random.randint(0, 1) == 0 else 1
+    if enemy_block.direction == -1:
+        enemy_block.position = [BOUNDARY_RIGHT - ENEMY_SIZE, random.randint(ENEMY_SPAWN[0], ENEMY_SPAWN[1])]
+    else:
+        enemy_block.position = [BOUNDARY_LEFT, random.randint(ENEMY_SPAWN[0], ENEMY_SPAWN[1])]
+    enemy_block.speed = random.randint(1, ENEMY_SPEED_MAX) / 1000
+    enemy_block.image = pygame.image.load('resources/enemy/enemy' + str(random.randint(0, ENEMY_TYPE - 1)) + '.png'),
+    enemy_block.image = enemy_block.image[0]
+    enemy_block.health[1] = enemy_block.health[0]
+    enemy_block.weapon = random.randint(0, ENEMY_WEAPON_TYPE - 1)
+    enemy_block.active = True
+    enemy_block.cooldown = random.randint(0, enemy_armory.index_at(index=enemy_block.weapon).cooldown)
+    # Self Start Element Reset
+    enemy_block.explode = None
+    enemy_block.health_show = True
+
 
 ##################################################
 # Enemy Armory Block
@@ -102,6 +117,25 @@ enemy_armory.append(name='bullet1',
 ##################################################
 # Boss Block
 ##################################################
+def create_mini_boss():
+    global enemies
+    for mini_boss_number in range(0, random.randint(0, MINI_BOSS_MAX_AMOUNT)):
+        # Create Mini Boss
+        enemies.append(name='mini_boss' + str(mini_boss_number),
+                       index=ENEMY_NUMBER - 1 + mini_boss_number,
+                       position=[random.randint(BOUNDARY_LEFT, BOUNDARY_RIGHT - BOSS_SIZE),
+                                 BOSS_SPAWN[0]],
+                       speed=random.randint(1, BOSS_SPEED_MAX) / 1000,
+                       active=True,
+                       image=pygame.image.load('resources/boss' + str(random.randint(0, MINI_BOSS_TYPE)) + '.png'),
+                       health=random.randint(BOSS_HEALTH[0], BOSS_HEALTH[1]),
+                       direction=-1 if random.randint(0, 1) == 0 else 1,
+                       weapon=random.sample([i for i in range(ENEMY_WEAPON_TYPE)], MINI_BOSS_WEAPON_AMOUNT)
+                       )
+        # Set Mini Boss Center
+        current_mini_boss = enemies.index_at(index=ENEMY_NUMBER - 1 + mini_boss_number)
+        current_mini_boss.update(size=MINI_BOSS_SIZE)
+
 
 ##################################################
 # Boss Armory Block

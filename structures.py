@@ -2,6 +2,9 @@
 # Version - Alpha 6.5
 # A Modified Linked List for Storage
 
+from settings import *
+import random
+
 ##################################################
 # Class Prototype - Player
 ##################################################
@@ -13,6 +16,8 @@ class PlayerBlock:
         self.image = image
         self.speed = speed
         self.health = [health, health]
+        # Self Start Element
+        self.center = [sum(x) for x in zip(position, [PLAYER_SIZE / 2, PLAYER_SIZE / 2])]
         # Background Information
         self.shield = 0
         self.invincible = False
@@ -25,6 +30,16 @@ class PlayerBlock:
         self.x_change = 0
         # Save Input Data
         self.data = [name, position, image, speed, health]
+
+    # Update Center
+    def update(self):
+        self.position[0] += self.x_change
+        self.center = [sum(x) for x in zip(self.position, [PLAYER_SIZE / 2, PLAYER_SIZE / 2])]
+        # Check Boundary
+        if self.position[0] < 0:
+            self.position[0] = 0
+        elif self.position[0] >= SCREEN_WIDTH - PLAYER_SIZE:
+            self.position[0] = SCREEN_WIDTH - PLAYER_SIZE
 
     # Reset Player
     def reset(self):
@@ -128,7 +143,6 @@ class AmoryBlock:
         self.cooldown = cooldown
         self.damage = damage
 
-
 class Armory:
     def __init__(self):
         self.head = None
@@ -182,6 +196,7 @@ class EnemyBlock:
         # To Update Element
         self.direction = direction
         self.position = position
+        self.center = [sum(x) for x in zip(position, [ENEMY_SIZE / 2, ENEMY_SIZE / 2])]
         self.speed = speed
         self.active = active
         self.image = image
@@ -194,6 +209,20 @@ class EnemyBlock:
         self.fire_cooldown = None
         # Connection
         self.next = None
+        # Boss Configuration
+
+    def update(self, block_size=ENEMY_SIZE):
+        # Movement Update
+        self.position[0] += self.speed * self.direction
+        self.center = [sum(x) for x in zip(self.position, [block_size / 2, block_size / 2])]
+        # Far Left Side
+        if self.position[0] <= BOUNDARY_LEFT:
+            self.position[0] = BOUNDARY_RIGHT - ENEMY_SIZE
+            self.position[1] = random.randint(ENEMY_SPAWN[0], ENEMY_SPAWN[1])
+        # Far Right Side
+        elif self.position[0] >= BOUNDARY_RIGHT - ENEMY_SIZE:
+            self.position[0] = BOUNDARY_LEFT
+            self.position[1] = random.randint(ENEMY_SPAWN[0], ENEMY_SPAWN[1])
 
 
 class EnemyList:
@@ -226,6 +255,20 @@ class EnemyList:
                 return current
             current = current.next
         return False
+
+    # Delete a Enemy
+    def delete(self, enemy_block):
+        if not self.head:
+            return
+        if self.head == enemy_block:
+            self.head = self.head.next
+            return
+        current = self.head
+        while current.next:
+            if current.next == enemy_block:
+                current.next = current.next.next
+                return
+            current = current.next
 
 
 ##################################################

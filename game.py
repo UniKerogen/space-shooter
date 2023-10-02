@@ -49,11 +49,11 @@ def show_player(player_block):
     screen.blit(player_block.image, (player_block.position[0], player_block.position[1]))
     if player_block.health_show:
         pygame.draw.rect(screen,
-                         color=(255, 0, 0),
+                         color=RED,
                          rect=(player_block.position[0], player_block.position[1] + PLAYER_HEALTH_BAR_SHIFT,
                                PLAYER_HEALTH_BAR[0], PLAYER_HEALTH_BAR[1]))
         pygame.draw.rect(screen,
-                         color=(0, 255, 0),
+                         color=GREEN,
                          rect=(player_block.position[0], player_block.position[1] + PLAYER_HEALTH_BAR_SHIFT,
                                player_block.health[1] / player_block.health[0] * PLAYER_HEALTH_BAR[0],
                                PLAYER_HEALTH_BAR[1]))
@@ -64,11 +64,11 @@ def show_enemy(enemy_block):
     screen.blit(enemy_block.image, (enemy_block.position[0], enemy_block.position[1]))
     if enemy_block.health_show:
         pygame.draw.rect(screen,
-                         color=(255, 0, 0),
+                         color=RED,
                          rect=(enemy_block.position[0], enemy_block.position[1] + ENEMY_HEALTH_BAR_SHIFT,
                                ENEMY_HEALTH_BAR[0], ENEMY_HEALTH_BAR[1]))
         pygame.draw.rect(screen,
-                         color=(0, 255, 0),
+                         color=GREEN,
                          rect=(enemy_block.position[0], enemy_block.position[1] + ENEMY_HEALTH_BAR_SHIFT,
                                enemy_block.health[1] / enemy_block.health[0] * ENEMY_HEALTH_BAR[0],
                                ENEMY_HEALTH_BAR[1]))
@@ -79,6 +79,7 @@ def fire_bullet_player(bullet_block):
     screen.blit(player_armory.index_at(index=bullet_block.index).image,
                 (bullet_block.position[0], bullet_block.position[1]))
 
+
 def fire_bullet_enemy(bullet_block):
     global screen, enemy_armory
     screen.blit(enemy_armory.index_at(index=bullet_block.index).image,
@@ -88,8 +89,8 @@ def fire_bullet_enemy(bullet_block):
 def collide_enemy(enemy_block, bullet_block):
     global player_armory
     for coordinates in bullet_block.contact:
-        distance = (((enemy_block.position[0] + ENEMY_SIZE / 2) - coordinates[0]) ** 2 +
-                    ((enemy_block.position[1] + ENEMY_SIZE / 2) - coordinates[1]) ** 2
+        distance = ((enemy_block.center[0] - coordinates[0]) ** 2 +
+                    (enemy_block.center[1] - coordinates[1]) ** 2
                     ) ** 0.5
         if distance < player_armory.index_at(index=bullet_block.index).exp_range:
             return True
@@ -99,8 +100,8 @@ def collide_enemy(enemy_block, bullet_block):
 def collide_player(player_block, bullet_block):
     global enemy_armory
     for coordinates in bullet_block.contact:
-        distance = (((player_block.position[0] + PLAYER_SIZE / 2) - coordinates[0]) ** 2 +
-                    ((player_block.position[1] + PLAYER_SIZE / 2) - coordinates[1]) ** 2
+        distance = ((player_block.center[0] - coordinates[0]) ** 2 +
+                    (player_block.center[1] - coordinates[1]) ** 2
                     ) ** 0.5
         if distance < enemy_armory.index_at(index=bullet_block.index).exp_range:
             return True
@@ -218,25 +219,12 @@ def main():
         ################################################################################
         ################################################################################
         # Player Movement
-        player.position[0] += player.x_change
-        # Check Player Boundary
-        if player.position[0] < 0:
-            player.position[0] = 0
-        elif player.position[0] >= SCREEN_WIDTH - PLAYER_SIZE:
-            player.position[0] = SCREEN_WIDTH - PLAYER_SIZE
+        player.update()
         # Movement of Each Enemy
         for enemy_index in range(len(enemies)):
             current_enemy = enemies.index_at(index=enemy_index)
             # Enemy Self Movement
-            current_enemy.position[0] += current_enemy.speed * current_enemy.direction
-            # Far Left Side
-            if current_enemy.position[0] <= BOUNDARY_LEFT:
-                current_enemy.position[0] = BOUNDARY_RIGHT - ENEMY_SIZE
-                current_enemy.position[1] = random.randint(ENEMY_SPAWN[0], ENEMY_SPAWN[1])
-            # Far Right Side
-            elif current_enemy.position[0] >= BOUNDARY_RIGHT - ENEMY_SIZE:
-                current_enemy.position[0] = BOUNDARY_LEFT
-                current_enemy.position[1] = random.randint(ENEMY_SPAWN[0], ENEMY_SPAWN[1])
+            current_enemy.update(block_size=ENEMY_SIZE)
         # Player Bullet Movement
         if len(player_bullets) > 0:
             for bullet_index in range(0, len(player_bullets)):
@@ -286,22 +274,7 @@ def main():
                 # Reset Enemy after Explosion of EXPLOSION_TIME
                 if time.time() - current_enemy.explode_at >= EXPLOSION_TIME:
                     # Reset Enemy Reset
-                    current_enemy.direction = -1 if random.randint(0, 1) == 0 else 1
-                    if current_enemy.direction == -1:
-                        current_enemy.position = [BOUNDARY_RIGHT - ENEMY_SIZE,
-                                                  random.randint(ENEMY_SPAWN[0], ENEMY_SPAWN[1])]
-                    else:
-                        current_enemy.position = [BOUNDARY_LEFT,
-                                                  random.randint(ENEMY_SPAWN[0], ENEMY_SPAWN[1])]
-                    current_enemy.speed = random.randint(1, ENEMY_SPEED_MAX) / 1000
-                    current_enemy.image = enemy_img[random.randint(0, ENEMY_TYPE - 1)]
-                    current_enemy.health[1] = current_enemy.health[0]
-                    current_enemy.weapon = random.randint(0, ENEMY_WEAPON_TYPE - 1)
-                    current_enemy.active = True
-                    current_enemy.cooldown = random.randint(0, enemy_armory.index_at(index=current_enemy.weapon).cooldown)
-                    # Self Start Element Reset
-                    current_enemy.explode = None
-                    current_enemy.health_show = True
+                    enemy_reset(enemy_block=current_enemy)
         ################################################################################
         ################################################################################
         # Collision of Player & Enemy Bullet
