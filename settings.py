@@ -1,5 +1,5 @@
 # Settings File
-# Version - Alpha 6.5
+# Version - Alpha 6.6
 # Store settings for game
 
 ##################################################

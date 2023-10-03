@@ -1,5 +1,5 @@
 # Structure File
-# Version - Alpha 6.5
+# Version - Alpha 6.6
 # A Modified Linked List for Storage
 
 from settings import *
