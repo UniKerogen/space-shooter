@@ -205,24 +205,24 @@ class EnemyBlock:
         # Self Start Element
         self.explode_at = None
         self.health_show = True
-        self.fire_bullet = True
-        self.fire_cooldown = None
+        self.fire_cooldown = 0
         # Connection
         self.next = None
         # Boss Configuration
+        self.y_axis = None
 
-    def update(self, block_size=ENEMY_SIZE):
+    def update(self, block_size=ENEMY_SIZE, block_spawn=ENEMY_SPAWN):
         # Movement Update
         self.position[0] += self.speed * self.direction
         self.center = [sum(x) for x in zip(self.position, [block_size / 2, block_size / 2])]
         # Far Left Side
         if self.position[0] <= BOUNDARY_LEFT:
             self.position[0] = BOUNDARY_RIGHT - ENEMY_SIZE
-            self.position[1] = random.randint(ENEMY_SPAWN[0], ENEMY_SPAWN[1])
+            self.position[1] = random.randint(block_spawn[0], block_spawn[1])
         # Far Right Side
         elif self.position[0] >= BOUNDARY_RIGHT - ENEMY_SIZE:
             self.position[0] = BOUNDARY_LEFT
-            self.position[1] = random.randint(ENEMY_SPAWN[0], ENEMY_SPAWN[1])
+            self.position[1] = random.randint(block_spawn[0], block_spawn[1])
 
 
 class EnemyList:
@@ -269,6 +269,14 @@ class EnemyList:
                 current.next = current.next.next
                 return
             current = current.next
+
+    def get_last_index(self):
+        if not self.head:
+            return 0  # The list is empty
+        current = self.head
+        while current.next:
+            current = current.next
+        return current.index
 
 
 ##################################################

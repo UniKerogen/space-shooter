@@ -50,6 +50,18 @@ player_armory.append(name='bullet1',
                      cooldown=[BULLET_COOLDOWN_BASE * 0.5, BULLET_COOLDOWN_BASE * 0.5],
                      damage=20
                      )
+player_armory.append(name='bullet2',
+                     index=2,
+                     position=[BULLET_ORIGIN_X, BULLET_ORIGIN_Y],
+                     speed=BULLET_SPEED_BASE * 1.5,
+                     exp_range=BULLET_EXPLOSION_RANGE * 0.5,
+                     contact=[[BULLET_ORIGIN_X + 26, BULLET_ORIGIN_Y],
+                              [BULLET_ORIGIN_X + 34, BULLET_ORIGIN_Y]],
+                     active=False,
+                     image=pygame.image.load('resources/player/bullet2.png'),
+                     cooldown=[BULLET_COOLDOWN_BASE * 0.1, BULLET_COOLDOWN_BASE * 0.1],
+                     damage=80
+                     )
 
 ##################################################
 # Enemy Block
@@ -69,6 +81,15 @@ for num_enemy in range(ENEMY_NUMBER):
                    weapon=random.randint(0, ENEMY_WEAPON_TYPE - 1))
 
 
+# Enemy Movement
+def enemy_move():
+    current_enemy = enemies.head
+    while current_enemy:
+        current_enemy.update(block_size=ENEMY_SIZE, block_spawn=ENEMY_SPAWN)
+        current_enemy = current_enemy.next
+
+
+# Enemy Reset
 def enemy_reset(enemy_block):
     # Reset Enemy Information
     enemy_block.direction = -1 if random.randint(0, 1) == 0 else 1
@@ -113,28 +134,57 @@ enemy_armory.append(name='bullet1',
                     cooldown=ENEMY_BULLET_COOLDOWN_BASE * 3,
                     damage=30)
 
+##################################################
+# Mini Boss Block
+##################################################
+miniboss = EnemyList()
 
-##################################################
-# Boss Block
-##################################################
-def create_mini_boss():
-    global enemies
+
+def miniboss_create():
+    num_increase = 0 if len(miniboss) == 0 else 1
     for mini_boss_number in range(0, random.randint(0, MINI_BOSS_MAX_AMOUNT)):
         # Create Mini Boss
-        enemies.append(name='mini_boss' + str(mini_boss_number),
-                       index=ENEMY_NUMBER - 1 + mini_boss_number,
-                       position=[random.randint(BOUNDARY_LEFT, BOUNDARY_RIGHT - BOSS_SIZE),
-                                 BOSS_SPAWN[0]],
-                       speed=random.randint(1, BOSS_SPEED_MAX) / 1000,
-                       active=True,
-                       image=pygame.image.load('resources/boss' + str(random.randint(0, MINI_BOSS_TYPE)) + '.png'),
-                       health=random.randint(BOSS_HEALTH[0], BOSS_HEALTH[1]),
-                       direction=-1 if random.randint(0, 1) == 0 else 1,
-                       weapon=random.sample([i for i in range(ENEMY_WEAPON_TYPE)], MINI_BOSS_WEAPON_AMOUNT)
-                       )
+        miniboss.append(name='mini_boss' + str(mini_boss_number),
+                        index=miniboss.get_last_index() + num_increase + mini_boss_number,
+                        position=[random.randint(BOUNDARY_LEFT, BOUNDARY_RIGHT - MINI_BOSS_SIZE), -MINI_BOSS_SIZE],
+                        speed=random.randint(1, MINI_BOSS_SPEED_MAX) / 1000,
+                        active=False,
+                        image=pygame.image.load(
+                            'resources/miniboss/miniboss' + str(random.randint(0, MINI_BOSS_TYPE - 1)) + '.png'),
+                        health=random.randint(MINI_BOSS_HEALTH[0], MINI_BOSS_HEALTH[1]),
+                        direction=-1 if random.randint(0, 1) == 0 else 1,
+                        weapon=random.sample([i for i in range(ENEMY_WEAPON_TYPE)], MINI_BOSS_WEAPON_AMOUNT)
+                        )
         # Set Mini Boss Center
-        current_mini_boss = enemies.index_at(index=ENEMY_NUMBER - 1 + mini_boss_number)
-        current_mini_boss.update(size=MINI_BOSS_SIZE)
+        current_miniboss = miniboss.index_at(index=miniboss.get_last_index())
+        current_miniboss.center = [sum(x) for x in
+                                   zip(current_miniboss.position, [MINI_BOSS_SIZE / 2, MINI_BOSS_SIZE / 2])]
+        current_miniboss.fire_cooldown = [0] * MINI_BOSS_WEAPON_AMOUNT
+        current_miniboss.y_axis = random.randint(MINI_BOSS_Y_AXIS[0], MINI_BOSS_Y_AXIS[1])
+        # Check
+        print("Mini Boss Created")
+
+
+def miniboss_move():
+    current_miniboss = miniboss.head
+    while current_miniboss:
+        if current_miniboss.position[1] < current_miniboss.y_axis:  # Move Downwards into Screen
+            current_miniboss.position[1] += STANDARD_MOVE_SPEED
+            if current_miniboss.position[1] < MINI_BOSS_HEALTH_BAR[1]:  # Active when Fully in Screen
+                current_miniboss.active = True
+        else:  # In Position
+            current_miniboss.position[0] += current_miniboss.speed * current_miniboss.direction
+            if current_miniboss.position[0] <= BOUNDARY_LEFT:
+                current_miniboss.position[0] = BOUNDARY_LEFT
+                current_miniboss.direction = - current_miniboss.direction
+            elif current_miniboss.position[0] >= BOUNDARY_RIGHT - MINI_BOSS_SIZE:
+                current_miniboss.position[0] = BOUNDARY_RIGHT - MINI_BOSS_SIZE
+                current_miniboss.direction = - current_miniboss.direction
+        # Update Center Information
+        current_miniboss.center = [sum(x) for x in
+                                   zip(current_miniboss.position, [MINI_BOSS_SIZE / 2, MINI_BOSS_SIZE / 2])]
+        # Next Element
+        current_miniboss = current_miniboss.next
 
 
 ##################################################
