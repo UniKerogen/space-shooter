@@ -230,7 +230,7 @@ def main():
             current_enemy = current_enemy.next
         ################################################################################
         ################################################################################
-        # Continuous Shooting Miniboss
+        # Continuous Shooting - Miniboss
         current_miniboss = miniboss.head
         while current_miniboss:
             if current_miniboss.active:

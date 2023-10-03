@@ -161,8 +161,6 @@ def miniboss_create():
                                    zip(current_miniboss.position, [MINI_BOSS_SIZE / 2, MINI_BOSS_SIZE / 2])]
         current_miniboss.fire_cooldown = [0] * MINI_BOSS_WEAPON_AMOUNT
         current_miniboss.y_axis = random.randint(MINI_BOSS_Y_AXIS[0], MINI_BOSS_Y_AXIS[1])
-        # Check
-        print("Mini Boss Created")
 
 
 def miniboss_move():
