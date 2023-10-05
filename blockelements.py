@@ -197,9 +197,9 @@ create_list = CreateList()
 
 def create_generate(enemy_block, chance=CREATE_CHANCE):
     if random.randint(0, 100) < chance:
-        max_chance = [1] * CREATE_TYPE_AMOUNT
+        max_chance = CREATE_SUB_CHANCE.copy()
         for i in range(1, CREATE_TYPE_AMOUNT):
-            max_chance[i] = max_chance[i - 1] + i + 1
+            max_chance[i] = max_chance[i - 1] + max_chance[i]
         dice = random.randint(0, max(max_chance))
         for create_type in max_chance:
             if dice < create_type:

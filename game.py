@@ -22,9 +22,10 @@ pygame.init()
 # Create Screen
 screen = pygame.display.set_mode(size=(SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Top-Down Shooter")
-# Score System
-font = pygame.font.Font(None, 24)
+# Display System
+score_font = pygame.font.Font(None, 24)
 score = 0
+life_font = pygame.font.Font(None, 18)
 # Explosion
 explosion_img = pygame.image.load('resources/explosion.png')
 # Background
@@ -35,6 +36,8 @@ background_rect3 = background.get_rect()
 background_rect1.topleft = (0, 0)
 background_rect2.topleft = (0, -SCREEN_HEIGHT)
 background_rect3.topleft = (0, -SCREEN_HEIGHT * 2)
+# Shield
+shield_image = pygame.image.load('resources/player/shield.png')
 ##################################################
 # Structures Setting
 ##################################################
@@ -52,13 +55,20 @@ def show_player(player_block):
     if player_block.health_show:
         pygame.draw.rect(screen,
                          color=RED,
-                         rect=(player_block.position[0], player_block.position[1] + PLAYER_HEALTH_BAR_SHIFT,
-                               PLAYER_HEALTH_BAR[0], PLAYER_HEALTH_BAR[1]))
+                         rect=(player_block.position[0], player_block.position[1] + player_block.health_bar[2],
+                               player_block.health_bar[0], player_block.health_bar[1]))
         pygame.draw.rect(screen,
                          color=GREEN,
-                         rect=(player_block.position[0], player_block.position[1] + PLAYER_HEALTH_BAR_SHIFT,
-                               player_block.health[1] / player_block.health[0] * PLAYER_HEALTH_BAR[0],
-                               PLAYER_HEALTH_BAR[1]))
+                         rect=(player_block.position[0], player_block.position[1] + player_block.health_bar[2],
+                               player_block.health[1] / player_block.health[0] * player_block.health_bar[0],
+                               player_block.health_bar[1]))
+        if player_block.shield > 0:
+            pygame.draw.rect(screen,
+                             color=GREY,
+                             rect=(player_block.position[0], player_block.position[1] + player_block.health_bar[2],
+                                   player_block.shield / PLAYER_SHIELD_MAX * player_block.health_bar[0],
+                                   player_block.health_bar[1]))
+            screen.blit(shield_image, (player_block.position[0], player_block.position[1] - 5))
 
 
 def show_create(create_list):
@@ -386,14 +396,13 @@ def main():
             danger_range = [player.position[1] - explosion_range * 2, player.position[1] + PLAYER_SIZE]
             if danger_range[0] < current_bullet.position[1] < danger_range[1]:
                 if collide_player(player_block=player, bullet_block=current_bullet):
-                    # Decrease Player Health including Shield
-                    player_health = player.health[1] + player.shield
-                    player_health -= enemy_armory.index_at(index=current_bullet.index).damage
-                    if player_health > player.health[0]:
-                        player.shield = player_health - player.health[0]
-                        player.health[1] = player.health[0]
+                    # Decrease Player Shield and Health
+                    shield = player.shield - enemy_armory.index_at(index=current_bullet.index).damage
+                    if shield >= 0:
+                        player.shield = shield
                     else:
-                        player.health[1] = player_health
+                        player.shield = 0
+                        player.health[1] += shield
                     # Player Health Check
                     if player.health[1] <= 0:
                         # Explode
@@ -425,25 +434,24 @@ def main():
         current_create = create_list.head
         while current_create:
             if collide_create(player_block=player, create_block=current_create):
-                if current_create.type == 0:  # Collect Health
-                    player.health[1] += current_create.info
-                    if player.health[1] > player.health[0]:
-                        player.health[1] = player.health[0]
-                elif current_create.type == 1:  # Clear Enemy Bullet
-                    enemy_bullets = BulletList()
-                elif current_create.type == 2:  # Add a life
+                if current_create.type == 0:  # Add a Life
                     player.life[1] += 1
+                elif current_create.type == 1:  # Collect Invincible
+                    player.invincible_at = time.time()
+                    player.invincible = True
+                elif current_create.type == 2:  # Clear Enemy Bullet
+                    enemy_bullets = BulletList()
                 elif current_create.type == 3:  # Weapon Create
                     player_armory.search_active().active = False
                     player_armory.index_at(index=current_create.info).active = True
                 elif current_create.type == 4:  # Shield
                     player.shield += current_create.info
-                elif current_create.type == 5:  # Invincible
-                    player.invincible_at = time.time()
-                    player.invincible = True
+                    player.shield = player.shield if player.shield <= PLAYER_SHIELD_MAX else PLAYER_SHIELD_MAX
+                elif current_create.type == 5:  # Collect Health
+                    player.health[1] += current_create.info
+                    player.health[1] = player.health[1] if player.health[1] < player.health[0] else player.health[0]
                 create_list.delete(create_block=current_create)
             current_create = current_create.next
-
         ################################################################################
         ################################################################################
         # Update Player
@@ -464,8 +472,10 @@ def main():
             for bullet_index in range(0, len(enemy_bullets)):
                 fire_bullet_enemy(bullet_block=enemy_bullets.get_element_at(position=bullet_index))
         # Update Display Element
-        score_text = font.render("Score: " + str(score), True, WHITE)
+        score_text = score_font.render("Score: " + str(score), True, WHITE)
         screen.blit(score_text, (10, 10))
+        life_text = life_font.render("Life X " + str(player.life[1]), True, WHITE)
+        screen.blit(life_text, (10, SCREEN_HEIGHT - 5 - 18))
         # Update Pygame Screen
         pygame.display.update()
     # Quit

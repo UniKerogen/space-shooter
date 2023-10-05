@@ -16,17 +16,19 @@ STANDARD_MOVE_SPEED = 0.5
 # Create
 CREATE_SIZE = 40
 CREATE_CHANCE = 10  # % of Chance generating create
+CREATE_SUB_CHANCE = [10, 20, 30, 40, 50, 60]  # Each Create Chance
 CREATE_SPEED = 0.1
 CREATE_HEALTH_SET = 50
 CREATE_SHIELD = (25, 75)
 CREATE_TYPE_AMOUNT = 6
 CREATE_COLLECT_RANGE = 30  # pixel of range for create collection
+
 # Player Modification
 PLAYER_SPEED = 0.5
 PLAYER_SIZE = 60  # Player Image Size 50x50 Pixel
-PLAYER_HEALTH_BAR = (PLAYER_SIZE, 5)
-PLAYER_HEALTH_BAR_SHIFT = PLAYER_SIZE + 5
+PLAYER_HEALTH_BAR = (PLAYER_SIZE, 5, PLAYER_SIZE + 5)  # Width x Height x Shift
 PLAYER_INVINCIBLE_TIME = 5
+PLAYER_SHIELD_MAX = 200
 # Bullet Modification
 BULLET_SPEED_BASE = 2  # Bullet Moving Speed
 BULLET_EXPLOSION_RANGE = 25  # Bullet Explosion Range
@@ -67,6 +69,7 @@ BIG_BOSS_WEAPON_AMOUNT = 3
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
+GREY = (213, 213, 213)
 
 
 ##################################################

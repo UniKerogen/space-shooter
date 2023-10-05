@@ -27,6 +27,7 @@ class PlayerBlock:
         self.life = [3, 3]
         self.explode_at = None
         self.invincible_at = None
+        self.health_bar = PLAYER_HEALTH_BAR
         # Storage Information
         self.x_change = 0
         # Save Input Data
@@ -291,24 +292,24 @@ class Create:
         self.position = position
         self.next = None
         # Self Start Element
-        if self.type == 0:  # Health
-            self.info = CREATE_HEALTH_SET
-            self.image = pygame.image.load('resources/create/health_create.png')
-        elif self.type == 1:  # Clear All Enemy Bullet
-            self.info = 0
-            self.image = pygame.image.load('resources/create/clear_bullet_create.png')
-        elif self.type == 2:  # Add a life
+        if self.type == 0:  # Add Life - 10 Chance
             self.info = 1
             self.image = pygame.image.load('resources/create/life_create.png')
-        elif self.type == 3:  # Weapon Create
-            self.info = random.randint(0, BULLET_TYPE)
-            self.image = pygame.image.load('resources/create/bullet' + str(self.info) + '.png')
-        elif self.type == 4:  # Shield
-            self.info = random.randint(CREATE_SHIELD[0], CREATE_SHIELD[1])
-            self.image = pygame.image.load('resources/create/shield_create.png')
-        elif self.type == 5:  # Invincible
+        elif self.type == 1:  # Invincible - 20 Chance
             self.info = PLAYER_INVINCIBLE_TIME
             self.image = pygame.image.load('resources/create/invincible_create.png')
+        elif self.type == 2:  # Clear All Enemy Bullet - 30 Chance
+            self.info = 0
+            self.image = pygame.image.load('resources/create/clear_bullet_create.png')
+        elif self.type == 3:  # Weapon Create - 40 Chance
+            self.info = random.randint(0, BULLET_TYPE)
+            self.image = pygame.image.load('resources/create/bullet' + str(self.info) + '.png')
+        elif self.type == 4:  # Shield - 50 Chance
+            self.info = random.randint(CREATE_SHIELD[0], CREATE_SHIELD[1])
+            self.image = pygame.image.load('resources/create/shield_create.png')
+        elif self.type == 5:  # Health - 60 Chance
+            self.info = CREATE_HEALTH_SET
+            self.image = pygame.image.load('resources/create/health_create.png')
         # Storage
         self.contact = [sum(x) for x in zip(position, [CREATE_SIZE/2, CREATE_SIZE/2])]
         self.direction = 1 if random.randint(0, 1) == 0 else -1
