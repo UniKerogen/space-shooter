@@ -6,6 +6,7 @@ from settings import *
 import random
 import pygame
 
+
 ##################################################
 # Class Prototype - Player
 ##################################################
@@ -311,9 +312,10 @@ class Create:
             self.info = CREATE_HEALTH_SET
             self.image = pygame.image.load('resources/create/health_create.png')
         # Storage
-        self.contact = [sum(x) for x in zip(position, [CREATE_SIZE/2, CREATE_SIZE/2])]
+        self.contact = [sum(x) for x in zip(position, [CREATE_SIZE / 2, CREATE_SIZE / 2])]
         self.direction = 1 if random.randint(0, 1) == 0 else -1
         self.collect_range = CREATE_COLLECT_RANGE
+
 
 class CreateList:
     def __init__(self):

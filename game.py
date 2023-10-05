@@ -306,6 +306,8 @@ def main():
         enemy_move()
         # Movement of Mini Boss
         miniboss_move()
+        # Movement of Boss
+
         # Create Movement
         create_movement()
         # Player Bullet Movement
