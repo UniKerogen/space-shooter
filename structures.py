@@ -1,9 +1,10 @@
 # Structure File
-# Version - Alpha 6.6
+# Version - Alpha 6.7
 # A Modified Linked List for Storage
 
 from settings import *
 import random
+import pygame
 
 ##################################################
 # Class Prototype - Player
@@ -143,6 +144,7 @@ class AmoryBlock:
         self.cooldown = cooldown
         self.damage = damage
 
+
 class Armory:
     def __init__(self):
         self.head = None
@@ -277,6 +279,76 @@ class EnemyList:
         while current.next:
             current = current.next
         return current.index
+
+
+##################################################
+# Class Prototype - Create
+##################################################
+class Create:
+    def __init__(self, type, position):
+        # Input Element
+        self.type = type
+        self.position = position
+        self.next = None
+        # Self Start Element
+        if self.type == 0:  # Health
+            self.info = CREATE_HEALTH_SET
+            self.image = pygame.image.load('resources/create/health_create.png')
+        elif self.type == 1:  # Clear All Enemy Bullet
+            self.info = 0
+            self.image = pygame.image.load('resources/create/clear_bullet_create.png')
+        elif self.type == 2:  # Add a life
+            self.info = 1
+            self.image = pygame.image.load('resources/create/life_create.png')
+        elif self.type == 3:  # Weapon Create
+            self.info = random.randint(0, BULLET_TYPE)
+            self.image = pygame.image.load('resources/create/bullet' + str(self.info) + '.png')
+        elif self.type == 4:  # Shield
+            self.info = random.randint(CREATE_SHIELD[0], CREATE_SHIELD[1])
+            self.image = pygame.image.load('resources/create/shield_create.png')
+        elif self.type == 5:  # Invincible
+            self.info = PLAYER_INVINCIBLE_TIME
+            self.image = pygame.image.load('resources/create/invincible_create.png')
+        # Storage
+        self.contact = [sum(x) for x in zip(position, [CREATE_SIZE/2, CREATE_SIZE/2])]
+        self.direction = 1 if random.randint(0, 1) == 0 else -1
+        self.collect_range = CREATE_COLLECT_RANGE
+
+class CreateList:
+    def __init__(self):
+        self.head = None
+
+    def __len__(self):
+        count = 0
+        current = self.head
+        while current:
+            count += 1
+            current = current.next
+        return count
+
+    def append(self, type, position):
+        new_node = Create(type, position)
+        if not self.head:
+            self.head = new_node
+        else:
+            current = self.head
+            while current.next:
+                current = current.next
+            current.next = new_node
+
+    # Delete a Enemy
+    def delete(self, create_block):
+        if not self.head:
+            return
+        if self.head == create_block:
+            self.head = self.head.next
+            return
+        current = self.head
+        while current.next:
+            if current.next == create_block:
+                current.next = current.next.next
+                return
+            current = current.next
 
 
 ##################################################

@@ -1,6 +1,6 @@
 # Top Down Shooter Game
 # A Simple Top Down Shooter for Raiden Mockup
-# Version - Alpha 6.6
+# Version - Alpha 6.7
 
 
 ####################################################################################################
@@ -58,6 +58,13 @@ def show_player(player_block):
                                player_block.health[1] / player_block.health[0] * PLAYER_HEALTH_BAR[0],
                                PLAYER_HEALTH_BAR[1]))
 
+def show_create(create_list):
+    global screen
+    current_create = create_list.head
+    while current_create:
+        screen.blit(current_create.image, (current_create.position[0], current_create.position[1]))
+        current_create = current_create.next
+
 
 def show_enemy(enemy_list, health_bar=ENEMY_HEALTH_BAR):
     global screen
@@ -111,6 +118,14 @@ def collide_player(player_block, bullet_block):
             return True
     return False
 
+def collide_create(player_block, create_block):
+    distance = ((player_block.center[0] - create_block.contact[0]) ** 2 +
+                (player_block.center[1] - create_block.contact[1]) ** 2
+                ) ** 0.5
+    if distance <= create_block.collect_range:
+        return True
+    return False
+
 
 ####################################################################################################
 # Main Function
@@ -120,8 +135,8 @@ def main():
     global screen
     global player
     global enemies, miniboss, boss
-    global player_armory, player_bullets
-    global score
+    global player_armory, player_bullets, enemy_bullets
+    global score, create_list
     # Running Game
     RUNNING = True
     BULLET_FIRE = False
@@ -273,28 +288,27 @@ def main():
         enemy_move()
         # Movement of Mini Boss
         miniboss_move()
+        # Create Movement
+        create_movement()
         # Player Bullet Movement
-        if len(player_bullets) > 0:
-            for bullet_index in range(0, len(player_bullets)):
-                bullet0 = player_bullets.get_element_at(position=bullet_index)
-                if bullet0 is not None:
-                    # Bullet Position
-                    bullet0.position[1] -= active_bullet.speed
-                    for item in bullet0.contact:
-                        item[1] -= active_bullet.speed
-                    # Reset Bullet
-                    if bullet0.position[1] <= 0:
-                        player_bullets.delete(current_bullet=bullet0)
+        current_bullet = player_bullets.head
+        while current_bullet:
+            current_bullet.position[1] -= active_bullet.speed
+            for item in current_bullet.contact:
+                item[1] -= active_bullet.speed
+            # Reset Bullet
+            if current_bullet.position[1] <= 0:
+                player_bullets.delete(current_bullet=current_bullet)
+            current_bullet = current_bullet.next
         # Enemy Bullet Movement
-        if len(enemy_bullets) > 0:
-            for bullet_index in range(0, len(enemy_bullets)):
-                bullet0 = enemy_bullets.get_element_at(position=bullet_index)
-                if bullet0 is not None:
-                    bullet0.position[1] += enemy_armory.index_at(index=bullet0.index).speed
-                    for item in bullet0.contact:
-                        item[1] += enemy_armory.index_at(index=bullet0.index).speed
-                    if bullet0.position[1] >= SCREEN_HEIGHT:
-                        enemy_bullets.delete(current_bullet=bullet0)
+        current_bullet = enemy_bullets.head
+        while current_bullet:
+            current_bullet.position[1] += enemy_armory.index_at(index=current_bullet.index).speed
+            for item in current_bullet.contact:
+                item[1] += enemy_armory.index_at(index=current_bullet.index).speed
+            if current_bullet.position[1] >= SCREEN_HEIGHT:
+                enemy_bullets.delete(current_bullet=current_bullet)
+            current_bullet = current_bullet.next
         ################################################################################
         ################################################################################
         # Collision of Enemy & Player Bullet
@@ -314,6 +328,7 @@ def main():
                             current_enemy.active = False  # De-active Enemy
                             current_enemy.health_show = False  # Disable Health Bar Element
                             score += 1  # Update Score
+                            create_generate(enemy_block=current_enemy, chance=CREATE_CHANCE)
                         player_bullets.delete(current_bullet=current_bullet)  # Bullet Reset after Collision
                     current_bullet = current_bullet.next  # Next Bullet
             # Reset enemy to active after some time
@@ -363,8 +378,14 @@ def main():
             danger_range = [player.position[1] - explosion_range * 2, player.position[1] + PLAYER_SIZE]
             if danger_range[0] < current_bullet.position[1] < danger_range[1]:
                 if collide_player(player_block=player, bullet_block=current_bullet):
-                    # Decrease Player Health
-                    player.health[1] -= enemy_armory.index_at(index=current_bullet.index).damage
+                    # Decrease Player Health including Shield
+                    player_health = player.health[1] + player.shield
+                    player_health -= enemy_armory.index_at(index=current_bullet.index).damage
+                    if player_health > player.health[0]:
+                        player.shield = player_health - player.health[0]
+                        player.health[1] = player.health[0]
+                    else:
+                        player.health[1]  = player_health
                     # Player Health Check
                     if player.health[1] <= 0:
                         # Explode
@@ -392,6 +413,32 @@ def main():
                 player.invincible = False
         ################################################################################
         ################################################################################
+        # Create Collection
+        current_create = create_list.head
+        while current_create:
+            if collide_create(player_block=player, create_block=current_create):
+                if current_create.type == 0:  # Collect Health
+                    player.health[1] += current_create.info
+                    if player.health[1] > player.health[0]:
+                        player.health[1] = player.health[0]
+                elif current_create.type == 1:  # Clear Enemy Bullet
+                    enemy_bullets = BulletList()
+                elif current_create.type == 2:  # Add a life
+                    player.life[1] += 1
+                elif current_create.type == 3:  # Weapon Create
+                    player_armory.search_active().active = False
+                    player_armory.index_at(index=current_create.info).active = True
+                elif current_create.type == 4:  # Shield
+                    player.shield += current_create.info
+                elif current_create.type == 5:  # Invincible
+                    player.invincible_at = time.time()
+                    player.invincible = True
+                create_list.delete(create_block=current_create)
+            current_create = current_create.next
+
+
+        ################################################################################
+        ################################################################################
         # Update Player
         show_player(player_block=player)
         # Update Enemy
@@ -400,6 +447,8 @@ def main():
         show_enemy(enemy_list=miniboss, health_bar=MINI_BOSS_HEALTH_BAR)
         # Update Boss
 
+        # Update Create
+        show_create(create_list=create_list)
         # Update Bullet when Available
         if len(player_bullets) > 0:
             for bullet_index in range(0, len(player_bullets)):

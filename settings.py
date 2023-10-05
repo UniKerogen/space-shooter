@@ -1,5 +1,5 @@
 # Settings File
-# Version - Alpha 6.6
+# Version - Alpha 6.7
 # Store settings for game
 
 ##################################################
@@ -13,6 +13,14 @@ BOUNDARY_RIGHT = SCREEN_WIDTH - BOUNDARY_LEFT
 BACKGROUND_SCROLL_SPEED = 1  # Pixel
 BACKGROUND_REFRESH_TIME = 0.1  # Second
 STANDARD_MOVE_SPEED = 0.5
+# Create
+CREATE_SIZE = 40
+CREATE_CHANCE = 20  # % of Chance generating create
+CREATE_SPEED = 0.1
+CREATE_HEALTH_SET = 50
+CREATE_SHIELD = (25, 75)
+CREATE_TYPE_AMOUNT = 6
+CREATE_COLLECT_RANGE = 30  # pixel of range for create collection
 # Player Modification
 PLAYER_SPEED = 0.5
 PLAYER_SIZE = 60  # Player Image Size 50x50 Pixel
@@ -55,7 +63,6 @@ BIG_BOSS_SPAWN = (0 - BIG_BOSS_SIZE, 50 - BIG_BOSS_SIZE)
 BIG_BOSS_TYPE = 1
 BIG_BOSS_HEALTH = (800, 1000)
 BIG_BOSS_WEAPON_AMOUNT = 3
-
 # Colors
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)

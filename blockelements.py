@@ -1,5 +1,5 @@
 # Block Element File
-# Version - Alpha 6.6
+# Version - Alpha 6.7
 # Storage for block elements
 
 ##################################################
@@ -188,6 +188,40 @@ def miniboss_move():
 ##################################################
 # Boss Armory Block
 ##################################################
+
+##################################################
+# Create Block
+##################################################
+create_list = CreateList()
+
+
+def create_generate(enemy_block, chance=CREATE_CHANCE):
+    if random.randint(0, 100) < chance:
+        create_type = random.randint(0, CREATE_TYPE_AMOUNT - 1)
+        create_list.append(type=create_type, position=enemy_block.position.copy())
+
+
+def create_movement():
+    current_create = create_list.head
+    while current_create:
+        current_create.position[1] += CREATE_SPEED
+        current_create.contact[1] += CREATE_SPEED
+        if random.randint(0, 1) == 0:  # x-axis Movement
+            current_create.position[0] += CREATE_SPEED * current_create.direction
+            current_create.contact[0] += CREATE_SPEED * current_create.direction
+            if current_create.position[0] <= BOUNDARY_LEFT:
+                current_create.position[0] = BOUNDARY_LEFT
+                current_create.direction = -current_create.direction
+            elif current_create.position[0] >= BOUNDARY_RIGHT - CREATE_SIZE:
+                current_create.position[0] = BOUNDARY_RIGHT - CREATE_SIZE
+                current_create.direction = -current_create.direction
+        # Out of Boundary - Y Axis
+        if current_create.position[1] >= SCREEN_HEIGHT - CREATE_SIZE:
+            create_list.delete(create_block=current_create)
+        # Next Step
+        current_create = current_create.next
+
+
 
 ##################################################
 # Main Function
