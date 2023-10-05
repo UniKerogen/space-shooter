@@ -15,7 +15,7 @@ BACKGROUND_REFRESH_TIME = 0.1  # Second
 STANDARD_MOVE_SPEED = 0.5
 # Create
 CREATE_SIZE = 40
-CREATE_CHANCE = 20  # % of Chance generating create
+CREATE_CHANCE = 10  # % of Chance generating create
 CREATE_SPEED = 0.1
 CREATE_HEALTH_SET = 50
 CREATE_SHIELD = (25, 75)

@@ -31,8 +31,10 @@ explosion_img = pygame.image.load('resources/explosion.png')
 background = pygame.image.load('resources/background.png')
 background_rect1 = background.get_rect()
 background_rect2 = background.get_rect()
+background_rect3 = background.get_rect()
 background_rect1.topleft = (0, 0)
 background_rect2.topleft = (0, -SCREEN_HEIGHT)
+background_rect3.topleft = (0, -SCREEN_HEIGHT * 2)
 ##################################################
 # Structures Setting
 ##################################################
@@ -57,6 +59,7 @@ def show_player(player_block):
                          rect=(player_block.position[0], player_block.position[1] + PLAYER_HEALTH_BAR_SHIFT,
                                player_block.health[1] / player_block.health[0] * PLAYER_HEALTH_BAR[0],
                                PLAYER_HEALTH_BAR[1]))
+
 
 def show_create(create_list):
     global screen
@@ -118,6 +121,7 @@ def collide_player(player_block, bullet_block):
             return True
     return False
 
+
 def collide_create(player_block, create_block):
     distance = ((player_block.center[0] - create_block.contact[0]) ** 2 +
                 (player_block.center[1] - create_block.contact[1]) ** 2
@@ -149,13 +153,17 @@ def main():
             background_timer = time.time()
             background_rect1.y += BACKGROUND_SCROLL_SPEED
             background_rect2.y += BACKGROUND_SCROLL_SPEED
+            background_rect3.y += BACKGROUND_SCROLL_SPEED
             if background_rect1.y >= SCREEN_HEIGHT:
-                background_rect1.topleft = (0, 0)
+                background_rect1.topleft = (0, -SCREEN_HEIGHT * 2)
             if background_rect2.y >= SCREEN_HEIGHT:
-                background_rect2.topleft = (0, -SCREEN_HEIGHT)
+                background_rect2.topleft = (0, -SCREEN_HEIGHT * 2)
+            if background_rect3.y >= SCREEN_HEIGHT:
+                background_rect3.topleft = (0, -SCREEN_HEIGHT * 2)
         # Draw the background
         screen.blit(background, background_rect1)
         screen.blit(background, background_rect2)
+        screen.blit(background, background_rect3)
         ################################################################################
         ################################################################################
         # Mini Boss Spawn
@@ -267,7 +275,7 @@ def main():
                         # Reset Cooldown
                         current_miniboss.fire_cooldown[current_weapon] = enemy_armory.index_at(
                             index=current_weapon).cooldown
-                    elif current_weapon == 1 and current_miniboss.fire_cooldown[current_weapon] <=0:  # Bullet1
+                    elif current_weapon == 1 and current_miniboss.fire_cooldown[current_weapon] <= 0:  # Bullet1
                         fire_position = [sum(x) for x in zip(current_miniboss.position, [25, 53])]
                         contact_point = [list(item) for item in
                                          enemy_armory.index_at(index=current_weapon).contact]
@@ -385,7 +393,7 @@ def main():
                         player.shield = player_health - player.health[0]
                         player.health[1] = player.health[0]
                     else:
-                        player.health[1]  = player_health
+                        player.health[1] = player_health
                     # Player Health Check
                     if player.health[1] <= 0:
                         # Explode
@@ -435,7 +443,6 @@ def main():
                     player.invincible = True
                 create_list.delete(create_block=current_create)
             current_create = current_create.next
-
 
         ################################################################################
         ################################################################################

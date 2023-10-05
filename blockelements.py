@@ -197,8 +197,14 @@ create_list = CreateList()
 
 def create_generate(enemy_block, chance=CREATE_CHANCE):
     if random.randint(0, 100) < chance:
-        create_type = random.randint(0, CREATE_TYPE_AMOUNT - 1)
-        create_list.append(type=create_type, position=enemy_block.position.copy())
+        max_chance = [1] * CREATE_TYPE_AMOUNT
+        for i in range(1, CREATE_TYPE_AMOUNT):
+            max_chance[i] = max_chance[i - 1] + i + 1
+        dice = random.randint(0, max(max_chance))
+        for create_type in max_chance:
+            if dice < create_type:
+                create_list.append(type=max_chance.index(create_type), position=enemy_block.position.copy())
+                break
 
 
 def create_movement():
@@ -220,7 +226,6 @@ def create_movement():
             create_list.delete(create_block=current_create)
         # Next Step
         current_create = current_create.next
-
 
 
 ##################################################
