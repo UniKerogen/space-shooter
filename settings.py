@@ -14,21 +14,21 @@ BACKGROUND_SCROLL_SPEED = 1  # Pixel
 BACKGROUND_REFRESH_TIME = 0.1  # Second
 STANDARD_MOVE_SPEED = 0.5
 # Create
-CRATE_SIZE = 40
-CRATE_CHANCE = 10  # % of Chance generating create
-CRATE_SUB_CHANCE = [10, 20, 30, 40, 50, 60]  # Each Create Chance
-CRATE_SPEED = 0.1
-CRATE_HEALTH_SET = 50
-CRATE_SHIELD = (25, 75)
-CRATE_TYPE_AMOUNT = 6
-CRATE_COLLECT_RANGE = 30  # pixel of range for create collection
+CRATE_SIZE = 40  # Pixel
+CRATE_CHANCE = 10  # % of Chance generating crate
+CRATE_SUB_CHANCE = [10, 20, 30, 40, 50, 60]  # Each Crate Chance
+CRATE_SPEED = 0.1  # Crate Movement Speed
+CRATE_HEALTH = (10, 50)  # Crate Health Range
+CRATE_SHIELD = (25, 75)  # Crate Shield Range
+CRATE_TYPE_AMOUNT = 6  # Total Types of Crate
+CRATE_COLLECT_RANGE = 30  # pixel of range for crate collection
 
 # Player Modification
-PLAYER_SPEED = 0.5
+PLAYER_SPEED = 0.5  # Player Movement Speed
 PLAYER_SIZE = 60  # Player Image Size 50x50 Pixel
 PLAYER_HEALTH_BAR = (PLAYER_SIZE, 5, PLAYER_SIZE + 5)  # Width x Height x Shift
-PLAYER_INVINCIBLE_TIME = 5
-PLAYER_SHIELD_MAX = 200
+PLAYER_INVINCIBLE_TIME = 5  # Player Invincible Time
+PLAYER_SHIELD_MAX = 200  # Player Max Shield
 # Bullet Modification
 BULLET_SPEED_BASE = 2  # Bullet Moving Speed
 BULLET_EXPLOSION_RANGE = 25  # Bullet Explosion Range
@@ -50,21 +50,22 @@ ENEMY_WEAPON_TYPE = 2  # Type of Weapon Enemy can use
 ENEMY_BULLET_SPEED_BASE = 0.5  # Base speed of enemy bullet
 ENEMY_BULLET_COOLDOWN_BASE = 1500  # Bullet Cooldown for Enemy
 # Mini Boss Modification
-MINI_BOSS_SIZE = 100
+MINI_BOSS_SIZE = 100  # Pixel
 MINI_BOSS_SPEED_MAX = 50  # /100 -> Max of 0.05
 MINI_BOSS_Y_AXIS = (150 - MINI_BOSS_SIZE, 200 - MINI_BOSS_SIZE)  # Mini Boss Spawn Range
-MINI_BOSS_TYPE = 1
-MINI_BOSS_HEALTH = (350, 500)
-MINI_BOSS_MAX_AMOUNT = 2
-MINI_BOSS_WEAPON_AMOUNT = 2
-MINI_BOSS_HEALTH_BAR = (MINI_BOSS_SIZE, 5, -10)
+MINI_BOSS_TYPE = 1  # Total Number of Types of MiniBoss
+MINI_BOSS_HEALTH = (350, 500)  # MiniBoss Health Range
+MINI_BOSS_MAX_AMOUNT = 2  # MiniBoss On Screen Amount
+MINI_BOSS_WEAPON_AMOUNT = 2  # Amount of Weapon MiniBoss Carry
+MINI_BOSS_HEALTH_BAR = (MINI_BOSS_SIZE, 5, -10)  # MiniBoss Health Bar Region WxHxShift
 # Big Boss Modification
 BIG_BOSS_SIZE = 200
 BIG_BOSS_SPEED_MAX = 20  # /100 -> Max of 0.02
-BIG_BOSS_SPAWN = (0 - BIG_BOSS_SIZE, 50 - BIG_BOSS_SIZE)
-BIG_BOSS_TYPE = 1
-BIG_BOSS_HEALTH = (800, 1000)
-BIG_BOSS_WEAPON_AMOUNT = 3
+BIG_BOSS_SPAWN = (0 - BIG_BOSS_SIZE, 50 - BIG_BOSS_SIZE)  # Big Boss Spawn Location
+BIG_BOSS_TYPE = 1  # Big Boss Type Amount
+BIG_BOSS_HEALTH = (800, 1000)  # Big Boss Health Region
+BIG_BOSS_WEAPON_AMOUNT = 3  # Big Boss Weapon Amount
+BIG_BOSS_HEALTH_BAR = (BIG_BOSS_SIZE, 5, -10)  # Big Boss Health Bar Region WxHxShift
 # Colors
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)

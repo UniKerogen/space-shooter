@@ -309,7 +309,7 @@ class Crate:
             self.info = random.randint(CRATE_SHIELD[0], CRATE_SHIELD[1])
             self.image = pygame.image.load('resources/create/shield_create.png')
         elif self.type == 5:  # Health - 60 Chance
-            self.info = CRATE_HEALTH_SET
+            self.info = random.randint(CRATE_HEALTH[0], CRATE_HEALTH[1])
             self.image = pygame.image.load('resources/create/health_create.png')
         # Storage
         self.contact = [sum(x) for x in zip(position, [CRATE_SIZE / 2, CRATE_SIZE / 2])]
