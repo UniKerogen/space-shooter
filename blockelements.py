@@ -192,23 +192,23 @@ def miniboss_move():
 ##################################################
 # Create Block
 ##################################################
-crate_list = CrateList()
+crates = CrateList()
 
 
 def crate_generate(enemy_block, chance=CRATE_CHANCE):
     if random.randint(0, 100) < chance:
-        max_chance = CRATE_SUB_CHANCE.copy()
+        max_chance = CRATE_SUB_CHANCE.copy()  # Calculate Dice Region
         for i in range(1, CRATE_TYPE_AMOUNT):
             max_chance[i] = max_chance[i - 1] + max_chance[i]
-        dice = random.randint(0, max(max_chance))
+        dice = random.randint(0, max(max_chance))  # Roll the Dice
         for crate_type in max_chance:
             if dice < crate_type:
-                crate_list.append(type=max_chance.index(crate_type), position=enemy_block.position.copy())
+                crates.append(category=max_chance.index(crate_type), position=enemy_block.position.copy())
                 break  # Exit Loop when Crate Created
 
 
 def crate_movement():
-    current_crate = crate_list.head
+    current_crate = crates.head
     while current_crate:
         current_crate.position[1] += CRATE_SPEED
         current_crate.contact[1] += CRATE_SPEED
@@ -223,7 +223,7 @@ def crate_movement():
                 current_crate.direction = -current_crate.direction
         # Out of Boundary - Y Axis
         if current_crate.position[1] >= SCREEN_HEIGHT - CRATE_SIZE:
-            crate_list.delete(crate_block=current_crate)
+            crates.delete(crate_block=current_crate)
         # Next Step
         current_crate = current_crate.next
 

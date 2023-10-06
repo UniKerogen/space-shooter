@@ -287,28 +287,28 @@ class EnemyList:
 # Class Prototype - Create
 ##################################################
 class Crate:
-    def __init__(self, type, position):
+    def __init__(self, category, position):
         # Input Element
-        self.type = type
+        self.category = category
         self.position = position
         self.next = None
         # Self Start Element
-        if self.type == 0:  # Add Life - 10 Chance
+        if self.category == 0:  # Add Life - 10 Chance
             self.info = 1
             self.image = pygame.image.load('resources/create/life_create.png')
-        elif self.type == 1:  # Invincible - 20 Chance
+        elif self.category == 1:  # Invincible - 20 Chance
             self.info = PLAYER_INVINCIBLE_TIME
             self.image = pygame.image.load('resources/create/invincible_create.png')
-        elif self.type == 2:  # Clear All Enemy Bullet - 30 Chance
+        elif self.category == 2:  # Clear All Enemy Bullet - 30 Chance
             self.info = 0
             self.image = pygame.image.load('resources/create/clear_bullet_create.png')
-        elif self.type == 3:  # Weapon Create - 40 Chance
+        elif self.category == 3:  # Weapon Create - 40 Chance
             self.info = random.randint(0, BULLET_TYPE)
             self.image = pygame.image.load('resources/create/bullet' + str(self.info) + '.png')
-        elif self.type == 4:  # Shield - 50 Chance
+        elif self.category == 4:  # Shield - 50 Chance
             self.info = random.randint(CRATE_SHIELD[0], CRATE_SHIELD[1])
             self.image = pygame.image.load('resources/create/shield_create.png')
-        elif self.type == 5:  # Health - 60 Chance
+        elif self.category == 5:  # Health - 60 Chance
             self.info = random.randint(CRATE_HEALTH[0], CRATE_HEALTH[1])
             self.image = pygame.image.load('resources/create/health_create.png')
         # Storage
@@ -329,8 +329,8 @@ class CrateList:
             current = current.next
         return count
 
-    def append(self, type, position):
-        new_node = Crate(type, position)
+    def append(self, category, position):
+        new_node = Crate(category, position)
         if not self.head:
             self.head = new_node
         else:

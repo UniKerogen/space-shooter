@@ -108,6 +108,7 @@ def show_enemy(enemy_list, health_bar=ENEMY_HEALTH_BAR):
 
 # Player Fire Bullet
 def fire_bullet_player(bullet_block):
+    # noinspection PyGlobalUndefined
     global screen, player_armory
     screen.blit(player_armory.index_at(index=bullet_block.index).image,
                 (bullet_block.position[0], bullet_block.position[1]))
@@ -115,6 +116,7 @@ def fire_bullet_player(bullet_block):
 
 # Enemy Fire Bullet
 def fire_bullet_enemy(bullet_block):
+    # noinspection PyGlobalUndefined
     global screen, enemy_armory
     screen.blit(enemy_armory.index_at(index=bullet_block.index).image,
                 (bullet_block.position[0], bullet_block.position[1]))
@@ -122,6 +124,7 @@ def fire_bullet_enemy(bullet_block):
 
 # Check if Player Bullet Hit Enemy
 def collide_enemy(enemy_block, bullet_block):
+    # noinspection PyGlobalUndefined
     global player_armory
     for coordinates in bullet_block.contact:
         distance = ((enemy_block.center[0] - coordinates[0]) ** 2 +
@@ -133,6 +136,7 @@ def collide_enemy(enemy_block, bullet_block):
 
 
 # Check if Enemy Bullet Hit Player
+# noinspection PyGlobalUndefined
 def collide_player(player_block, bullet_block):
     global enemy_armory
     for coordinates in bullet_block.contact:
@@ -157,9 +161,10 @@ def collide_crate(player_block, crate_block):
 ####################################################################################################
 # Main Function
 ####################################################################################################
+# noinspection PyGlobalUndefined
 def main():
     # Global Variable
-    global screen, score, crate_list
+    global screen, score, crates
     global player
     global enemies, miniboss, boss
     global player_armory, player_bullets, enemy_bullets
@@ -341,7 +346,7 @@ def main():
             current_bullet.position[1] += enemy_armory.index_at(index=current_bullet.index).speed  # Update Position
             for item in current_bullet.contact:  # Update Contact
                 item[1] += enemy_armory.index_at(index=current_bullet.index).speed
-            if current_bullet.position[1] >= SCREEN_HEIGHT:  # Remove After Off Screen
+            if current_bullet.position[1] >= SCREEN_HEIGHT:  # Remove After Off-Screen
                 enemy_bullets.delete(current_bullet=current_bullet)
             current_bullet = current_bullet.next
         ################################################################################
@@ -450,26 +455,26 @@ def main():
         ################################################################################
         ################################################################################
         # Create Collection
-        current_crate = crate_list.head
+        current_crate = crates.head
         while current_crate:  # Iteration of Create
             if collide_crate(player_block=player, crate_block=current_crate):
-                if current_crate.type == 0:  # Add a Life
+                if current_crate.category == 0:  # Add a Life
                     player.life[1] += 1
-                elif current_crate.type == 1:  # Collect Invincible
+                elif current_crate.category == 1:  # Collect Invincible
                     player.invincible_at = time.time()
                     player.invincible = True
-                elif current_crate.type == 2:  # Clear Enemy Bullet
+                elif current_crate.category == 2:  # Clear Enemy Bullet
                     enemy_bullets = BulletList()
-                elif current_crate.type == 3:  # Weapon Create
+                elif current_crate.category == 3:  # Weapon Create
                     player_armory.search_active().active = False
                     player_armory.index_at(index=current_crate.info).active = True
-                elif current_crate.type == 4:  # Shield
+                elif current_crate.category == 4:  # Shield
                     player.shield += current_crate.info
                     player.shield = player.shield if player.shield <= PLAYER_SHIELD_MAX else PLAYER_SHIELD_MAX
-                elif current_crate.type == 5:  # Collect Health
+                elif current_crate.category == 5:  # Collect Health
                     player.health[1] += current_crate.info
                     player.health[1] = player.health[1] if player.health[1] < player.health[0] else player.health[0]
-                crate_list.delete(crate_block=current_crate)  # Delete Collected Crate
+                crates.delete(crate_block=current_crate)  # Delete Collected Crate
             current_crate = current_crate.next  # Next Element
         ################################################################################
         ################################################################################
@@ -482,7 +487,7 @@ def main():
         # Update Boss
 
         # Update Create
-        show_crate(crate_list=crate_list)
+        show_crate(crate_list=crates)
         # Update Bullet when Available
         if len(player_bullets) > 0:
             for bullet_index in range(0, len(player_bullets)):
