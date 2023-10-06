@@ -286,7 +286,7 @@ class EnemyList:
 ##################################################
 # Class Prototype - Create
 ##################################################
-class Create:
+class Crate:
     def __init__(self, type, position):
         # Input Element
         self.type = type
@@ -306,18 +306,18 @@ class Create:
             self.info = random.randint(0, BULLET_TYPE)
             self.image = pygame.image.load('resources/create/bullet' + str(self.info) + '.png')
         elif self.type == 4:  # Shield - 50 Chance
-            self.info = random.randint(CREATE_SHIELD[0], CREATE_SHIELD[1])
+            self.info = random.randint(CRATE_SHIELD[0], CRATE_SHIELD[1])
             self.image = pygame.image.load('resources/create/shield_create.png')
         elif self.type == 5:  # Health - 60 Chance
-            self.info = CREATE_HEALTH_SET
+            self.info = CRATE_HEALTH_SET
             self.image = pygame.image.load('resources/create/health_create.png')
         # Storage
-        self.contact = [sum(x) for x in zip(position, [CREATE_SIZE / 2, CREATE_SIZE / 2])]
+        self.contact = [sum(x) for x in zip(position, [CRATE_SIZE / 2, CRATE_SIZE / 2])]
         self.direction = 1 if random.randint(0, 1) == 0 else -1
-        self.collect_range = CREATE_COLLECT_RANGE
+        self.collect_range = CRATE_COLLECT_RANGE
 
 
-class CreateList:
+class CrateList:
     def __init__(self):
         self.head = None
 
@@ -330,7 +330,7 @@ class CreateList:
         return count
 
     def append(self, type, position):
-        new_node = Create(type, position)
+        new_node = Crate(type, position)
         if not self.head:
             self.head = new_node
         else:
@@ -340,15 +340,15 @@ class CreateList:
             current.next = new_node
 
     # Delete a Enemy
-    def delete(self, create_block):
+    def delete(self, crate_block):
         if not self.head:
             return
-        if self.head == create_block:
+        if self.head == crate_block:
             self.head = self.head.next
             return
         current = self.head
         while current.next:
-            if current.next == create_block:
+            if current.next == crate_block:
                 current.next = current.next.next
                 return
             current = current.next

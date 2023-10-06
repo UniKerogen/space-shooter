@@ -186,46 +186,46 @@ def miniboss_move():
 
 
 ##################################################
-# Boss Armory Block
+# Boss Block
 ##################################################
 
 ##################################################
 # Create Block
 ##################################################
-create_list = CreateList()
+crate_list = CrateList()
 
 
-def create_generate(enemy_block, chance=CREATE_CHANCE):
+def crate_generate(enemy_block, chance=CRATE_CHANCE):
     if random.randint(0, 100) < chance:
-        max_chance = CREATE_SUB_CHANCE.copy()
-        for i in range(1, CREATE_TYPE_AMOUNT):
+        max_chance = CRATE_SUB_CHANCE.copy()
+        for i in range(1, CRATE_TYPE_AMOUNT):
             max_chance[i] = max_chance[i - 1] + max_chance[i]
         dice = random.randint(0, max(max_chance))
-        for create_type in max_chance:
-            if dice < create_type:
-                create_list.append(type=max_chance.index(create_type), position=enemy_block.position.copy())
-                break
+        for crate_type in max_chance:
+            if dice < crate_type:
+                crate_list.append(type=max_chance.index(crate_type), position=enemy_block.position.copy())
+                break  # Exit Loop when Crate Created
 
 
-def create_movement():
-    current_create = create_list.head
-    while current_create:
-        current_create.position[1] += CREATE_SPEED
-        current_create.contact[1] += CREATE_SPEED
+def crate_movement():
+    current_crate = crate_list.head
+    while current_crate:
+        current_crate.position[1] += CRATE_SPEED
+        current_crate.contact[1] += CRATE_SPEED
         if random.randint(0, 1) == 0:  # x-axis Movement
-            current_create.position[0] += CREATE_SPEED * current_create.direction
-            current_create.contact[0] += CREATE_SPEED * current_create.direction
-            if current_create.position[0] <= BOUNDARY_LEFT:
-                current_create.position[0] = BOUNDARY_LEFT
-                current_create.direction = -current_create.direction
-            elif current_create.position[0] >= BOUNDARY_RIGHT - CREATE_SIZE:
-                current_create.position[0] = BOUNDARY_RIGHT - CREATE_SIZE
-                current_create.direction = -current_create.direction
+            current_crate.position[0] += CRATE_SPEED * current_crate.direction
+            current_crate.contact[0] += CRATE_SPEED * current_crate.direction
+            if current_crate.position[0] <= BOUNDARY_LEFT:
+                current_crate.position[0] = BOUNDARY_LEFT
+                current_crate.direction = -current_crate.direction
+            elif current_crate.position[0] >= BOUNDARY_RIGHT - CRATE_SIZE:
+                current_crate.position[0] = BOUNDARY_RIGHT - CRATE_SIZE
+                current_crate.direction = -current_crate.direction
         # Out of Boundary - Y Axis
-        if current_create.position[1] >= SCREEN_HEIGHT - CREATE_SIZE:
-            create_list.delete(create_block=current_create)
+        if current_crate.position[1] >= SCREEN_HEIGHT - CRATE_SIZE:
+            crate_list.delete(crate_block=current_crate)
         # Next Step
-        current_create = current_create.next
+        current_crate = current_crate.next
 
 
 ##################################################
