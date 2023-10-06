@@ -38,6 +38,8 @@ background_rect2.topleft = (0, -SCREEN_HEIGHT)
 background_rect3.topleft = (0, -SCREEN_HEIGHT * 2)
 # Shield
 shield_image = pygame.image.load('resources/player/shield.png')
+# Invincible
+invincible_image = pygame.image.load('resources/player/invincible.png')
 ##################################################
 # Structures Setting
 ##################################################
@@ -51,7 +53,12 @@ enemy_bullets = BulletList()
 ####################################################################################################
 def show_player(player_block):
     global screen
+    # Invincible Coat
+    if player_block.invincible:
+        screen.blit(invincible_image, (player_block.position[0], player_block.position[1]))
+    # Player Self
     screen.blit(player_block.image, (player_block.position[0], player_block.position[1]))
+    # Shield
     if player_block.health_show:
         pygame.draw.rect(screen,
                          color=RED,
