@@ -353,6 +353,38 @@ class CrateList:
                 return
             current = current.next
 
+##################################################
+# Class Prototype - Button
+##################################################
+class Button:
+    def __init__(self, name):
+        self.name = name
+        self.image = pygame.image.load('resources/button/button_' + str(name) + '.png')
+        self.rect = self.image.get_rect()
+        # Connect
+        self.next = None
+
+class ButtonList:
+    def __init__(self):
+        self.head = None
+
+    def append(self, name):
+        new_node = Button(name=name)
+        if not self.head:
+            self.head = new_node
+        else:
+            current = self.head
+            while current.next:
+                current = current.next
+            current.next = new_node
+
+    def name(self, name):
+        current = self.head
+        while current:
+            if current.name == name:
+                return current
+            current = current.next
+        return False
 
 ##################################################
 # Main Function

@@ -227,6 +227,21 @@ def crate_movement():
         # Next Step
         current_crate = current_crate.next
 
+##################################################
+# Button Block
+##################################################
+buttons = ButtonList()
+button_names = ['endless', 'level', 'main_menu', 'quit', 'restart', 'score_board']
+for item in button_names:
+    buttons.append(name=item)
+# Intro Screen
+buttons.name(name='endless').rect.topleft = (220, 460)
+buttons.name(name='level').rect.topleft = (85, 460)
+# End Screen - Vertical Stack
+buttons.name(name='restart').rect.topleft = (150, 420)
+buttons.name(name='main_menu').rect.topleft = (150, 480)
+buttons.name(name='score_board').rect.topleft = (150, 540)
+buttons.name(name='quit').rect.topleft = (150, 600)
 
 ##################################################
 # Main Function

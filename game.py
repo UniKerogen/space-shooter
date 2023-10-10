@@ -449,7 +449,7 @@ def main():
 if __name__ == "__main__":
     # Variable
     RUNNING, BULLET_FIRE = True, False
-    intro_screen, end_screen = True, False
+    intro_screen, end_screen, score_board, error_screen = True, False, False, False
     background_timer = time.time()
     # Running Loop
     while RUNNING:
@@ -478,20 +478,52 @@ if __name__ == "__main__":
             # Event of Quiting
             if event.type == pygame.QUIT:
                 RUNNING = False
-            # Event of Key Press
-            if event.type == pygame.KEYDOWN:
-                # Disable Intro Screen with SPACE
-                if event.key == pygame.K_SPACE and intro_screen:
+            # Event of Mouse Click
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                # Intro Screen
+                if intro_screen and buttons.name('level').rect.collidepoint(event.pos):
                     intro_screen = False
+                    error_screen = True
+                elif intro_screen and buttons.name('endless').rect.collidepoint(event.pos):
+                    intro_screen = False
+                # End Screen
+                elif end_screen and buttons.name('restart').rect.collidepoint(event.pos):
+                    end_screen = False
+                    score = 0
+                    player.life[1] = player.life[0]
+                    player.reset()
+                    player.invincible_at = time.time()
+
+                elif end_screen and buttons.name('main_menu').rect.collidepoint(event.pos):
+                    end_screen = False
+                    intro_screen = True
+                elif end_screen and buttons.name('score_board').rect.collidepoint(event.pos):
+                    score_board = True
+                elif end_screen and buttons.name('quit').rect.collidepoint(event.pos):
+                    RUNNING = False
+                # Pause Screen
+                elif score_board and buttons.name('main_menu').rect.collidepoint(event.pos):
+                    score_board = False
+                    intro_screen = True
+                elif score_board and buttons.name('quit').rect.collidepoint(event.pos):
+                    RUNNING = False
+                # Error Screen
+                elif error_screen and buttons.name('main_menu').rect.collidepoint(event.pos):
+                    error_screen = False
+                    intro_screen = True
+                elif error_screen and buttons.name('score_board').rect.collidepoint(event.pos):
+                    RUNNING = False
+            # Event of Key Press
+            if event.type == pygame.KEYDOWN and not intro_screen and not end_screen:
                 # Player Movement
-                elif event.key == pygame.K_LEFT and not intro_screen:
+                if event.key == pygame.K_LEFT:
                     if player.active:
                         player.x_change = -player.speed
-                elif event.key == pygame.K_RIGHT and not intro_screen:
+                elif event.key == pygame.K_RIGHT:
                     if player.active:
                         player.x_change = player.speed
                 # Fire Bullet
-                elif event.key == pygame.K_SPACE and not intro_screen:
+                elif event.key == pygame.K_SPACE:
                     if player.active:
                         BULLET_FIRE = True
                 # Weapon Switch -- TO BE DISABLED
@@ -518,21 +550,45 @@ if __name__ == "__main__":
             intro_text = font36.render("Space Shooter", True, WHITE)
             intro_text_rect = intro_text.get_rect()
             intro_text_rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 50)
-            start_text = font30.render("Press Space to Start", True, WHITE)
-            start_text_rect = start_text.get_rect()
-            start_text_rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 50)
             # Show Texts
             screen.blit(intro_text, intro_text_rect)
-            screen.blit(start_text, start_text_rect)
-            ################################################################################
-            ################################################################################
+            # Intro Screen Button
+            screen.blit(buttons.name('level').image, buttons.name('level').rect.topleft)
+            screen.blit(buttons.name('endless').image, buttons.name('endless').rect.topleft)
+        ################################################################################
+        ################################################################################
         elif end_screen:
-            print("Show End Screen")
-            RUNNING = False
-            ################################################################################
-            ################################################################################
+            # Show Score
+            score_text_end = font36.render("Score :" + str(score), True, WHITE)
+            score_text_end_rect = score_text_end.get_rect()
+            score_text_end_rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 50)
+            screen.blit(score_text_end, score_text_end_rect)
+            # Render Button
+            screen.blit(buttons.name('restart').image, buttons.name('restart').rect.topleft)
+            screen.blit(buttons.name('main_menu').image, buttons.name('main_menu').rect.topleft)
+            screen.blit(buttons.name('score_board').image, buttons.name('score_board').rect.topleft)
+            screen.blit(buttons.name('quit').image, buttons.name('quit').rect.topleft)
+        ################################################################################
+        ################################################################################
+        elif score_board:
+            # Show Button
+            screen.blit(buttons.name('main_menu').image, buttons.name('main_menu').rect.topleft)
+            screen.blit(buttons.name('quit').image, buttons.name('score_board').rect.topleft)
+        ################################################################################
+        ################################################################################
+        elif error_screen:
+            # Show Text
+            error_text = font36.render("Oops! Something went Wrong!", True, WHITE)
+            error_text_rect = error_text.get_rect()
+            error_text_rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 50)
+            screen.blit(error_text, error_text_rect)
+            # Show Button
+            screen.blit(buttons.name('main_menu').image, buttons.name('main_menu').rect.topleft)
+            screen.blit(buttons.name('quit').image, buttons.name('score_board').rect.topleft)
+        ################################################################################
+        ################################################################################
         else:  # Normal Game
-            main()  # Main Game Function
+            main()  # Main Game Function - Endless Run
         # Update Pygame Screen
         pygame.display.update()
     pygame.quit()  # Exit Game
