@@ -258,7 +258,7 @@ def main():
         current_miniboss = current_miniboss.next
     ################################################################################
     ################################################################################
-    # Continuous Shooting - Big Boss
+    # Continuous Shooting - Big Boss - TODO
     ################################################################################
     ################################################################################
     # Player Movement
@@ -449,8 +449,11 @@ def main():
 if __name__ == "__main__":
     # Variable
     RUNNING, BULLET_FIRE = True, False
-    intro_screen, end_screen, score_board, error_screen = True, False, False, False
+    intro_screen, end_screen, score_board, error_screen, level_screen = True, False, False, False, False
     background_timer = time.time()
+    # Storage
+    highest_score = 0
+    level_set = 0
     # Running Loop
     while RUNNING:
         ################################################################################
@@ -483,28 +486,35 @@ if __name__ == "__main__":
                 # Intro Screen
                 if intro_screen and buttons.name('level').rect.collidepoint(event.pos):
                     intro_screen = False
-                    error_screen = True
+                    level_screen = True
                 elif intro_screen and buttons.name('endless').rect.collidepoint(event.pos):
                     intro_screen = False
                 # End Screen
                 elif end_screen and buttons.name('restart').rect.collidepoint(event.pos):
                     # Restart Endless Run
                     end_screen = False
+                    # Reset Player
                     score = 0
                     player.life[1] = player.life[0]
                     player.reset()
                     player.invincible_at = time.time()
+                    # Reset Enemy and Bullets
+                    enemy_bullets = BulletList()
+                    player_bullets = BulletList()
+                    miniboss = EnemyList()
+                    enemies = EnemyList()
                 elif end_screen and buttons.name('main_menu').rect.collidepoint(event.pos):
                     # Back to Main Menu/Intro Menu
                     end_screen = False
                     intro_screen = True
                 elif end_screen and buttons.name('score_board').rect.collidepoint(event.pos):
                     # Show Score Board
+                    end_screen = False
                     score_board = True
                 elif end_screen and buttons.name('quit').rect.collidepoint(event.pos):
                     # Quit Game
                     RUNNING = False
-                # Pause Screen
+                # Score Board Screen
                 elif score_board and buttons.name('main_menu').rect.collidepoint(event.pos):
                     score_board = False
                     intro_screen = True
@@ -562,7 +572,7 @@ if __name__ == "__main__":
         ################################################################################
         elif end_screen:
             # Show Score
-            score_text_end = font36.render("Score :" + str(score), True, WHITE)
+            score_text_end = font36.render("Score : " + str(score), True, WHITE)
             score_text_end_rect = score_text_end.get_rect()
             score_text_end_rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 50)
             screen.blit(score_text_end, score_text_end_rect)
@@ -575,7 +585,11 @@ if __name__ == "__main__":
         ################################################################################
         elif score_board:
             # Show Score Board - TODO
-
+            highest_score = score if highest_score < score else highest_score
+            score_board_text = font36.render("Current High Score : " + str(highest_score), True, WHITE)
+            score_board_text_rect = score_board_text.get_rect()
+            score_board_text_rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 50)
+            screen.blit(score_board_text, score_board_text_rect)
             # Show Button
             screen.blit(buttons.name('main_menu').image, buttons.name('main_menu').rect.topleft)
             screen.blit(buttons.name('quit').image, buttons.name('score_board').rect.topleft)
@@ -592,7 +606,23 @@ if __name__ == "__main__":
             screen.blit(buttons.name('quit').image, buttons.name('score_board').rect.topleft)
         ################################################################################
         ################################################################################
-        else:  # Normal Game
+        elif level_screen:  # Level Selection - TODO
+            print("Level Screen")
+        ################################################################################
+        ################################################################################
+        else:  # Normal Game - TODO: Level Differences
+            # Generate Enemy - Level Selection
+            if level_set == 1:  # Easy Mode
+                enemy_generate(number=2)
+            elif level_set == 2:  # Medium Mode
+                enemy_generate(number=5)
+            elif level_set == 3:  # Hard Mode
+                enemy_generate(number=8)
+            elif level_set == 4:  # Death Mode
+                enemy_generate(number=12)
+            else:  # Default Mode
+                enemy_generate(number=ENEMY_NUMBER)
+            # Endless Run
             main()  # Main Game Function - Endless Run
         # Update Pygame Screen
         pygame.display.update()

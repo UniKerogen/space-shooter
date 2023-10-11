@@ -68,17 +68,21 @@ player_armory.append(name='bullet2',
 ##################################################
 # Enemy List
 enemies = EnemyList()
-for num_enemy in range(ENEMY_NUMBER):
-    enemies.append(name='enemy' + str(num_enemy),
-                   index=num_enemy,
-                   position=[random.randint(BOUNDARY_LEFT, BOUNDARY_RIGHT - ENEMY_SIZE),
-                             random.randint(ENEMY_SPAWN[0], ENEMY_SPAWN[1])],
-                   speed=random.randint(1, ENEMY_SPEED_MAX) / 1000,
-                   active=True,
-                   image=pygame.image.load('resources/enemy/enemy' + str(random.randint(0, ENEMY_TYPE - 1)) + '.png'),
-                   health=random.randint(ENEMY_BASE_HEALTH[0], ENEMY_BASE_HEALTH[1]),
-                   direction=-1 if random.randint(0, 1) == 0 else 1,
-                   weapon=random.randint(0, ENEMY_WEAPON_TYPE - 1))
+
+
+def enemy_generate(number=ENEMY_NUMBER):
+    for num_enemy in range(number):
+        enemies.append(name='enemy' + str(num_enemy),
+                       index=num_enemy,
+                       position=[random.randint(BOUNDARY_LEFT, BOUNDARY_RIGHT - ENEMY_SIZE),
+                                 random.randint(ENEMY_SPAWN[0], ENEMY_SPAWN[1])],
+                       speed=random.randint(1, ENEMY_SPEED_MAX) / 1000,
+                       active=True,
+                       image=pygame.image.load(
+                           'resources/enemy/enemy' + str(random.randint(0, ENEMY_TYPE - 1)) + '.png'),
+                       health=random.randint(ENEMY_BASE_HEALTH[0], ENEMY_BASE_HEALTH[1]),
+                       direction=-1 if random.randint(0, 1) == 0 else 1,
+                       weapon=random.randint(0, ENEMY_WEAPON_TYPE - 1))
 
 
 # Enemy Movement
