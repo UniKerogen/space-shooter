@@ -148,13 +148,14 @@ def miniboss_create():
     num_increase = 0 if len(miniboss) == 0 else 1
     for mini_boss_number in range(0, random.randint(0, MINI_BOSS_MAX_AMOUNT)):
         # Create Mini Boss
+        miniboss_type = random.randint(0, MINI_BOSS_TYPE - 1)
         miniboss.append(name='mini_boss' + str(mini_boss_number),
                         index=miniboss.get_last_index() + num_increase + mini_boss_number,
                         position=[random.randint(BOUNDARY_LEFT, BOUNDARY_RIGHT - MINI_BOSS_SIZE), -MINI_BOSS_SIZE],
                         speed=random.randint(1, MINI_BOSS_SPEED_MAX) / 1000,
                         active=False,
                         image=pygame.image.load(
-                            'resources/miniboss/miniboss' + str(random.randint(0, MINI_BOSS_TYPE - 1)) + '.png'),
+                            'resources/miniboss/miniboss' + str(miniboss_type) + '.png'),
                         health=random.randint(MINI_BOSS_HEALTH[0], MINI_BOSS_HEALTH[1]),
                         direction=-1 if random.randint(0, 1) == 0 else 1,
                         weapon=random.sample([i for i in range(ENEMY_WEAPON_TYPE)], MINI_BOSS_WEAPON_AMOUNT)
@@ -165,6 +166,10 @@ def miniboss_create():
                                    zip(current_miniboss.position, [MINI_BOSS_SIZE / 2, MINI_BOSS_SIZE / 2])]
         current_miniboss.fire_cooldown = [0] * MINI_BOSS_WEAPON_AMOUNT
         current_miniboss.y_axis = random.randint(MINI_BOSS_Y_AXIS[0], MINI_BOSS_Y_AXIS[1])
+        # Type Specific Adjustment
+        if miniboss_type == 0:  # Type 0 MiniBoss
+            current_miniboss.each_weapon_amount = (2, 1)
+            current_miniboss.fire_shift = (((0, 10), (50, 10)), (25, 53))
 
 
 def miniboss_move():
@@ -192,6 +197,8 @@ def miniboss_move():
 ##################################################
 # Boss Block
 ##################################################
+bosses = EnemyList()
+
 
 ##################################################
 # Create Block

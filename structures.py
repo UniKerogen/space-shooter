@@ -214,6 +214,8 @@ class EnemyBlock:
         self.next = None
         # Boss Configuration
         self.y_axis = None
+        self.each_weapon_amount = None
+        self.fire_shift = None
 
     def update(self, block_size=ENEMY_SIZE, block_spawn=ENEMY_SPAWN):
         # Movement Update

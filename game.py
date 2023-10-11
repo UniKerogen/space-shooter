@@ -227,33 +227,23 @@ def main():
         if current_miniboss.active:
             # Fire Bullet at current miniboss position
             for current_weapon in current_miniboss.weapon:
-                if current_weapon == 0 and current_miniboss.fire_cooldown[current_weapon] <= 0:  # Bullet0
-                    # First Shot
-                    fire_position = [sum(x) for x in zip(current_miniboss.position, [0, 10])]
-                    contact_point = [list(item) for item in
-                                     enemy_armory.index_at(index=current_weapon).contact]
-                    contact_point = [[sum(x) for x in zip(item, fire_position)] for item in contact_point]
-                    enemy_bullets.append(index=current_weapon, position=fire_position, contact=contact_point)
-                    # Second Shot
-                    fire_position = [sum(x) for x in zip(current_miniboss.position, [50, 10])]
-                    contact_point = [list(item) for item in
-                                     enemy_armory.index_at(index=current_weapon).contact]
-                    contact_point = [[sum(x) for x in zip(item, fire_position)] for item in contact_point]
-                    enemy_bullets.append(index=current_weapon, position=fire_position, contact=contact_point)
-                    # Reset Cooldown
-                    current_miniboss.fire_cooldown[current_weapon] = enemy_armory.index_at(
-                        index=current_weapon).cooldown
-                elif current_weapon == 1 and current_miniboss.fire_cooldown[current_weapon] <= 0:  # Bullet1
-                    fire_position = [sum(x) for x in zip(current_miniboss.position, [25, 53])]
-                    contact_point = [list(item) for item in
-                                     enemy_armory.index_at(index=current_weapon).contact]
-                    contact_point = [[sum(x) for x in zip(item, fire_position)] for item in contact_point]
-                    enemy_bullets.append(index=current_weapon, position=fire_position, contact=contact_point)
+                if current_miniboss.fire_cooldown[current_weapon] <= 0:
+                    for shot_number in range(current_miniboss.each_weapon_amount[current_weapon]):
+                        fire_position = \
+                            [sum(x) for x in zip(current_miniboss.position,
+                                                 current_miniboss.fire_shift[current_weapon][shot_number])] \
+                                if current_miniboss.each_weapon_amount[current_weapon] > 1 else \
+                                [sum(x) for x in zip(current_miniboss.position,
+                                                     current_miniboss.fire_shift[current_weapon])]
+                        contact_point = [list(item) for item in enemy_armory.index_at(index=current_weapon).contact]
+                        contact_point = [[sum(x) for x in zip(item, fire_position)] for item in contact_point]
+                        enemy_bullets.append(index=current_weapon, position=fire_position, contact=contact_point)
                     # Reset Cooldown
                     current_miniboss.fire_cooldown[current_weapon] = enemy_armory.index_at(
                         index=current_weapon).cooldown
                 else:
-                    current_miniboss.fire_cooldown = [sum(x) for x in zip(current_miniboss.fire_cooldown, [-1, -1])]
+                    current_miniboss.fire_cooldown = [sum(x) for x in zip(current_miniboss.fire_cooldown,
+                                                                          [-1] * len(current_miniboss.fire_cooldown))]
         # Next Miniboss
         current_miniboss = current_miniboss.next
     ################################################################################
@@ -449,6 +439,7 @@ def main():
 if __name__ == "__main__":
     # Variable
     RUNNING, BULLET_FIRE = True, False
+    enemy_exist = False
     intro_screen, end_screen, score_board, error_screen, level_screen = True, False, False, False, False
     background_timer = time.time()
     # Storage
@@ -503,6 +494,7 @@ if __name__ == "__main__":
                     player_bullets = BulletList()
                     miniboss = EnemyList()
                     enemies = EnemyList()
+                    enemy_exist = False
                 elif end_screen and buttons.name('main_menu').rect.collidepoint(event.pos):
                     # Back to Main Menu/Intro Menu
                     end_screen = False
@@ -612,16 +604,18 @@ if __name__ == "__main__":
         ################################################################################
         else:  # Normal Game - TODO: Level Differences
             # Generate Enemy - Level Selection
-            if level_set == 1:  # Easy Mode
-                enemy_generate(number=2)
-            elif level_set == 2:  # Medium Mode
-                enemy_generate(number=5)
-            elif level_set == 3:  # Hard Mode
-                enemy_generate(number=8)
-            elif level_set == 4:  # Death Mode
-                enemy_generate(number=12)
-            else:  # Default Mode
-                enemy_generate(number=ENEMY_NUMBER)
+            if not enemy_exist:
+                if level_set == 1:  # Easy Mode
+                    enemy_generate(number=2)
+                elif level_set == 2:  # Medium Mode
+                    enemy_generate(number=5)
+                elif level_set == 3:  # Hard Mode
+                    enemy_generate(number=8)
+                elif level_set == 4:  # Death Mode
+                    enemy_generate(number=12)
+                else:  # Default Mode
+                    enemy_generate(number=ENEMY_NUMBER)
+                enemy_exist = True
             # Endless Run
             main()  # Main Game Function - Endless Run
         # Update Pygame Screen
