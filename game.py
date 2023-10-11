@@ -267,7 +267,7 @@ def main():
     enemy_move()
     # Movement of Mini Boss
     miniboss_move()
-    # Movement of Boss
+    # Movement of Boss - TODO
 
     # Create Movement
     crate_movement()
@@ -353,7 +353,7 @@ def main():
         current_miniboss = current_miniboss.next  # Next Element
     ################################################################################
     ################################################################################
-    # Collision of Boss & Player Bullet
+    # Collision of Boss & Player Bullet - TODO
     ################################################################################
     ################################################################################
     # Collision of Player & Enemy Bullet
@@ -425,7 +425,7 @@ def main():
     show_enemy(enemy_list=enemies, health_bar=ENEMY_HEALTH_BAR)
     # Update Mini Boss
     show_enemy(enemy_list=miniboss, health_bar=MINI_BOSS_HEALTH_BAR)
-    # Update Boss
+    # Update Boss - TODO
 
     # Update Create
     show_crate(crate_list=crates)
@@ -488,18 +488,21 @@ if __name__ == "__main__":
                     intro_screen = False
                 # End Screen
                 elif end_screen and buttons.name('restart').rect.collidepoint(event.pos):
+                    # Restart Endless Run
                     end_screen = False
                     score = 0
                     player.life[1] = player.life[0]
                     player.reset()
                     player.invincible_at = time.time()
-
                 elif end_screen and buttons.name('main_menu').rect.collidepoint(event.pos):
+                    # Back to Main Menu/Intro Menu
                     end_screen = False
                     intro_screen = True
                 elif end_screen and buttons.name('score_board').rect.collidepoint(event.pos):
+                    # Show Score Board
                     score_board = True
                 elif end_screen and buttons.name('quit').rect.collidepoint(event.pos):
+                    # Quit Game
                     RUNNING = False
                 # Pause Screen
                 elif score_board and buttons.name('main_menu').rect.collidepoint(event.pos):
@@ -537,7 +540,7 @@ if __name__ == "__main__":
                     player_armory.search_active().active = False
                     player_armory.index_at(index=2).active = True
             # Event of Key Release
-            if event.type == pygame.KEYUP and not intro_screen:
+            if event.type == pygame.KEYUP and not intro_screen and not end_screen:
                 # Stop Player Movement
                 if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                     player.x_change = 0
@@ -571,6 +574,8 @@ if __name__ == "__main__":
         ################################################################################
         ################################################################################
         elif score_board:
+            # Show Score Board - TODO
+
             # Show Button
             screen.blit(buttons.name('main_menu').image, buttons.name('main_menu').rect.topleft)
             screen.blit(buttons.name('quit').image, buttons.name('score_board').rect.topleft)
@@ -591,4 +596,7 @@ if __name__ == "__main__":
             main()  # Main Game Function - Endless Run
         # Update Pygame Screen
         pygame.display.update()
-    pygame.quit()  # Exit Game
+    # Store and Update Scores - TODO
+
+    # Exit Game
+    pygame.quit()

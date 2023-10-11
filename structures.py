@@ -353,6 +353,7 @@ class CrateList:
                 return
             current = current.next
 
+
 ##################################################
 # Class Prototype - Button
 ##################################################
@@ -363,6 +364,7 @@ class Button:
         self.rect = self.image.get_rect()
         # Connect
         self.next = None
+
 
 class ButtonList:
     def __init__(self):
@@ -385,6 +387,7 @@ class ButtonList:
                 return current
             current = current.next
         return False
+
 
 ##################################################
 # Main Function

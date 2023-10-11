@@ -227,6 +227,7 @@ def crate_movement():
         # Next Step
         current_crate = current_crate.next
 
+
 ##################################################
 # Button Block
 ##################################################
@@ -242,6 +243,7 @@ buttons.name(name='restart').rect.topleft = (150, 420)
 buttons.name(name='main_menu').rect.topleft = (150, 480)
 buttons.name(name='score_board').rect.topleft = (150, 540)
 buttons.name(name='quit').rect.topleft = (150, 600)
+
 
 ##################################################
 # Main Function
