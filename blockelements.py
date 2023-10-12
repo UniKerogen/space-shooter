@@ -7,6 +7,7 @@
 ##################################################
 from structures import *
 from settings import *
+import math
 import pygame
 import random
 
@@ -120,23 +121,43 @@ enemy_armory = Armory()
 enemy_armory.append(name='bullet0',
                     index=0,
                     position=[0, 0],
-                    speed=ENEMY_BULLET_SPEED_BASE,
+                    speed=ENEMY_BULLET_SPEED_BASE * 0.5,
                     exp_range=BULLET_EXPLOSION_RANGE,
                     contact=[[24, 45], [26, 45]],
                     active=False,
                     image=pygame.image.load('resources/enemy/bullet0.png'),
                     cooldown=ENEMY_BULLET_COOLDOWN_BASE,
-                    damage=10)
+                    damage=20)
 enemy_armory.append(name='bullet1',
                     index=1,
                     position=[0, 0],
                     speed=ENEMY_BULLET_SPEED_BASE * 0.1,
-                    exp_range=BULLET_EXPLOSION_RANGE * 0.5,
+                    exp_range=math.floor(BULLET_EXPLOSION_RANGE * 0.5),
                     contact=[[24, 45], [26, 45]],
                     active=False,
                     image=pygame.image.load('resources/enemy/bullet1.png'),
                     cooldown=ENEMY_BULLET_COOLDOWN_BASE * 3,
-                    damage=30)
+                    damage=40)
+enemy_armory.append(name='bullet2',
+                    index=2,
+                    position=[0, 0],
+                    speed=ENEMY_BULLET_SPEED_BASE,
+                    exp_range=math.floor(BULLET_EXPLOSION_RANGE * 0.5),
+                    contact=[[17, 49], [33, 49]],
+                    active=False,
+                    image=pygame.image.load('resources/enemy/bullet2.png'),
+                    cooldown=ENEMY_BULLET_COOLDOWN_BASE * 0.75,
+                    damage=10)
+enemy_armory.append(name='bullet3',
+                    index=3,
+                    position=[0, 0],
+                    speed=ENEMY_BULLET_SPEED_BASE * 1.2,
+                    exp_range=math.floor(BULLET_EXPLOSION_RANGE * 0.5),
+                    contact=[[24, player.position[1]], [26, player.position[1]]],
+                    active=False,
+                    image=pygame.image.load('resources/enemy/bullet3.png'),
+                    cooldown=ENEMY_BULLET_COOLDOWN_BASE * 5,
+                    damage=100)
 
 ##################################################
 # Mini Boss Block
@@ -165,11 +186,18 @@ def miniboss_create():
         current_miniboss.center = [sum(x) for x in
                                    zip(current_miniboss.position, [MINI_BOSS_SIZE / 2, MINI_BOSS_SIZE / 2])]
         current_miniboss.fire_cooldown = [0] * MINI_BOSS_WEAPON_AMOUNT
+        for weapon in current_miniboss.weapon:
+            index = current_miniboss.weapon.index(weapon)
+            max_cooldown = enemy_armory.index_at(index=weapon).cooldown
+            current_miniboss.fire_cooldown[index] = random.randint(0, max_cooldown)
         current_miniboss.y_axis = random.randint(MINI_BOSS_Y_AXIS[0], MINI_BOSS_Y_AXIS[1])
         # Type Specific Adjustment
         if miniboss_type == 0:  # Type 0 MiniBoss
-            current_miniboss.each_weapon_amount = (2, 1)
-            current_miniboss.fire_shift = (((0, 10), (50, 10)), (25, 53))
+            current_miniboss.each_weapon_amount = (2, 1, 2)
+            current_miniboss.fire_shift = (((12, 12), (38, 12)), (25, 53), ((-1, 9), (50, 9)))
+        elif miniboss_type == 1:  # Type 1 MiniBoss
+            current_miniboss.each_weapon_amount = (2, 1, 1)
+            current_miniboss.fire_shift = (((1, 4), (57, 4)), (25, 53), (25, 50))
 
 
 def miniboss_move():
@@ -198,7 +226,6 @@ def miniboss_move():
 # Boss Block
 ##################################################
 bosses = EnemyList()
-
 
 ##################################################
 # Create Block

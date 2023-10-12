@@ -174,7 +174,7 @@ def main():
     # Mini Boss Spawn
     if score > 0 and score % 100 % 30 == 0 and len(miniboss) == 0:
         miniboss_create()
-    # Boss Spawn
+    # Boss Spawn - TODO
     ################################################################################
     ################################################################################
     # Find Active Bullet
@@ -227,19 +227,22 @@ def main():
         if current_miniboss.active:
             # Fire Bullet at current miniboss position
             for current_weapon in current_miniboss.weapon:
-                if current_miniboss.fire_cooldown[current_weapon] <= 0:
+                weapon_index = current_miniboss.weapon.index(current_weapon)
+                if current_miniboss.fire_cooldown[weapon_index] <= 0:
                     for shot_number in range(current_miniboss.each_weapon_amount[current_weapon]):
-                        fire_position = \
-                            [sum(x) for x in zip(current_miniboss.position,
-                                                 current_miniboss.fire_shift[current_weapon][shot_number])] \
-                                if current_miniboss.each_weapon_amount[current_weapon] > 1 else \
-                                [sum(x) for x in zip(current_miniboss.position,
-                                                     current_miniboss.fire_shift[current_weapon])]
+                        if current_miniboss.each_weapon_amount[current_weapon] > 1:
+                            fire_shift = current_miniboss.fire_shift[current_weapon][shot_number]
+                            fire_position = [sum(x) for x in zip(current_miniboss.position, fire_shift)]
+                        else:
+                            fire_shift = current_miniboss.fire_shift[current_weapon]
+                            fire_position = [sum(x) for x in zip(current_miniboss.position, fire_shift)]
                         contact_point = [list(item) for item in enemy_armory.index_at(index=current_weapon).contact]
                         contact_point = [[sum(x) for x in zip(item, fire_position)] for item in contact_point]
+                        # Add Enemy Bullet
                         enemy_bullets.append(index=current_weapon, position=fire_position, contact=contact_point)
                     # Reset Cooldown
-                    current_miniboss.fire_cooldown[current_weapon] = enemy_armory.index_at(
+                    current_miniboss.fire_cooldown[
+                        current_miniboss.weapon.index(current_weapon)] = enemy_armory.index_at(
                         index=current_weapon).cooldown
                 else:
                     current_miniboss.fire_cooldown = [sum(x) for x in zip(current_miniboss.fire_cooldown,
@@ -276,7 +279,10 @@ def main():
     while current_bullet:
         current_bullet.position[1] += enemy_armory.index_at(index=current_bullet.index).speed  # Update Position
         for item in current_bullet.contact:  # Update Contact
-            item[1] += enemy_armory.index_at(index=current_bullet.index).speed
+            if current_bullet.index == 3:
+                item[1] = player.center[1]
+            else:
+                item[1] += enemy_armory.index_at(index=current_bullet.index).speed
         if current_bullet.position[1] >= SCREEN_HEIGHT:  # Remove After Off-Screen
             enemy_bullets.delete(current_bullet=current_bullet)
         current_bullet = current_bullet.next
@@ -351,8 +357,11 @@ def main():
     while current_bullet and player.active and not player.invincible:
         explosion_range = enemy_armory.index_at(index=current_bullet.index).exp_range
         # Set Danger Zone
-        danger_range = [player.position[1] - explosion_range * 2, player.position[1] + PLAYER_SIZE]
-        if danger_range[0] < current_bullet.position[1] < danger_range[1]:
+        if current_bullet.index == 3:
+            danger_range = [0, SCREEN_HEIGHT]
+        else:
+            danger_range = [player.position[1] - explosion_range * 2, player.position[1] + PLAYER_SIZE]
+        if danger_range[0] < current_bullet.position[1] and current_bullet.position[1] < danger_range[1]:
             if collide_player(player_block=player, bullet_block=current_bullet):  # Check Collision
                 # Decrease Player Shield and Health
                 shield = player.shield - enemy_armory.index_at(index=current_bullet.index).damage
