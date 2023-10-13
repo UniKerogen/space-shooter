@@ -358,7 +358,7 @@ def main():
         explosion_range = enemy_armory.index_at(index=current_bullet.index).exp_range
         # Set Danger Zone
         if current_bullet.index == 3:
-            danger_range = [0, SCREEN_HEIGHT]
+            danger_range = [0, SCREEN_HEIGHT - ENEMY_SIZE]
         else:
             danger_range = [player.position[1] - explosion_range * 2, player.position[1] + PLAYER_SIZE]
         if danger_range[0] < current_bullet.position[1] and current_bullet.position[1] < danger_range[1]:
