@@ -193,12 +193,17 @@ def miniboss_create():
         current_miniboss.y_axis = random.randint(MINI_BOSS_Y_AXIS[0], MINI_BOSS_Y_AXIS[1])
         # Type Specific Adjustment
         if miniboss_type == 0:  # Type 0 MiniBoss
-            current_miniboss.each_weapon_amount = (2, 1, 2)
-            current_miniboss.fire_shift = (((12, 12), (38, 12)), (25, 53), ((-1, 9), (50, 9)))
+            current_miniboss.each_weapon_amount = (2, 1, 2, 1)
+            current_miniboss.fire_shift = (((12, 12), (38, 12)), (25, 53), ((-1, 9), (50, 9)), (28, 56))
         elif miniboss_type == 1:  # Type 1 MiniBoss
-            current_miniboss.each_weapon_amount = (2, 1, 1)
-            current_miniboss.fire_shift = (((1, 4), (57, 4)), (25, 53), (25, 50))
-
+            current_miniboss.each_weapon_amount = (2, 1, 1, 1)
+            current_miniboss.fire_shift = (((1, 4), (57, 4)), (25, 53), (25, 50), (28, 56))
+        elif miniboss_type == 2: # Type 2 MiniBoss
+            current_miniboss.each_weapon_amount = (2, 2, 2, 1)
+            current_miniboss.fire_shift = (((12, 23), (38, 23)), ((7, 24), (43, 24)), ((-11, -13), (63, -13)), (26, 2))
+        elif miniboss_type == 3: # Type 3 MiniBoss
+            current_miniboss.each_weapon_amount = (2, 1, 1, 1)
+            current_miniboss.fire_shift = (((13, 21), (37, 21)), (25, 34), (25, 49), (25, 24))
 
 def miniboss_move():
     current_miniboss = miniboss.head
