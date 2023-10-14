@@ -129,6 +129,18 @@ class BulletList:
             current = current.next
         return current
 
+    # Delete All Elements
+    def delete_list(self):
+        current = self.head
+        while current:
+            previous = current.next
+            del current.index
+            del current.position
+            del current.contact
+            del current.next
+            current = previous
+        self.head = None
+
 
 ##################################################
 # Class Prototype - Amory
@@ -139,15 +151,15 @@ class AmoryBlock:
         self.next = None
         # Format Data
         self.name = name
-        self.index = index
-        self.position = position
-        self.speed = speed
-        self.exp_range = exp_range
-        self.contact = tuple(tuple(i) for i in contact) if contact is not None else None
-        self.active = active
-        self.image = image
-        self.cooldown = cooldown
-        self.damage = damage
+        self.index = index  # Weapon Index
+        self.position = position  # Image Position at Top Left
+        self.speed = speed  # Movement Speed
+        self.exp_range = exp_range  # Bullet Explosion Range Shift
+        self.contact = tuple(tuple(i) for i in contact) if contact is not None else None  # Contact Point - Calculation
+        self.active = active  # Bullet Status
+        self.image = image  # Bullet Image
+        self.cooldown = cooldown  # Bullet CoolDown
+        self.damage = damage  # Bullet Damage
 
 
 class Armory:
@@ -287,6 +299,21 @@ class EnemyList:
         while current.next:
             current = current.next
         return current.index
+
+        # Delete All Elements
+    def delete_list(self):
+        current = self.head
+        while current:
+            previous = current.next
+            del current.name, current.index
+            del current.direction, current.position, current.center, current.speed
+            del current.active, current.image, current.health
+            del current.weapon, current.hit_range
+            del current.explode_at, current.health_show, current.fire_cooldown
+            del current.next
+            del current.y_axis, current.each_weapon_amount, current.fire_shift
+            current = previous
+        self.head = None
 
 
 ##################################################

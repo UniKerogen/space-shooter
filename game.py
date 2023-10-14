@@ -36,9 +36,6 @@ background_rect3.topleft = (0, -SCREEN_HEIGHT * 2)
 ##################################################
 # Structures Setting
 ##################################################
-# On Screen Bullet Storage
-player_bullets = BulletList()
-enemy_bullets = BulletList()
 
 
 ####################################################################################################
@@ -123,7 +120,7 @@ def collide_enemy(enemy_block, bullet_block):
         distance = ((enemy_block.center[0] - coordinates[0]) ** 2 +
                     (enemy_block.center[1] - coordinates[1]) ** 2
                     ) ** 0.5
-        if distance <= enemy_block.hit_range:
+        if distance <= enemy_block.hit_range + player_armory.index_at(index=bullet_block.index).exp_range:
             return True  # Return True if within Explosion Range
     return False
 
@@ -135,7 +132,7 @@ def collide_player(player_block, bullet_block):
         distance = ((player_block.center[0] - coordinates[0]) ** 2 +
                     (player_block.center[1] - coordinates[1]) ** 2
                     ) ** 0.5
-        if distance < enemy_armory.index_at(index=bullet_block.index).exp_range:
+        if distance <= player_block.hit_range + enemy_armory.index_at(index=bullet_block.index).exp_range:
             return True  # Return True if within Explosion Range
     return False
 
@@ -490,10 +487,7 @@ if __name__ == "__main__":
                     player.reset()
                     player.invincible_at = time.time()
                     # Reset Enemy and Bullets
-                    enemy_bullets = BulletList()
-                    player_bullets = BulletList()
-                    miniboss = EnemyList()
-                    enemies = EnemyList()
+                    reset_screen()
                     enemy_exist = False
                 elif end_screen and buttons.name('main_menu').rect.collidepoint(event.pos):
                     # Back to Main Menu/Intro Menu

@@ -7,7 +7,6 @@
 ##################################################
 from structures import *
 from settings import *
-import math
 import pygame
 import random
 
@@ -33,7 +32,7 @@ player_armory.append(name='bullet0',
                      index=0,
                      position=[BULLET_ORIGIN_X, BULLET_ORIGIN_Y],
                      speed=BULLET_SPEED_BASE,
-                     exp_range=BULLET_EXPLOSION_RANGE,
+                     exp_range=0,
                      contact=[[BULLET_ORIGIN_X + 28, BULLET_ORIGIN_Y],
                               [BULLET_ORIGIN_X + 32, BULLET_ORIGIN_Y]],
                      active=True,
@@ -45,7 +44,7 @@ player_armory.append(name='bullet1',
                      index=1,
                      position=[BULLET_ORIGIN_X, BULLET_ORIGIN_Y],
                      speed=BULLET_SPEED_BASE,
-                     exp_range=BULLET_EXPLOSION_RANGE * 0.8,
+                     exp_range=2,
                      contact=[[BULLET_ORIGIN_X + 18, BULLET_ORIGIN_Y + 20],
                               [BULLET_ORIGIN_X + 42, BULLET_ORIGIN_Y + 20]],
                      active=False,
@@ -57,7 +56,7 @@ player_armory.append(name='bullet2',
                      index=2,
                      position=[BULLET_ORIGIN_X, BULLET_ORIGIN_Y],
                      speed=BULLET_SPEED_BASE * 1.5,
-                     exp_range=BULLET_EXPLOSION_RANGE * 0.5,
+                     exp_range=2,
                      contact=[[BULLET_ORIGIN_X + 26, BULLET_ORIGIN_Y],
                               [BULLET_ORIGIN_X + 34, BULLET_ORIGIN_Y]],
                      active=False,
@@ -87,6 +86,8 @@ def enemy_generate(number=ENEMY_NUMBER):
                        direction=-1 if random.randint(0, 1) == 0 else 1,
                        weapon=random.randint(0, ENEMY_WEAPON_TYPE - 1),
                        hit_range=ENEMY_SIZE / 2 * ENEMY_HIT_RANGE)
+        current_enemy = enemies.index_at(index=num_enemy)
+        current_enemy.fire_cooldown = random.randint(0, enemy_armory.index_at(index=current_enemy.weapon).cooldown)
 
 
 # Enemy Movement
@@ -111,7 +112,7 @@ def enemy_reset(enemy_block):
     enemy_block.health[1] = enemy_block.health[0]
     enemy_block.weapon = random.randint(0, ENEMY_WEAPON_TYPE - 1)
     enemy_block.active = True
-    enemy_block.cooldown = random.randint(0, enemy_armory.index_at(index=enemy_block.weapon).cooldown)
+    enemy_block.fire_cooldown = random.randint(0, enemy_armory.index_at(index=enemy_block.weapon).cooldown)
     # Self Start Element Reset
     enemy_block.explode = None
     enemy_block.health_show = True
@@ -125,7 +126,7 @@ enemy_armory.append(name='bullet0',
                     index=0,
                     position=[0, 0],
                     speed=ENEMY_BULLET_SPEED_BASE * 0.5,
-                    exp_range=BULLET_EXPLOSION_RANGE,
+                    exp_range=3,
                     contact=[[24, 45], [26, 45]],
                     active=False,
                     image=pygame.image.load('resources/enemy/bullet0.png'),
@@ -135,7 +136,7 @@ enemy_armory.append(name='bullet1',
                     index=1,
                     position=[0, 0],
                     speed=ENEMY_BULLET_SPEED_BASE * 0.1,
-                    exp_range=math.floor(BULLET_EXPLOSION_RANGE * 0.5),
+                    exp_range=3,
                     contact=[[24, 45], [26, 45]],
                     active=False,
                     image=pygame.image.load('resources/enemy/bullet1.png'),
@@ -145,7 +146,7 @@ enemy_armory.append(name='bullet2',
                     index=2,
                     position=[0, 0],
                     speed=ENEMY_BULLET_SPEED_BASE,
-                    exp_range=math.floor(BULLET_EXPLOSION_RANGE * 0.5),
+                    exp_range=2,
                     contact=[[17, 49], [33, 49]],
                     active=False,
                     image=pygame.image.load('resources/enemy/bullet2.png'),
@@ -155,12 +156,22 @@ enemy_armory.append(name='bullet3',
                     index=3,
                     position=[0, 0],
                     speed=ENEMY_BULLET_SPEED_BASE * 1.2,
-                    exp_range=math.floor(BULLET_EXPLOSION_RANGE * 0.5),
+                    exp_range=2,
                     contact=[[24, player.position[1]], [26, player.position[1]]],
                     active=False,
                     image=pygame.image.load('resources/enemy/bullet3.png'),
                     cooldown=ENEMY_BULLET_COOLDOWN_BASE * 5,
                     damage=100)
+enemy_armory.append(name='bullet4',
+                    index=4,
+                    position=[0, 0],
+                    speed=ENEMY_BULLET_SPEED_BASE * 0.8,
+                    exp_range=2,
+                    contact=[[24, 33], [26, 33]],
+                    active=False,
+                    image=pygame.image.load('resources/enemy/bullet4.png'),
+                    cooldown=ENEMY_BULLET_COOLDOWN_BASE * 1.75,
+                    damage=60)
 
 ##################################################
 # Mini Boss Block
@@ -202,12 +213,13 @@ def miniboss_create():
         elif miniboss_type == 1:  # Type 1 MiniBoss
             current_miniboss.each_weapon_amount = (2, 1, 1, 1)
             current_miniboss.fire_shift = (((1, 4), (57, 4)), (25, 53), (25, 50), (28, 56))
-        elif miniboss_type == 2: # Type 2 MiniBoss
+        elif miniboss_type == 2:  # Type 2 MiniBoss
             current_miniboss.each_weapon_amount = (2, 2, 2, 1)
             current_miniboss.fire_shift = (((12, 23), (38, 23)), ((7, 24), (43, 24)), ((-11, -13), (63, -13)), (26, 2))
-        elif miniboss_type == 3: # Type 3 MiniBoss
+        elif miniboss_type == 3:  # Type 3 MiniBoss
             current_miniboss.each_weapon_amount = (2, 1, 1, 1)
             current_miniboss.fire_shift = (((13, 21), (37, 21)), (25, 34), (25, 49), (25, 24))
+
 
 def miniboss_move():
     current_miniboss = miniboss.head
@@ -290,6 +302,20 @@ buttons.name(name='restart').rect.topleft = (150, 420)
 buttons.name(name='main_menu').rect.topleft = (150, 480)
 buttons.name(name='score_board').rect.topleft = (150, 540)
 buttons.name(name='quit').rect.topleft = (150, 600)
+
+##################################################
+# Screen Element Storage
+##################################################
+# On Screen Bullet Storage
+player_bullets = BulletList()
+enemy_bullets = BulletList()
+
+
+def reset_screen():
+    enemy_bullets.delete_list()
+    player_bullets.delete_list()
+    miniboss.delete_list()
+    enemies.delete_list()
 
 
 ##################################################
