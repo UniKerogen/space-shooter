@@ -6,12 +6,7 @@
 ####################################################################################################
 # Libraries
 ####################################################################################################
-import pygame
-import random
 import time
-
-from structures import *
-from settings import *
 from blockelements import *
 
 ####################################################################################################
@@ -38,10 +33,6 @@ background_rect3 = background.get_rect()
 background_rect1.topleft = (0, 0)
 background_rect2.topleft = (0, -SCREEN_HEIGHT)
 background_rect3.topleft = (0, -SCREEN_HEIGHT * 2)
-# Shield
-shield_image = pygame.image.load('resources/player/shield.png')
-# Invincible
-invincible_image = pygame.image.load('resources/player/invincible.png')
 ##################################################
 # Structures Setting
 ##################################################
@@ -57,7 +48,7 @@ def show_player(player_block):
     global screen
     # Invincible Coat
     if player_block.invincible:
-        screen.blit(invincible_image, (player_block.position[0], player_block.position[1]))
+        screen.blit(player.invincible_image, (player_block.position[0], player_block.position[1]))
     # Player Self
     screen.blit(player_block.image, (player_block.position[0], player_block.position[1]))
     # Shield
@@ -77,7 +68,7 @@ def show_player(player_block):
                              rect=(player_block.position[0], player_block.position[1] + player_block.health_bar[2],
                                    player_block.shield / PLAYER_SHIELD_MAX * player_block.health_bar[0],
                                    player_block.health_bar[1]))
-            screen.blit(shield_image, (player_block.position[0], player_block.position[1] - 5))
+            screen.blit(player.shield_image, (player_block.position[0], player_block.position[1] - 5))
 
 
 # Show Each Create
@@ -132,7 +123,7 @@ def collide_enemy(enemy_block, bullet_block):
         distance = ((enemy_block.center[0] - coordinates[0]) ** 2 +
                     (enemy_block.center[1] - coordinates[1]) ** 2
                     ) ** 0.5
-        if distance < player_armory.index_at(index=bullet_block.index).exp_range:
+        if distance <= enemy_block.hit_range:
             return True  # Return True if within Explosion Range
     return False
 

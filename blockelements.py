@@ -20,6 +20,8 @@ player = PlayerBlock(name='player',
                      image=pygame.image.load('resources/player/player.png'),
                      speed=PLAYER_SPEED,
                      health=100)
+player.shield_image = pygame.image.load('resources/player/shield.png')
+player.invincible_image = pygame.image.load('resources/player/invincible.png')
 
 ##################################################
 # Player Armory Block
@@ -83,7 +85,8 @@ def enemy_generate(number=ENEMY_NUMBER):
                            'resources/enemy/enemy' + str(random.randint(0, ENEMY_TYPE - 1)) + '.png'),
                        health=random.randint(ENEMY_BASE_HEALTH[0], ENEMY_BASE_HEALTH[1]),
                        direction=-1 if random.randint(0, 1) == 0 else 1,
-                       weapon=random.randint(0, ENEMY_WEAPON_TYPE - 1))
+                       weapon=random.randint(0, ENEMY_WEAPON_TYPE - 1),
+                       hit_range=ENEMY_SIZE / 2 * ENEMY_HIT_RANGE)
 
 
 # Enemy Movement
@@ -179,7 +182,8 @@ def miniboss_create():
                             'resources/miniboss/miniboss' + str(miniboss_type) + '.png'),
                         health=random.randint(MINI_BOSS_HEALTH[0], MINI_BOSS_HEALTH[1]),
                         direction=-1 if random.randint(0, 1) == 0 else 1,
-                        weapon=random.sample([i for i in range(ENEMY_WEAPON_TYPE)], MINI_BOSS_WEAPON_AMOUNT)
+                        weapon=random.sample([i for i in range(ENEMY_WEAPON_TYPE)], MINI_BOSS_WEAPON_AMOUNT),
+                        hit_range=MINI_BOSS_SIZE / 2 * MINI_BOSS_HIT_RANGE
                         )
         # Set Mini Boss Center
         current_miniboss = miniboss.index_at(index=miniboss.get_last_index())

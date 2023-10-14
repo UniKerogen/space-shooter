@@ -21,8 +21,11 @@ class PlayerBlock:
         # Self Start Element
         self.center = [sum(x) for x in zip(position, [PLAYER_SIZE / 2, PLAYER_SIZE / 2])]
         # Background Information
+        self.hit_range = round(PLAYER_SIZE / 2 * PLAYER_HIT_RANGE)
         self.shield = 0
+        self.shield_image = None
         self.invincible = False
+        self.invincible_image = None
         self.health_show = True
         self.active = True
         self.life = [3, 3]
@@ -194,7 +197,7 @@ class Armory:
 # Class Prototype - Enemy
 ##################################################
 class EnemyBlock:
-    def __init__(self, name, index, position, speed, active, image, health, direction, weapon):
+    def __init__(self, name, index, position, speed, active, image, health, direction, weapon, hit_range):
         self.name = name
         self.index = index
         # To Update Element
@@ -206,6 +209,7 @@ class EnemyBlock:
         self.image = image
         self.health = [health, health]
         self.weapon = weapon
+        self.hit_range = round(hit_range)
         # Self Start Element
         self.explode_at = None
         self.health_show = True
@@ -243,8 +247,8 @@ class EnemyList:
             current = current.next
         return count
 
-    def append(self, name, index, position, speed, active, image, health, direction, weapon):
-        new_node = EnemyBlock(name, index, position, speed, active, image, health, direction, weapon)
+    def append(self, name, index, position, speed, active, image, health, direction, weapon, hit_range):
+        new_node = EnemyBlock(name, index, position, speed, active, image, health, direction, weapon, hit_range)
         if not self.head:
             self.head = new_node
         else:
