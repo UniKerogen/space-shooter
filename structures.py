@@ -238,11 +238,11 @@ class EnemyBlock:
         self.position[0] += self.speed * self.direction
         self.center = [sum(x) for x in zip(self.position, [block_size / 2, block_size / 2])]
         # Far Left Side
-        if self.position[0] <= BOUNDARY_LEFT:
+        if self.position[0] < BOUNDARY_LEFT:
             self.position[0] = BOUNDARY_RIGHT - ENEMY_SIZE
             self.position[1] = random.randint(block_spawn[0], block_spawn[1])
         # Far Right Side
-        elif self.position[0] >= BOUNDARY_RIGHT - ENEMY_SIZE:
+        elif self.position[0] > BOUNDARY_RIGHT - ENEMY_SIZE:
             self.position[0] = BOUNDARY_LEFT
             self.position[1] = random.randint(block_spawn[0], block_spawn[1])
 
@@ -301,6 +301,7 @@ class EnemyList:
         return current.index
 
         # Delete All Elements
+
     def delete_list(self):
         current = self.head
         while current:

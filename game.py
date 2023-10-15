@@ -33,6 +33,8 @@ background_rect3 = background.get_rect()
 background_rect1.topleft = (0, 0)
 background_rect2.topleft = (0, -SCREEN_HEIGHT)
 background_rect3.topleft = (0, -SCREEN_HEIGHT * 2)
+
+
 ##################################################
 # Structures Setting
 ##################################################
@@ -526,15 +528,9 @@ if __name__ == "__main__":
                     if player.active:
                         BULLET_FIRE = True
                 # Weapon Switch -- TO BE DISABLED
-                elif event.key == pygame.K_1 and not intro_screen:
+                elif event.key == pygame.K_0 and not intro_screen:
                     player_armory.search_active().active = False
-                    player_armory.index_at(index=0).active = True
-                elif event.key == pygame.K_2 and not intro_screen:
-                    player_armory.search_active().active = False
-                    player_armory.index_at(index=1).active = True
-                elif event.key == pygame.K_3 and not intro_screen:
-                    player_armory.search_active().active = False
-                    player_armory.index_at(index=2).active = True
+                    player_armory.index_at(index=10).active = True
             # Event of Key Release
             if event.type == pygame.KEYUP and not intro_screen and not end_screen:
                 # Stop Player Movement

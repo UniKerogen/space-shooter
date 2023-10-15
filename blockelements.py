@@ -18,7 +18,7 @@ player = PlayerBlock(name='player',
                      position=[SCREEN_WIDTH // 2 - PLAYER_SIZE / 2, SCREEN_HEIGHT - 128],
                      image=pygame.image.load('resources/player/player.png'),
                      speed=PLAYER_SPEED,
-                     health=100)
+                     health=PLAYER_HEALTH)
 player.shield_image = pygame.image.load('resources/player/shield.png')
 player.invincible_image = pygame.image.load('resources/player/invincible.png')
 
@@ -43,14 +43,14 @@ player_armory.append(name='bullet0',
 player_armory.append(name='bullet1',
                      index=1,
                      position=[BULLET_ORIGIN_X, BULLET_ORIGIN_Y],
-                     speed=BULLET_SPEED_BASE,
+                     speed=BULLET_SPEED_BASE * 1.1,
                      exp_range=2,
                      contact=[[BULLET_ORIGIN_X + 18, BULLET_ORIGIN_Y + 20],
                               [BULLET_ORIGIN_X + 42, BULLET_ORIGIN_Y + 20]],
                      active=False,
                      image=pygame.image.load('resources/player/bullet1.png'),
                      cooldown=[BULLET_COOLDOWN_BASE * 0.5, BULLET_COOLDOWN_BASE * 0.5],
-                     damage=20
+                     damage=30
                      )
 player_armory.append(name='bullet2',
                      index=2,
@@ -61,8 +61,20 @@ player_armory.append(name='bullet2',
                               [BULLET_ORIGIN_X + 34, BULLET_ORIGIN_Y]],
                      active=False,
                      image=pygame.image.load('resources/player/bullet2.png'),
-                     cooldown=[BULLET_COOLDOWN_BASE * 0.1, BULLET_COOLDOWN_BASE * 0.1],
+                     cooldown=[BULLET_COOLDOWN_BASE * 1.5, BULLET_COOLDOWN_BASE * 1.5],
                      damage=80
+                     )
+player_armory.append(name='bullet10',
+                     index=10,
+                     position=[BULLET_ORIGIN_X, BULLET_ORIGIN_Y],
+                     speed=BULLET_SPEED_BASE * 1.5,
+                     exp_range=2,
+                     contact=[[BULLET_ORIGIN_X + 26, BULLET_ORIGIN_Y],
+                              [BULLET_ORIGIN_X + 34, BULLET_ORIGIN_Y]],
+                     active=False,
+                     image=pygame.image.load('resources/player/bullet2.png'),
+                     cooldown=[BULLET_COOLDOWN_BASE * 0.2, BULLET_COOLDOWN_BASE * 0.2],
+                     damage=100
                      )
 
 ##################################################
@@ -76,10 +88,9 @@ def enemy_generate(number=ENEMY_NUMBER):
     for num_enemy in range(number):
         enemies.append(name='enemy' + str(num_enemy),
                        index=num_enemy,
-                       position=[random.randint(BOUNDARY_LEFT, BOUNDARY_RIGHT - ENEMY_SIZE),
-                                 random.randint(ENEMY_SPAWN[0], ENEMY_SPAWN[1])],
+                       position=[random.randint(BOUNDARY_LEFT, BOUNDARY_RIGHT - ENEMY_SIZE), -ENEMY_SIZE],
                        speed=random.randint(1, ENEMY_SPEED_MAX) / 1000,
-                       active=True,
+                       active=False,
                        image=pygame.image.load(
                            'resources/enemy/enemy' + str(random.randint(0, ENEMY_TYPE - 1)) + '.png'),
                        health=random.randint(ENEMY_BASE_HEALTH[0], ENEMY_BASE_HEALTH[1]),
@@ -88,13 +99,21 @@ def enemy_generate(number=ENEMY_NUMBER):
                        hit_range=ENEMY_SIZE / 2 * ENEMY_HIT_RANGE)
         current_enemy = enemies.index_at(index=num_enemy)
         current_enemy.fire_cooldown = random.randint(0, enemy_armory.index_at(index=current_enemy.weapon).cooldown)
+        current_enemy.y_axis = random.randint(ENEMY_SPAWN[0], ENEMY_SPAWN[1])
 
 
 # Enemy Movement
 def enemy_move():
     current_enemy = enemies.head
     while current_enemy:
-        current_enemy.update(block_size=ENEMY_SIZE, block_spawn=ENEMY_SPAWN)
+        if current_enemy.position[
+            1] < current_enemy.y_axis and current_enemy.explode_at is None:  # Move Downwards into Screen
+            current_enemy.position[1] += STANDARD_MOVE_SPEED
+            current_enemy.center = [sum(x) for x in zip(current_enemy.position, [ENEMY_SIZE / 2, ENEMY_SIZE / 2])]
+            if current_enemy.position[1] > ENEMY_SPAWN[0] - STANDARD_MOVE_SPEED:  # Active After in Position
+                current_enemy.active = True
+        else:
+            current_enemy.update(block_size=ENEMY_SIZE, block_spawn=ENEMY_SPAWN)
         current_enemy = current_enemy.next
 
 
@@ -102,20 +121,18 @@ def enemy_move():
 def enemy_reset(enemy_block):
     # Reset Enemy Information
     enemy_block.direction = -1 if random.randint(0, 1) == 0 else 1
-    if enemy_block.direction == -1:
-        enemy_block.position = [BOUNDARY_RIGHT - ENEMY_SIZE, random.randint(ENEMY_SPAWN[0], ENEMY_SPAWN[1])]
-    else:
-        enemy_block.position = [BOUNDARY_LEFT, random.randint(ENEMY_SPAWN[0], ENEMY_SPAWN[1])]
+    enemy_block.position = [random.randint(BOUNDARY_LEFT, BOUNDARY_RIGHT - ENEMY_SIZE), -ENEMY_SIZE]
     enemy_block.speed = random.randint(1, ENEMY_SPEED_MAX) / 1000
     enemy_block.image = pygame.image.load('resources/enemy/enemy' + str(random.randint(0, ENEMY_TYPE - 1)) + '.png'),
     enemy_block.image = enemy_block.image[0]
     enemy_block.health[1] = enemy_block.health[0]
     enemy_block.weapon = random.randint(0, ENEMY_WEAPON_TYPE - 1)
-    enemy_block.active = True
+    enemy_block.active = False
     enemy_block.fire_cooldown = random.randint(0, enemy_armory.index_at(index=enemy_block.weapon).cooldown)
     # Self Start Element Reset
-    enemy_block.explode = None
+    enemy_block.explode_at = None
     enemy_block.health_show = True
+    enemy_block.y_axis = random.randint(ENEMY_SPAWN[0], ENEMY_SPAWN[1])
 
 
 ##################################################
@@ -160,7 +177,7 @@ enemy_armory.append(name='bullet3',
                     contact=[[24, player.position[1]], [26, player.position[1]]],
                     active=False,
                     image=pygame.image.load('resources/enemy/bullet3.png'),
-                    cooldown=ENEMY_BULLET_COOLDOWN_BASE * 5,
+                    cooldown=ENEMY_BULLET_COOLDOWN_BASE * 10,
                     damage=100)
 enemy_armory.append(name='bullet4',
                     index=4,
@@ -170,7 +187,7 @@ enemy_armory.append(name='bullet4',
                     contact=[[24, 33], [26, 33]],
                     active=False,
                     image=pygame.image.load('resources/enemy/bullet4.png'),
-                    cooldown=ENEMY_BULLET_COOLDOWN_BASE * 1.75,
+                    cooldown=ENEMY_BULLET_COOLDOWN_BASE * 2,
                     damage=60)
 
 ##################################################
@@ -208,17 +225,33 @@ def miniboss_create():
         current_miniboss.y_axis = random.randint(MINI_BOSS_Y_AXIS[0], MINI_BOSS_Y_AXIS[1])
         # Type Specific Adjustment
         if miniboss_type == 0:  # Type 0 MiniBoss
-            current_miniboss.each_weapon_amount = (2, 1, 2, 1)
-            current_miniboss.fire_shift = (((12, 12), (38, 12)), (25, 53), ((-1, 9), (50, 9)), (28, 56))
+            current_miniboss.each_weapon_amount = (2, 1, 2, 1, 1)
+            current_miniboss.fire_shift = (((12, 12), (38, 12)),
+                                           (25, 53),
+                                           ((-1, 9), (50, 9)),
+                                           (28, 56),
+                                           (25, 2))
         elif miniboss_type == 1:  # Type 1 MiniBoss
-            current_miniboss.each_weapon_amount = (2, 1, 1, 1)
-            current_miniboss.fire_shift = (((1, 4), (57, 4)), (25, 53), (25, 50), (28, 56))
+            current_miniboss.each_weapon_amount = (2, 1, 1, 1, 2)
+            current_miniboss.fire_shift = (((1, 4), (57, 4)),
+                                           (25, 53),
+                                           (25, 50),
+                                           (28, 56),
+                                           ((16, 41), (34, 41)))
         elif miniboss_type == 2:  # Type 2 MiniBoss
-            current_miniboss.each_weapon_amount = (2, 2, 2, 1)
-            current_miniboss.fire_shift = (((12, 23), (38, 23)), ((7, 24), (43, 24)), ((-11, -13), (63, -13)), (26, 2))
+            current_miniboss.each_weapon_amount = (2, 2, 2, 1, 2)
+            current_miniboss.fire_shift = (((12, 23), (38, 23)),
+                                           ((7, 24), (43, 24)),
+                                           ((-11, -13), (63, -13)),
+                                           (26, 2),
+                                           ((-3, -2), (61, -2)))
         elif miniboss_type == 3:  # Type 3 MiniBoss
-            current_miniboss.each_weapon_amount = (2, 1, 1, 1)
-            current_miniboss.fire_shift = (((13, 21), (37, 21)), (25, 34), (25, 49), (25, 24))
+            current_miniboss.each_weapon_amount = (2, 1, 1, 1, 2)
+            current_miniboss.fire_shift = (((13, 21), (37, 21)),
+                                           (25, 34),
+                                           (25, 49),
+                                           (25, 24),
+                                           ((11, 7), (39, 7)))
 
 
 def miniboss_move():
@@ -226,7 +259,7 @@ def miniboss_move():
     while current_miniboss:
         if current_miniboss.position[1] < current_miniboss.y_axis:  # Move Downwards into Screen
             current_miniboss.position[1] += STANDARD_MOVE_SPEED
-            if current_miniboss.position[1] < MINI_BOSS_HEALTH_BAR[1]:  # Active when Fully in Screen
+            if current_miniboss.position[1] > MINI_BOSS_Y_AXIS[0] - STANDARD_MOVE_SPEED:  # Active after in Position
                 current_miniboss.active = True
         else:  # In Position
             current_miniboss.position[0] += current_miniboss.speed * current_miniboss.direction

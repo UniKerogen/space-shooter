@@ -29,7 +29,8 @@ PLAYER_SPEED = 0.5  # Player Movement Speed
 PLAYER_SIZE = 60  # Player Image Size 50x50 Pixel
 PLAYER_HEALTH_BAR = (PLAYER_SIZE, 5, PLAYER_SIZE + 5)  # Width x Height x Shift
 PLAYER_INVINCIBLE_TIME = 5  # Player Invincible Time
-PLAYER_SHIELD_MAX = 200  # Player Max Shield
+PLAYER_HEALTH = 150  # Player Health
+PLAYER_SHIELD_MAX = 300  # Player Max Shield
 PLAYER_HIT_RANGE = 0.83  # Player Got Hit Range Multiplier
 
 # Bullet Modification
@@ -47,10 +48,10 @@ ENEMY_SPEED_MAX = 100  # /1000 -> Max of 0.1
 ENEMY_NUMBER = 4  # On Screen Enemy Number
 ENEMY_TYPE = 8  # Total Number of Enemy
 ENEMY_SPAWN = (125 - ENEMY_SIZE, 300 - ENEMY_SIZE)  # Enemy Spawn Range
-ENEMY_BASE_HEALTH = (80, 150)  # Enemy Base Health Range
+ENEMY_BASE_HEALTH = (100, 200)  # Enemy Base Health Range
 ENEMY_HEALTH_BAR = (ENEMY_SIZE, 5, -10)  # Enemy Health Bar Width x Height x Shift
 ENEMY_HEALTH_BAR_SHIFT = -10  # Distance Between Enemy and Health Bar Display
-ENEMY_WEAPON_TYPE = 5 # Type of Weapon Enemy can use
+ENEMY_WEAPON_TYPE = 5  # Type of Weapon Enemy can use
 ENEMY_BULLET_SPEED_BASE = 0.5  # Base speed of enemy bullet
 ENEMY_BULLET_COOLDOWN_BASE = 2000  # Bullet Cooldown for Enemy
 ENEMY_HIT_RANGE = 0.8  # Enemy Got Hit Range Multiplier
