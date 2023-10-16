@@ -109,8 +109,8 @@ def enemy_generate(number=ENEMY_NUMBER):
 def enemy_move():
     current_enemy = enemies.head
     while current_enemy:
-        if current_enemy.position[
-            1] < current_enemy.y_axis and current_enemy.explode_at is None:  # Move Downwards into Screen
+        if current_enemy.position[1] < current_enemy.y_axis and current_enemy.explode_at is None:
+            # Move Downwards into Screen
             current_enemy.position[1] += STANDARD_MOVE_SPEED
             current_enemy.center = [sum(x) for x in zip(current_enemy.position, [ENEMY_SIZE / 2, ENEMY_SIZE / 2])]
             if current_enemy.position[1] > ENEMY_SPAWN[0] - STANDARD_MOVE_SPEED:  # Active After in Position
@@ -466,6 +466,10 @@ def collide_crate(player_block, crate_block):
         return True  # Return True if within Collecting Range
     return False
 
+
+# Movement - TODO General movement
+def movement(block_list):
+    print("Here")
 
 ##################################################
 # Main Function

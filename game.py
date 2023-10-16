@@ -129,18 +129,18 @@ def bullet_collision(block_list, bullet_list, spawn):
                         current_block.explode_at = time.time()  # Set Explosion Time
                         current_block.active = False  # De-active block
                         current_block.health_show = False  # Hide Health Bar
-                    # Update Score and Crate
-                    if spawn == ENEMY_SPAWN:
-                        score += 1
-                    elif spawn == MINI_BOSS_SPAWN:
-                        score += 5
-                        crate_generate(enemy_block=current_block, chance=100)
-                    elif spawn == BIG_BOSS_SPAWN:
-                        score += 15
-                        crate_generate(enemy_block=current_block, chance=100)
-                        crate_generate(enemy_block=current_block, chance=100)
-                        crate_generate(enemy_block=current_block, chance=50)
-                    crate_generate(enemy_block=current_block, chance=CRATE_CHANCE)
+                        # Update Score and Crate
+                        if spawn == ENEMY_SPAWN:
+                            score += 1
+                        elif spawn == MINI_BOSS_SPAWN:
+                            score += 5
+                            crate_generate(enemy_block=current_block, chance=100)  # Additional Crate
+                        elif spawn == BIG_BOSS_SPAWN:
+                            score += 15
+                            crate_generate(enemy_block=current_block, chance=100)  # Additional Crate
+                            crate_generate(enemy_block=current_block, chance=100)  # Additional Crate
+                            crate_generate(enemy_block=current_block, chance=50)  # 50% Chance of Additional Crate
+                        crate_generate(enemy_block=current_block, chance=CRATE_CHANCE)  # Regular Crate
                     # Delete Bullets
                     bullet_list.delete(current_bullet=current_bullet)
                 current_bullet = current_bullet.next  # Next Bullet
@@ -153,6 +153,10 @@ def bullet_collision(block_list, bullet_list, spawn):
                     block_list.delete(enemy_block=current_block)
         current_block = current_block.next  # Next Block
 
+
+# Continuous Shooting - TODO Continuous Shooting General Function
+def continuous_shooting(block_list):
+    print("Here")
 
 ####################################################################################################
 # Main Function
@@ -169,7 +173,7 @@ def main():
     # Mini Boss Spawn
     if score > 0 and score % 100 % 30 == 0 and len(miniboss) == 0:
         miniboss_create()
-    # Boss Spawn
+    # Boss Spawn - TODO Boss not spawn with score jump i.e. 98 -> 103
     if score > 0 and score % 100 == 0 and len(bosses) == 0:
         boss_create()
     ################################################################################
@@ -313,63 +317,11 @@ def main():
     ################################################################################
     ################################################################################
     # Collision of Mini Boss & Player Bullet
-    current_miniboss = miniboss.head
-    while current_miniboss:  # Iteration of MiniBoss
-        if len(player_bullets) > 0 and current_miniboss.active:
-            current_bullet = player_bullets.head
-            # Iteration of Bullet with Active Zone
-            while current_bullet and current_miniboss.position[1] <= MINI_BOSS_SPAWN[1]:
-                if collide_enemy(enemy_block=current_miniboss, bullet_block=current_bullet):  # Check Collision
-                    # Miniboss Health Decrease
-                    current_miniboss.health[1] -= player_armory.index_at(index=current_bullet.index).damage
-                    # Health Check
-                    if current_miniboss.health[1] <= 0:
-                        current_miniboss.speed = 0  # Stop Moving
-                        current_miniboss.image = explosion_img  # Explosion Image
-                        current_miniboss.explode_at = time.time()  # Explosion Time
-                        current_miniboss.active = False  # De-active Mini Boss
-                        current_miniboss.health_show = False  # Hide Health Bar
-                        score += 5  # Update Score
-                        crate_generate(enemy_block=current_miniboss, chance=100)  # Guarantee a Create
-                        crate_generate(enemy_block=current_miniboss, chance=CRATE_CHANCE)  # Generate Second Create
-                    player_bullets.delete(current_bullet=current_bullet)  # Bullet Reset after Collision
-                current_bullet = current_bullet.next  # Next Bullet
-        # Reset enemy to active after some time
-        if not current_miniboss.active and current_miniboss.explode_at is not None:
-            # Reset Enemy after Explosion of EXPLOSION_TIME
-            if time.time() - current_miniboss.explode_at >= EXPLOSION_TIME:
-                miniboss.delete(enemy_block=current_miniboss)  # Delete Destroyed Miniboss
-        current_miniboss = current_miniboss.next  # Next Element
+    bullet_collision(block_list=miniboss, bullet_list=player_bullets, spawn=MINI_BOSS_SPAWN)
     ################################################################################
     ################################################################################
     # Collision of Boss & Player Bullet
-    current_boss = bosses.head
-    while current_boss:
-        if len(player_bullets) > 0 and current_boss.active:
-            current_bullet = player_bullets.head
-            while current_bullet and current_boss.position[1] <= BIG_BOSS_SPAWN[1]:
-                if collide_enemy(enemy_block=current_boss, bullet_block=current_bullet):
-                    # Boss Health Decrease
-                    current_boss.health[1] -= player_armory.index_at(index=current_bullet.index).damage
-                    # Health Check
-                    if current_boss.health[1] <= 0:
-                        current_boss.speed = 0  # Stop Moving
-                        current_boss.image = explosion_img  # Explosion Image
-                        current_boss.explosion = time.time()  # Explosion Time
-                        current_boss.active = False  # De-active Boss
-                        current_boss.health_show = False  # Hide Health Bar
-                        score += 15  # Update Score
-                        crate_generate(enemy_block=current_boss, chance=100)
-                        crate_generate(enemy_block=current_boss, chance=100)
-                        crate_generate(enemy_block=current_boss, chance=50)
-                        crate_generate(enemy_block=current_boss, chance=CRATE_CHANCE)
-                    player_bullets.delete(current_bullet=current_bullet)  # Delete Bullet
-                current_bullet = current_bullet.next
-        # Reset
-        if not current_boss.active and current_boss.explode_at is not None:
-            if time.time() - current_boss.explode_at >= EXPLOSION_TIME:
-                bosses.delete(enemy_block=current_boss)
-        current_boss = current_boss.next
+    bullet_collision(block_list=bosses, bullet_list=player_bullets, spawn=BIG_BOSS_SPAWN)
     ################################################################################
     ################################################################################
     # Collision of Player & Enemy Bullet
@@ -596,7 +548,7 @@ if __name__ == "__main__":
         ################################################################################
         ################################################################################
         elif score_board:
-            # Show Score Board - TODO
+            # Show Score Board - TODO Show Multiple High Scores
             highest_score = score if highest_score < score else highest_score
             score_board_text = font36.render("Current High Score : " + str(highest_score), True, WHITE)
             score_board_text_rect = score_board_text.get_rect()
@@ -618,11 +570,11 @@ if __name__ == "__main__":
             screen.blit(buttons.name('quit').image, buttons.name('score_board').rect.topleft)
         ################################################################################
         ################################################################################
-        elif level_screen:  # Level Selection - TODO
+        elif level_screen:  # Level Selection - TODO Create Level Selection Screen
             print("Level Screen")
         ################################################################################
         ################################################################################
-        else:  # Normal Game - TODO: Level Differences
+        else:  # Normal Game
             # Generate Enemy - Level Selection
             if not enemy_exist:
                 if level_set == 1:  # Easy Mode
@@ -640,7 +592,7 @@ if __name__ == "__main__":
             main()  # Main Game Function - Endless Run
         # Update Pygame Screen
         pygame.display.update()
-    # Store and Update Scores - TODO
+    # Store and Update Scores - TODO Update and store highest scores
 
     # Exit Game
     pygame.quit()
