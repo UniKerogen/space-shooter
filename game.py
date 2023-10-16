@@ -6,7 +6,6 @@
 ####################################################################################################
 # Libraries
 ####################################################################################################
-import time
 from blockelements import *
 
 ####################################################################################################
@@ -23,8 +22,6 @@ font18 = pygame.font.Font(None, 18)
 font24 = pygame.font.Font(None, 24)
 font30 = pygame.font.Font(None, 30)
 font36 = pygame.font.Font(None, 36)
-# Explosion
-explosion_img = pygame.image.load('resources/explosion.png')
 # Background
 background = pygame.image.load('resources/background.png')
 background_rect1 = background.get_rect()
@@ -114,39 +111,47 @@ def fire_bullet_enemy(bullet_block):
                 (bullet_block.position[0], bullet_block.position[1]))
 
 
-# Check if Player Bullet Hit Enemy
-def collide_enemy(enemy_block, bullet_block):
-    # noinspection PyGlobalUndefined
-    global player_armory
-    for coordinates in bullet_block.contact:
-        distance = ((enemy_block.center[0] - coordinates[0]) ** 2 +
-                    (enemy_block.center[1] - coordinates[1]) ** 2
-                    ) ** 0.5
-        if distance <= enemy_block.hit_range + player_armory.index_at(index=bullet_block.index).exp_range:
-            return True  # Return True if within Explosion Range
-    return False
-
-
-# Check if Enemy Bullet Hit Player
-def collide_player(player_block, bullet_block):
-    global enemy_armory
-    for coordinates in bullet_block.contact:
-        distance = ((player_block.center[0] - coordinates[0]) ** 2 +
-                    (player_block.center[1] - coordinates[1]) ** 2
-                    ) ** 0.5
-        if distance <= player_block.hit_range + enemy_armory.index_at(index=bullet_block.index).exp_range:
-            return True  # Return True if within Explosion Range
-    return False
-
-
-# Check if Player can Collect Create
-def collide_crate(player_block, crate_block):
-    distance = ((player_block.center[0] - crate_block.contact[0]) ** 2 +
-                (player_block.center[1] - crate_block.contact[1]) ** 2
-                ) ** 0.5
-    if distance <= crate_block.collect_range:
-        return True  # Return True if within Collecting Range
-    return False
+# Bullet Collision
+def bullet_collision(block_list, bullet_list, spawn):
+    global score
+    current_block = block_list.head
+    while current_block:  # Iteration of Block List
+        if len(bullet_list) > 0 and current_block.active:
+            current_bullet = bullet_list.head
+            while current_bullet and current_block.position[1] <= spawn[1]:
+                if collide_enemy(enemy_block=current_block, bullet_block=current_bullet):  # Check Collision
+                    # Health Decrease
+                    current_block.health[1] -= player_armory.index_at(index=current_bullet.index).damage
+                    # Health Check
+                    if current_block.health[1] <= 0:
+                        current_block.speed = 0  # Stop Moving
+                        current_block.image = explosion_img  # Set Explosion Image
+                        current_block.explode_at = time.time()  # Set Explosion Time
+                        current_block.active = False  # De-active block
+                        current_block.health_show = False  # Hide Health Bar
+                    # Update Score and Crate
+                    if spawn == ENEMY_SPAWN:
+                        score += 1
+                    elif spawn == MINI_BOSS_SPAWN:
+                        score += 5
+                        crate_generate(enemy_block=current_block, chance=100)
+                    elif spawn == BIG_BOSS_SPAWN:
+                        score += 15
+                        crate_generate(enemy_block=current_block, chance=100)
+                        crate_generate(enemy_block=current_block, chance=100)
+                        crate_generate(enemy_block=current_block, chance=50)
+                    crate_generate(enemy_block=current_block, chance=CRATE_CHANCE)
+                    # Delete Bullets
+                    bullet_list.delete(current_bullet=current_bullet)
+                current_bullet = current_bullet.next  # Next Bullet
+        # Reset block to active after some time
+        if not current_block.active and current_block.explode_at is not None:
+            if time.time() - current_block.explode_at >= EXPLOSION_TIME:
+                if spawn == ENEMY_SPAWN:  # Enemy List
+                    enemy_reset(enemy_block=current_block)
+                else:  # Boss and Mini Boss
+                    block_list.delete(enemy_block=current_block)
+        current_block = current_block.next  # Next Block
 
 
 ####################################################################################################
@@ -247,7 +252,7 @@ def main():
     while current_boss:
         if current_boss.active:
             # Fire Bullet at current big boss position
-            for current_weapon in current_boss:
+            for current_weapon in current_boss.weapon:
                 weapon_index = current_boss.weapon.index(current_weapon)
                 if current_boss.fire_cooldown[weapon_index] <= 0:
                     for shot_number in range(current_boss.each_weapon_amount[current_weapon]):
@@ -304,34 +309,7 @@ def main():
     ################################################################################
     ################################################################################
     # Collision of Enemy & Player Bullet
-    current_enemy = enemies.head
-    while current_enemy:  # Iteration of Enemy
-        if len(player_bullets) > 0 and current_enemy.active:
-            current_bullet = player_bullets.head
-            # Iteration of Player Bullet with Active Zone
-            while current_bullet and current_enemy.position[1] <= ENEMY_SPAWN[1]:
-                if collide_enemy(enemy_block=current_enemy, bullet_block=current_bullet):  # Check Collision
-                    # Enemy Health Decrease
-                    current_enemy.health[1] -= player_armory.index_at(index=current_bullet.index).damage
-                    # Enemy Health Check
-                    if current_enemy.health[1] <= 0:  # Explode at Health of 0
-                        current_enemy.speed = 0  # Stop Moving
-                        current_enemy.image = explosion_img  # Set Explosion Image
-                        current_enemy.explode_at = time.time()  # Set Explosion Time
-                        current_enemy.active = False  # De-active Enemy
-                        current_enemy.health_show = False  # Disable Health Bar Element
-                        score += 1  # Update Score
-                        crate_generate(enemy_block=current_enemy, chance=CRATE_CHANCE)  # Generate Create
-                    player_bullets.delete(current_bullet=current_bullet)  # Bullet Reset after Collision
-                current_bullet = current_bullet.next  # Next Bullet
-        # Reset enemy to active after some time
-        if not current_enemy.active and current_enemy.explode_at is not None:
-            # Reset Enemy after Explosion of EXPLOSION_TIME
-            if time.time() - current_enemy.explode_at >= EXPLOSION_TIME:
-                # Reset Enemy Reset
-                enemy_reset(enemy_block=current_enemy)
-        # Next Enemy
-        current_enemy = current_enemy.next
+    bullet_collision(block_list=enemies, bullet_list=player_bullets, spawn=ENEMY_SPAWN)
     ################################################################################
     ################################################################################
     # Collision of Mini Boss & Player Bullet

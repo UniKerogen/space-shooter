@@ -9,6 +9,7 @@ from structures import *
 from settings import *
 import pygame
 import random
+import time
 
 ##################################################
 # Player Block
@@ -21,6 +22,8 @@ player = PlayerBlock(name='player',
                      health=PLAYER_HEALTH)
 player.shield_image = pygame.image.load('resources/player/shield.png')
 player.invincible_image = pygame.image.load('resources/player/invincible.png')
+# Explosion
+explosion_img = pygame.image.load('resources/explosion.png')
 
 ##################################################
 # Player Armory Block
@@ -312,20 +315,20 @@ def boss_create():
     # Type Specific Adjustment
     if boss_type == 0:  # Type 0 Big Boss
         current_boss.each_weapon_amount = (4, 4, 1, 2, 3)
-        current_boss.fire_shift = ((tuple(sum(x) for x in zip([36, 156], negative_contact(index=0))),
-                                    tuple(sum(x) for x in zip([93, 86], negative_contact(index=0))),
-                                    tuple(sum(x) for x in zip([105, 86], negative_contact(index=0))),
-                                    tuple(sum(x) for x in zip([162, 156], negative_contact(index=0)))),
-                                   (tuple(sum(x) for x in zip([42, 109], negative_contact(index=1))),
-                                    tuple(sum(x) for x in zip([158, 109], negative_contact(index=1))),
-                                    tuple(sum(x) for x in zip([93, 136], negative_contact(index=1))),
-                                    tuple(sum(x) for x in zip([107, 136], negative_contact(index=1)))),
-                                   (tuple(sum(x) for x in zip([92, 143], negative_contact(index=2)))),
-                                   (tuple(sum(x) for x in zip([88, 67], negative_contact(index=3))),
-                                    tuple(sum(x) for x in zip([106, 67], negative_contact(index=3)))),
-                                   (tuple(sum(x) for x in zip([99, 67], negative_contact(index=4))),
-                                    tuple(sum(x) for x in zip([77, 97], negative_contact(index=4))),
-                                    tuple(sum(x) for x in zip([121, 97], negative_contact(index=4))))
+        current_boss.fire_shift = ((contact_point(point=[36, 156], index=0),
+                                    contact_point(point=[93, 86], index=0),
+                                    contact_point(point=[105, 86], index=0),
+                                    contact_point(point=[162, 156], index=0)),
+                                   (contact_point(point=[42, 109], index=1),
+                                    contact_point(point=[158, 109], index=1),
+                                    contact_point(point=[93, 136], index=1),
+                                    contact_point(point=[107, 136], index=1)),
+                                   (contact_point(point=[92, 143], index=2)),
+                                   (contact_point(point=[88, 67], index=3),
+                                    contact_point(point=[106, 67], index=3)),
+                                   (contact_point(point=[99, 67], index=4),
+                                    contact_point(point=[77, 97], index=4),
+                                    contact_point(point=[121, 97], index=4))
                                    )
 
 
@@ -428,8 +431,41 @@ def negative_contact(index):
     return [-x for x in list(enemy_armory.index_at(index=index).contact[0]).copy()]
 
 
-def bullet_collision(enemy_list, bullet_list):
-    print("Here")
+def contact_point(point, index):
+    return tuple(sum(x) for x in zip(point, negative_contact(index=index)))
+
+
+# Check if Player Bullet Hit Enemy
+def collide_enemy(enemy_block, bullet_block):
+    for coordinates in bullet_block.contact:
+        distance = ((enemy_block.center[0] - coordinates[0]) ** 2 +
+                    (enemy_block.center[1] - coordinates[1]) ** 2
+                    ) ** 0.5
+        if distance <= enemy_block.hit_range + player_armory.index_at(index=bullet_block.index).exp_range:
+            return True  # Return True if within Explosion Range
+    return False
+
+
+# Check if Enemy Bullet Hit Player
+def collide_player(player_block, bullet_block):
+    for coordinates in bullet_block.contact:
+        distance = ((player_block.center[0] - coordinates[0]) ** 2 +
+                    (player_block.center[1] - coordinates[1]) ** 2
+                    ) ** 0.5
+        if distance <= player_block.hit_range + enemy_armory.index_at(index=bullet_block.index).exp_range:
+            return True  # Return True if within Explosion Range
+    return False
+
+
+# Check if Player can Collect Create
+def collide_crate(player_block, crate_block):
+    distance = ((player_block.center[0] - crate_block.contact[0]) ** 2 +
+                (player_block.center[1] - crate_block.contact[1]) ** 2
+                ) ** 0.5
+    if distance <= crate_block.collect_range:
+        return True  # Return True if within Collecting Range
+    return False
+
 
 ##################################################
 # Main Function
