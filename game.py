@@ -7,6 +7,7 @@
 # Libraries
 ####################################################################################################
 from blockelements import *
+import time
 
 ####################################################################################################
 # Settings
@@ -282,11 +283,11 @@ def main():
     # Player Movement
     player.update()
     # Movement of Each Enemy
-    enemy_move()
+    movement(block_list=enemies, spawn=ENEMY_SPAWN, size=ENEMY_SIZE)
     # Movement of Mini Boss
-    miniboss_move()
+    movement(block_list=miniboss, spawn=MINI_BOSS_SPAWN, size=MINI_BOSS_SIZE)
     # Movement of Boss
-    boss_move()
+    movement(block_list=bosses, spawn=BIG_BOSS_SPAWN, size=BIG_BOSS_SIZE)
     # Create Movement
     crate_movement()
     # Player Bullet Movement
@@ -334,7 +335,7 @@ def main():
             danger_range = [0, SCREEN_HEIGHT - ENEMY_SIZE]
         else:
             danger_range = [player.position[1] - explosion_range * 2, player.position[1] + PLAYER_SIZE]
-        if danger_range[0] < current_bullet.position[1] and current_bullet.position[1] < danger_range[1]:
+        if danger_range[0] < current_bullet.position[1] < danger_range[1]:
             if collide_player(player_block=player, bullet_block=current_bullet):  # Check Collision
                 # Decrease Player Shield and Health
                 shield = player.shield - enemy_armory.index_at(index=current_bullet.index).damage
@@ -362,7 +363,7 @@ def main():
             else:  # With No Life Left
                 end_screen = True
     # Reset Invincibility
-    if player.invincible:
+    if player.invincible and not player.always_invincible:
         if time.time() - player.invincible_at > PLAYER_INVINCIBLE_TIME:
             player.invincible = False
     ################################################################################
@@ -514,6 +515,10 @@ if __name__ == "__main__":
                 elif event.key == pygame.K_0 and not intro_screen:
                     player_armory.search_active().active = False
                     player_armory.index_at(index=10).active = True
+                # Always Invincible
+                elif event.key == pygame.K_9 and not intro_screen:
+                    player.always_invincible = not player.always_invincible
+                    player.invincible = not player.invincible
             # Event of Key Release
             if event.type == pygame.KEYUP and not intro_screen and not end_screen:
                 # Stop Player Movement

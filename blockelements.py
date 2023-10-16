@@ -9,7 +9,6 @@ from structures import *
 from settings import *
 import pygame
 import random
-import time
 
 ##################################################
 # Player Block
@@ -54,7 +53,7 @@ player_armory.append(name='bullet1',
                      image=pygame.image.load('resources/player/bullet1.png'),
                      cooldown=[BULLET_COOLDOWN_BASE * 0.5, BULLET_COOLDOWN_BASE * 0.5],
                      damage=30
-                     )
+                     )  # TODO Separate Bullet into 2 Elements
 player_armory.append(name='bullet2',
                      index=2,
                      position=[BULLET_ORIGIN_X, BULLET_ORIGIN_Y],
@@ -64,7 +63,7 @@ player_armory.append(name='bullet2',
                               [BULLET_ORIGIN_X + 34, BULLET_ORIGIN_Y]],
                      active=False,
                      image=pygame.image.load('resources/player/bullet2.png'),
-                     cooldown=[BULLET_COOLDOWN_BASE * 1.5, BULLET_COOLDOWN_BASE * 1.5],
+                     cooldown=[BULLET_COOLDOWN_BASE * 1.1, BULLET_COOLDOWN_BASE * 1.1],
                      damage=80
                      )
 player_armory.append(name='bullet10',
@@ -103,21 +102,6 @@ def enemy_generate(number=ENEMY_NUMBER):
         current_enemy = enemies.index_at(index=num_enemy)
         current_enemy.fire_cooldown = random.randint(0, enemy_armory.index_at(index=current_enemy.weapon).cooldown)
         current_enemy.y_axis = random.randint(ENEMY_SPAWN[0], ENEMY_SPAWN[1])
-
-
-# Enemy Movement
-def enemy_move():
-    current_enemy = enemies.head
-    while current_enemy:
-        if current_enemy.position[1] < current_enemy.y_axis and current_enemy.explode_at is None:
-            # Move Downwards into Screen
-            current_enemy.position[1] += STANDARD_MOVE_SPEED
-            current_enemy.center = [sum(x) for x in zip(current_enemy.position, [ENEMY_SIZE / 2, ENEMY_SIZE / 2])]
-            if current_enemy.position[1] > ENEMY_SPAWN[0] - STANDARD_MOVE_SPEED:  # Active After in Position
-                current_enemy.active = True
-        else:
-            current_enemy.update(block_size=ENEMY_SIZE, block_spawn=ENEMY_SPAWN)
-        current_enemy = current_enemy.next
 
 
 # Enemy Reset
@@ -259,28 +243,6 @@ def miniboss_create():
                                            ((11, 7), (39, 7)))
 
 
-def miniboss_move():
-    current_miniboss = miniboss.head
-    while current_miniboss:
-        if current_miniboss.position[1] < current_miniboss.y_axis:  # Move Downwards into Screen
-            current_miniboss.position[1] += STANDARD_MOVE_SPEED
-            if current_miniboss.position[1] > MINI_BOSS_SPAWN[0] - STANDARD_MOVE_SPEED:  # Active after in Position
-                current_miniboss.active = True
-        else:  # In Position
-            current_miniboss.position[0] += current_miniboss.speed * current_miniboss.direction
-            if current_miniboss.position[0] <= BOUNDARY_LEFT:
-                current_miniboss.position[0] = BOUNDARY_LEFT
-                current_miniboss.direction = - current_miniboss.direction
-            elif current_miniboss.position[0] >= BOUNDARY_RIGHT - MINI_BOSS_SIZE:
-                current_miniboss.position[0] = BOUNDARY_RIGHT - MINI_BOSS_SIZE
-                current_miniboss.direction = - current_miniboss.direction
-        # Update Center Information
-        current_miniboss.center = [sum(x) for x in
-                                   zip(current_miniboss.position, [MINI_BOSS_SIZE / 2, MINI_BOSS_SIZE / 2])]
-        # Next Element
-        current_miniboss = current_miniboss.next
-
-
 ##################################################
 # Boss Block
 ##################################################
@@ -330,28 +292,6 @@ def boss_create():
                                     contact_point(point=[77, 97], index=4),
                                     contact_point(point=[121, 97], index=4))
                                    )
-
-
-def boss_move():
-    current_boss = bosses.head
-    while current_boss:
-        # Update Move
-        if current_boss.position[1] < current_boss.y_axis:
-            current_boss.position[1] += STANDARD_MOVE_SPEED
-            if current_boss.position[1] > BIG_BOSS_SPAWN[0] - STANDARD_MOVE_SPEED:
-                current_boss.active = True
-        else:
-            current_boss.position[0] += current_boss.speed * current_boss.direction
-            if current_boss.position[0] <= BOUNDARY_LEFT:
-                current_boss.position[0] = BOUNDARY_LEFT
-                current_boss.direction = - current_boss.direction
-            elif current_boss.position[0] >= BOUNDARY_RIGHT - BIG_BOSS_SIZE:
-                current_boss.position[0] = BOUNDARY_RIGHT - BIG_BOSS_SIZE
-                current_boss.direction = - current_boss.direction
-        # Update Center Information
-        current_boss.center = [sum(x) for x in zip(current_boss.position, [BIG_BOSS_SIZE / 2, BIG_BOSS_SIZE / 2])]
-        # Next Element
-        current_boss = current_boss.next
 
 
 ##################################################
@@ -467,9 +407,46 @@ def collide_crate(player_block, crate_block):
     return False
 
 
-# Movement - TODO General movement
-def movement(block_list):
-    print("Here")
+# Movement
+def movement(block_list, spawn, size):
+    current_block = block_list.head
+    while current_block:
+        if current_block.explode_at is None:  # No Movement for Exploded Block
+            # Initial Vertical Move
+            if not current_block.active and current_block.position[1] < current_block.y_axis:
+                current_block.position[1] += STANDARD_MOVE_SPEED * 10
+                # Active Block
+                if spawn == BIG_BOSS_SPAWN:  # Boss Block
+                    if current_block.position[1] > spawn[0] - STANDARD_MOVE_SPEED * 10:
+                        current_block.active = True
+                else:  # Other Block Active at Pixel Y of 25
+                    if current_block.position[1] > 25:
+                        current_block.active = True
+            else:
+                # Update Vertical Move
+                if current_block.position[1] < current_block.y_axis - STANDARD_MOVE_SPEED:
+                    current_block.position[1] += STANDARD_MOVE_SPEED * 2
+                # Move to New Y
+                elif current_block.position[1] > current_block.y_axis + STANDARD_MOVE_SPEED:
+                    current_block.position[1] -= STANDARD_MOVE_SPEED * 2
+                # Update Horizontal Move
+                else:
+                    current_block.position[0] += current_block.speed * current_block.direction
+                    if current_block.position[0] <= BOUNDARY_LEFT:
+                        current_block.position[0] = BOUNDARY_LEFT
+                        current_block.direction = -current_block.direction
+                        if random.randint(0, 100) < ENEMY_SHIFT_CHANCE:  # Random Vertical Move
+                            current_block.y_axis = random.randint(spawn[0], spawn[1])
+                    elif current_block.position[0] >= BOUNDARY_RIGHT - size:
+                        current_block.position[0] = BOUNDARY_RIGHT - size
+                        current_block.direction = -current_block.direction
+                        if random.randint(0, 100) < ENEMY_SHIFT_CHANCE:
+                            current_block.y_axis = random.randint(spawn[0], spawn[1])
+            # Update Center Information
+            current_block.center = [sum(x) for x in zip(current_block.position, [size / 2, size / 2])]
+        # Next Block
+        current_block = current_block.next
+
 
 ##################################################
 # Main Function

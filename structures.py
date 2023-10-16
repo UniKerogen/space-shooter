@@ -32,6 +32,7 @@ class PlayerBlock:
         self.explode_at = None
         self.invincible_at = None
         self.health_bar = PLAYER_HEALTH_BAR
+        self.always_invincible = False
         # Storage Information
         self.x_change = 0
         # Save Input Data
@@ -233,19 +234,6 @@ class EnemyBlock:
         self.each_weapon_amount = None
         self.fire_shift = None
 
-    def update(self, block_size=ENEMY_SIZE, block_spawn=ENEMY_SPAWN):
-        # Movement Update
-        self.position[0] += self.speed * self.direction
-        self.center = [sum(x) for x in zip(self.position, [block_size / 2, block_size / 2])]
-        # Far Left Side
-        if self.position[0] < BOUNDARY_LEFT:
-            self.position[0] = BOUNDARY_RIGHT - ENEMY_SIZE
-            self.position[1] = random.randint(block_spawn[0], block_spawn[1])
-        # Far Right Side
-        elif self.position[0] > BOUNDARY_RIGHT - ENEMY_SIZE:
-            self.position[0] = BOUNDARY_LEFT
-            self.position[1] = random.randint(block_spawn[0], block_spawn[1])
-
 
 class EnemyList:
     def __init__(self):
@@ -427,7 +415,7 @@ class ButtonList:
 # Main Function
 ##################################################
 def main():
-    print("Hello World!")
+    print("This is a storage for Structures!")
 
 
 ##################################################

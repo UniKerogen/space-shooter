@@ -12,7 +12,7 @@ BOUNDARY_LEFT = 5
 BOUNDARY_RIGHT = SCREEN_WIDTH - BOUNDARY_LEFT
 BACKGROUND_SCROLL_SPEED = 1  # Pixel
 BACKGROUND_REFRESH_TIME = 0.1  # Second
-STANDARD_MOVE_SPEED = 0.5
+STANDARD_MOVE_SPEED = 0.1  # Standard Movement Speed
 
 # Create
 CRATE_SIZE = 40  # Pixel
@@ -55,13 +55,14 @@ ENEMY_WEAPON_TYPE = 5  # Type of Weapon Enemy can use
 ENEMY_BULLET_SPEED_BASE = 0.5  # Base speed of enemy bullet
 ENEMY_BULLET_COOLDOWN_BASE = 2000  # Bullet Cooldown for Enemy
 ENEMY_HIT_RANGE = 0.8  # Enemy Got Hit Range Multiplier
+ENEMY_SHIFT_CHANCE = 35  # % of Chance of Get New Y
 
 # Mini Boss Modification
 MINI_BOSS_SIZE = 100  # Pixel
 MINI_BOSS_SPEED_MAX = 50  # /100 -> Max of 0.05
 MINI_BOSS_SPAWN = (180 - MINI_BOSS_SIZE, 230 - MINI_BOSS_SIZE)  # Mini Boss Spawn Range
 MINI_BOSS_TYPE = 4  # Total Number of Types of MiniBoss
-MINI_BOSS_HEALTH = (350, 500)  # MiniBoss Health Range
+MINI_BOSS_HEALTH = (500, 800)  # MiniBoss Health Range
 MINI_BOSS_MAX_AMOUNT = 2  # MiniBoss On Screen Amount
 MINI_BOSS_WEAPON_AMOUNT = 2  # Amount of Weapon MiniBoss Carry
 MINI_BOSS_HEALTH_BAR = (MINI_BOSS_SIZE, 5, -10)  # MiniBoss Health Bar Region WxHxShift
@@ -72,9 +73,9 @@ BIG_BOSS_SIZE = 200
 BIG_BOSS_SPEED_MAX = 20  # /100 -> Max of 0.02
 BIG_BOSS_SPAWN = (150 - BIG_BOSS_SIZE, 170 - BIG_BOSS_SIZE)  # Big Boss Spawn Location
 BIG_BOSS_TYPE = 1  # Big Boss Type Amount
-BIG_BOSS_HEALTH = (800, 1000)  # Big Boss Health Region
+BIG_BOSS_HEALTH = (1300, 1500)  # Big Boss Health Region
 BIG_BOSS_WEAPON_AMOUNT = 3  # Big Boss Weapon Amount
-BIG_BOSS_HEALTH_BAR = (BIG_BOSS_SIZE, 5, -10)  # Big Boss Health Bar Region WxHxShift
+BIG_BOSS_HEALTH_BAR = (BIG_BOSS_SIZE, 5, 50)  # Big Boss Health Bar Region WxHxShift
 BIG_BOSS_HIT_RANGE = 0.9  # Big Boss Got Hit Range Multiplier
 
 # Colors
