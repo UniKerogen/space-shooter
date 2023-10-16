@@ -1,6 +1,6 @@
 # Top Down Shooter Game
 # A Simple Top Down Shooter for Raiden Mockup
-# Version - Alpha 8
+# Version - Alpha 9
 
 
 ####################################################################################################
@@ -83,6 +83,10 @@ def show_enemy(enemy_list, health_bar=ENEMY_HEALTH_BAR):
     enemy_block = enemy_list.head
     while enemy_block:
         screen.blit(enemy_block.image, (enemy_block.position[0], enemy_block.position[1]))
+        # Type 3 Weapon Indicator - Regular Enemy
+        if enemy_block.weapon == 3 and enemy_block.explode_at is None:
+            screen.blit(enemy_block.indicator, (enemy_block.position[0], enemy_block.position[1]))
+        # Show Health
         if enemy_block.health_show:
             pygame.draw.rect(screen,
                              color=RED,
@@ -126,18 +130,20 @@ def bullet_collision(block_list, bullet_list, spawn):
                     # Health Check
                     if current_block.health[1] <= 0:
                         current_block.speed = 0  # Stop Moving
-                        current_block.image = explosion_img  # Set Explosion Image
                         current_block.explode_at = time.time()  # Set Explosion Time
                         current_block.active = False  # De-active block
                         current_block.health_show = False  # Hide Health Bar
                         # Update Score and Crate
                         if spawn == ENEMY_SPAWN:
                             score += 1
+                            current_block.image = explosion_img  # Set Explosion Image
                         elif spawn == MINI_BOSS_SPAWN:
                             score += 5
+                            current_block.image = pygame.transform.scale(explosion_img, (MINI_BOSS_SIZE, MINI_BOSS_SIZE))
                             crate_generate(enemy_block=current_block, chance=100)  # Additional Crate
                         elif spawn == BIG_BOSS_SPAWN:
                             score += 15
+                            current_block.image = pygame.transform.scale(explosion_img, (BIG_BOSS_SIZE, BIG_BOSS_SIZE))
                             crate_generate(enemy_block=current_block, chance=100)  # Additional Crate
                             crate_generate(enemy_block=current_block, chance=100)  # Additional Crate
                             crate_generate(enemy_block=current_block, chance=50)  # 50% Chance of Additional Crate

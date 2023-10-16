@@ -1,5 +1,5 @@
 # Structure File
-# Version - Alpha 8
+# Version - Alpha 9
 # A Modified Linked List for Storage
 
 from settings import *
@@ -227,12 +227,14 @@ class EnemyBlock:
         self.explode_at = None
         self.health_show = True
         self.fire_cooldown = 0
+        self.indicator = None
         # Connection
         self.next = None
         # Boss Configuration
         self.y_axis = None
         self.each_weapon_amount = None
         self.fire_shift = None
+
 
 
 class EnemyList:

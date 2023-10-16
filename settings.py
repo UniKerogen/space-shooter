@@ -1,5 +1,5 @@
 # Settings File
-# Version - Alpha 8
+# Version - Alpha 9
 # Store settings for game
 
 ##################################################

@@ -1,5 +1,5 @@
 # Block Element File
-# Version - Alpha 8
+# Version - Alpha 9
 # Storage for block elements
 
 ##################################################
@@ -100,8 +100,9 @@ def enemy_generate(number=ENEMY_NUMBER):
                        weapon=random.randint(0, ENEMY_WEAPON_TYPE - 1),
                        hit_range=ENEMY_SIZE / 2 * ENEMY_HIT_RANGE)
         current_enemy = enemies.index_at(index=num_enemy)
-        current_enemy.fire_cooldown = random.randint(0, enemy_armory.index_at(index=current_enemy.weapon).cooldown)
+        current_enemy.fire_cooldown = random.randint(10, enemy_armory.index_at(index=current_enemy.weapon).cooldown * 0.2)
         current_enemy.y_axis = random.randint(ENEMY_SPAWN[0], ENEMY_SPAWN[1])
+        current_enemy.indicator = pygame.image.load('resources/enemy/bullet3_indicator.png')
 
 
 # Enemy Reset
@@ -161,7 +162,7 @@ enemy_armory.append(name='bullet3',
                     position=[0, 0],
                     speed=ENEMY_BULLET_SPEED_BASE * 1.2,
                     exp_range=2,
-                    contact=[[24, player.position[1]], [26, player.position[1]]],
+                    contact=[[22, 40], [28, 40]],
                     active=False,
                     image=pygame.image.load('resources/enemy/bullet3.png'),
                     cooldown=ENEMY_BULLET_COOLDOWN_BASE * 10,
@@ -326,7 +327,7 @@ def crate_generate(enemy_block, chance=CRATE_CHANCE):
         dice = random.randint(0, max(max_chance))  # Roll the Dice
         for crate_type in max_chance:
             if dice < crate_type:
-                crates.append(category=max_chance.index(crate_type), position=enemy_block.position.copy())
+                crates.append(category=max_chance.index(crate_type), position=enemy_block.center.copy())
                 break  # Exit Loop when Crate Created
 
 
