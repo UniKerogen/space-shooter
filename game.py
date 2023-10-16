@@ -1,6 +1,6 @@
 # Top Down Shooter Game
 # A Simple Top Down Shooter for Raiden Mockup
-# Version - Alpha 7
+# Version - Alpha 8
 
 
 ####################################################################################################
@@ -156,7 +156,7 @@ def main():
     # Global Variable
     global screen, score, crates
     global player
-    global enemies, miniboss, boss
+    global enemies, miniboss, bosses
     global player_armory, player_bullets, enemy_bullets
     global BULLET_FIRE, end_screen
     ################################################################################
@@ -164,7 +164,9 @@ def main():
     # Mini Boss Spawn
     if score > 0 and score % 100 % 30 == 0 and len(miniboss) == 0:
         miniboss_create()
-    # Boss Spawn - TODO
+    # Boss Spawn
+    if score > 0 and score % 100 == 0 and len(bosses) == 0:
+        boss_create()
     ################################################################################
     ################################################################################
     # Find Active Bullet
@@ -235,13 +237,36 @@ def main():
                         current_miniboss.weapon.index(current_weapon)] = enemy_armory.index_at(
                         index=current_weapon).cooldown
                 else:
-                    current_miniboss.fire_cooldown = [sum(x) for x in zip(current_miniboss.fire_cooldown,
-                                                                          [-1] * len(current_miniboss.fire_cooldown))]
+                    current_miniboss.fire_cooldown[weapon_index] -= 1
         # Next Miniboss
         current_miniboss = current_miniboss.next
     ################################################################################
     ################################################################################
-    # Continuous Shooting - Big Boss - TODO
+    # Continuous Shooting - Big Boss
+    current_boss = bosses.head
+    while current_boss:
+        if current_boss.active:
+            # Fire Bullet at current big boss position
+            for current_weapon in current_boss:
+                weapon_index = current_boss.weapon.index(current_weapon)
+                if current_boss.fire_cooldown[weapon_index] <= 0:
+                    for shot_number in range(current_boss.each_weapon_amount[current_weapon]):
+                        if current_boss.each_weapon_amount[current_weapon] > 1:
+                            fire_shift = current_boss.fire_shift[current_weapon][shot_number]
+                        else:
+                            fire_shift = current_boss.fire_shift[current_weapon]
+                        fire_position = [sum(x) for x in zip(current_boss.position, fire_shift)]
+                        contact_point = [list(item) for item in enemy_armory.index_at(index=current_weapon).contact]
+                        contact_point = [[sum(x) for x in zip(item, fire_position)] for item in contact_point]
+                        # Add Enemy Bullet
+                        enemy_bullets.append(index=current_weapon, position=fire_position, contact=contact_point)
+                    # Reset Cooldown
+                    current_boss.fire_cooldown[current_boss.weapon.index(current_weapon)] = enemy_armory.index_at(
+                        index=current_weapon).cooldown
+                else:
+                    current_boss.fire_cooldown[weapon_index] -= 1
+        # Next Big Boss
+        current_boss = current_boss.next
     ################################################################################
     ################################################################################
     # Player Movement
@@ -250,8 +275,8 @@ def main():
     enemy_move()
     # Movement of Mini Boss
     miniboss_move()
-    # Movement of Boss - TODO
-
+    # Movement of Boss
+    boss_move()
     # Create Movement
     crate_movement()
     # Player Bullet Movement
@@ -269,7 +294,7 @@ def main():
     while current_bullet:
         current_bullet.position[1] += enemy_armory.index_at(index=current_bullet.index).speed  # Update Position
         for item in current_bullet.contact:  # Update Contact
-            if current_bullet.index == 3:
+            if current_bullet.index == 3:  # Special Case of Type 3 Weapon
                 item[1] = player.center[1]
             else:
                 item[1] += enemy_armory.index_at(index=current_bullet.index).speed
@@ -315,7 +340,7 @@ def main():
         if len(player_bullets) > 0 and current_miniboss.active:
             current_bullet = player_bullets.head
             # Iteration of Bullet with Active Zone
-            while current_bullet and current_miniboss.position[1] <= MINI_BOSS_Y_AXIS[1]:
+            while current_bullet and current_miniboss.position[1] <= MINI_BOSS_SPAWN[1]:
                 if collide_enemy(enemy_block=current_miniboss, bullet_block=current_bullet):  # Check Collision
                     # Miniboss Health Decrease
                     current_miniboss.health[1] -= player_armory.index_at(index=current_bullet.index).damage
@@ -339,7 +364,34 @@ def main():
         current_miniboss = current_miniboss.next  # Next Element
     ################################################################################
     ################################################################################
-    # Collision of Boss & Player Bullet - TODO
+    # Collision of Boss & Player Bullet
+    current_boss = bosses.head
+    while current_boss:
+        if len(player_bullets) > 0 and current_boss.active:
+            current_bullet = player_bullets.head
+            while current_bullet and current_boss.position[1] <= BIG_BOSS_SPAWN[1]:
+                if collide_enemy(enemy_block=current_boss, bullet_block=current_bullet):
+                    # Boss Health Decrease
+                    current_boss.health[1] -= player_armory.index_at(index=current_bullet.index).damage
+                    # Health Check
+                    if current_boss.health[1] <= 0:
+                        current_boss.speed = 0  # Stop Moving
+                        current_boss.image = explosion_img  # Explosion Image
+                        current_boss.explosion = time.time()  # Explosion Time
+                        current_boss.active = False  # De-active Boss
+                        current_boss.health_show = False  # Hide Health Bar
+                        score += 15  # Update Score
+                        crate_generate(enemy_block=current_boss, chance=100)
+                        crate_generate(enemy_block=current_boss, chance=100)
+                        crate_generate(enemy_block=current_boss, chance=50)
+                        crate_generate(enemy_block=current_boss, chance=CRATE_CHANCE)
+                    player_bullets.delete(current_bullet=current_bullet)  # Delete Bullet
+                current_bullet = current_bullet.next
+        # Reset
+        if not current_boss.active and current_boss.explode_at is not None:
+            if time.time() - current_boss.explode_at >= EXPLOSION_TIME:
+                bosses.delete(enemy_block=current_boss)
+        current_boss = current_boss.next
     ################################################################################
     ################################################################################
     # Collision of Player & Enemy Bullet
@@ -414,8 +466,8 @@ def main():
     show_enemy(enemy_list=enemies, health_bar=ENEMY_HEALTH_BAR)
     # Update Mini Boss
     show_enemy(enemy_list=miniboss, health_bar=MINI_BOSS_HEALTH_BAR)
-    # Update Boss - TODO
-
+    # Update Boss
+    show_enemy(enemy_list=bosses, health_bar=BIG_BOSS_HEALTH_BAR)
     # Update Create
     show_crate(crate_list=crates)
     # Update Bullet when Available

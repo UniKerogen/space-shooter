@@ -1,5 +1,5 @@
 # Settings File
-# Version - Alpha 7
+# Version - Alpha 8
 # Store settings for game
 
 ##################################################
@@ -47,7 +47,7 @@ ENEMY_SIZE = 50  # Enemy Image Size 50x50 Pixel
 ENEMY_SPEED_MAX = 100  # /1000 -> Max of 0.1
 ENEMY_NUMBER = 4  # On Screen Enemy Number
 ENEMY_TYPE = 8  # Total Number of Enemy
-ENEMY_SPAWN = (125 - ENEMY_SIZE, 300 - ENEMY_SIZE)  # Enemy Spawn Range
+ENEMY_SPAWN = (200 - ENEMY_SIZE, 300 - ENEMY_SIZE)  # Enemy Spawn Range
 ENEMY_BASE_HEALTH = (100, 200)  # Enemy Base Health Range
 ENEMY_HEALTH_BAR = (ENEMY_SIZE, 5, -10)  # Enemy Health Bar Width x Height x Shift
 ENEMY_HEALTH_BAR_SHIFT = -10  # Distance Between Enemy and Health Bar Display
@@ -59,7 +59,7 @@ ENEMY_HIT_RANGE = 0.8  # Enemy Got Hit Range Multiplier
 # Mini Boss Modification
 MINI_BOSS_SIZE = 100  # Pixel
 MINI_BOSS_SPEED_MAX = 50  # /100 -> Max of 0.05
-MINI_BOSS_Y_AXIS = (150 - MINI_BOSS_SIZE, 200 - MINI_BOSS_SIZE)  # Mini Boss Spawn Range
+MINI_BOSS_SPAWN = (180 - MINI_BOSS_SIZE, 230 - MINI_BOSS_SIZE)  # Mini Boss Spawn Range
 MINI_BOSS_TYPE = 4  # Total Number of Types of MiniBoss
 MINI_BOSS_HEALTH = (350, 500)  # MiniBoss Health Range
 MINI_BOSS_MAX_AMOUNT = 2  # MiniBoss On Screen Amount
@@ -70,7 +70,7 @@ MINI_BOSS_HIT_RANGE = 0.68  # MiniBoss Got Hit Range Multiplier
 # Big Boss Modification
 BIG_BOSS_SIZE = 200
 BIG_BOSS_SPEED_MAX = 20  # /100 -> Max of 0.02
-BIG_BOSS_SPAWN = (0 - BIG_BOSS_SIZE, 50 - BIG_BOSS_SIZE)  # Big Boss Spawn Location
+BIG_BOSS_SPAWN = (150 - BIG_BOSS_SIZE, 170 - BIG_BOSS_SIZE)  # Big Boss Spawn Location
 BIG_BOSS_TYPE = 1  # Big Boss Type Amount
 BIG_BOSS_HEALTH = (800, 1000)  # Big Boss Health Region
 BIG_BOSS_WEAPON_AMOUNT = 3  # Big Boss Weapon Amount

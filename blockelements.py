@@ -1,5 +1,5 @@
 # Block Element File
-# Version - Alpha 7
+# Version - Alpha 8
 # Storage for block elements
 
 ##################################################
@@ -217,12 +217,14 @@ def miniboss_create():
         current_miniboss = miniboss.index_at(index=miniboss.get_last_index())
         current_miniboss.center = [sum(x) for x in
                                    zip(current_miniboss.position, [MINI_BOSS_SIZE / 2, MINI_BOSS_SIZE / 2])]
+        # Set Mini Boss Weapon Cooldown
         current_miniboss.fire_cooldown = [0] * MINI_BOSS_WEAPON_AMOUNT
         for weapon in current_miniboss.weapon:
             index = current_miniboss.weapon.index(weapon)
             max_cooldown = enemy_armory.index_at(index=weapon).cooldown
             current_miniboss.fire_cooldown[index] = random.randint(0, max_cooldown)
-        current_miniboss.y_axis = random.randint(MINI_BOSS_Y_AXIS[0], MINI_BOSS_Y_AXIS[1])
+        # Set Mini Boss Y Axis
+        current_miniboss.y_axis = random.randint(MINI_BOSS_SPAWN[0], MINI_BOSS_SPAWN[1])
         # Type Specific Adjustment
         if miniboss_type == 0:  # Type 0 MiniBoss
             current_miniboss.each_weapon_amount = (2, 1, 2, 1, 1)
@@ -259,7 +261,7 @@ def miniboss_move():
     while current_miniboss:
         if current_miniboss.position[1] < current_miniboss.y_axis:  # Move Downwards into Screen
             current_miniboss.position[1] += STANDARD_MOVE_SPEED
-            if current_miniboss.position[1] > MINI_BOSS_Y_AXIS[0] - STANDARD_MOVE_SPEED:  # Active after in Position
+            if current_miniboss.position[1] > MINI_BOSS_SPAWN[0] - STANDARD_MOVE_SPEED:  # Active after in Position
                 current_miniboss.active = True
         else:  # In Position
             current_miniboss.position[0] += current_miniboss.speed * current_miniboss.direction
@@ -280,6 +282,74 @@ def miniboss_move():
 # Boss Block
 ##################################################
 bosses = EnemyList()
+
+
+def boss_create():
+    # Create New Big Boss
+    num_increase = 0 if len(bosses) == 0 else 1
+    boss_type = random.randint(0, BIG_BOSS_TYPE - 1)
+    bosses.append(name='big_boss',
+                  index=bosses.get_last_index() + num_increase,
+                  position=[random.randint(BOUNDARY_LEFT, BOUNDARY_RIGHT - BIG_BOSS_SIZE), -BIG_BOSS_SIZE],
+                  speed=random.randint(1, BIG_BOSS_SPEED_MAX) / 1000,
+                  active=False,
+                  image=pygame.image.load('resources/bigboss/bigboss' + str(boss_type) + '.png'),
+                  health=random.randint(BIG_BOSS_HEALTH[0], BIG_BOSS_HEALTH[1]),
+                  direction=-1 if random.randint(0, 1) == 0 else 1,
+                  weapon=random.sample([i for i in range(ENEMY_WEAPON_TYPE)], BIG_BOSS_WEAPON_AMOUNT),
+                  hit_range=BIG_BOSS_SIZE / 2 * BIG_BOSS_HIT_RANGE)
+    # Set Big Boss Center
+    current_boss = bosses.index_at(index=bosses.get_last_index())
+    current_boss.center = [sum(x) for x in zip(current_boss.position, [BIG_BOSS_SIZE / 2, BIG_BOSS_SIZE / 2])]
+    # Initial Weapon Cooldown
+    current_boss.fire_cooldown = [0] * BIG_BOSS_WEAPON_AMOUNT
+    for weapon in current_boss.weapon:
+        index = current_boss.weapon.index(weapon)
+        max_cooldown = enemy_armory.index_at(index=weapon).cooldown
+        current_boss.fire_cooldown[index] = random.randint(0, max_cooldown)
+    # Target y_axis
+    current_boss.y_axis = random.randint(BIG_BOSS_SPAWN[0], BIG_BOSS_SPAWN[1])
+    # Type Specific Adjustment
+    if boss_type == 0:  # Type 0 Big Boss
+        current_boss.each_weapon_amount = (4, 4, 1, 2, 3)
+        current_boss.fire_shift = ((tuple(sum(x) for x in zip([36, 156], negative_contact(index=0))),
+                                    tuple(sum(x) for x in zip([93, 86], negative_contact(index=0))),
+                                    tuple(sum(x) for x in zip([105, 86], negative_contact(index=0))),
+                                    tuple(sum(x) for x in zip([162, 156], negative_contact(index=0)))),
+                                   (tuple(sum(x) for x in zip([42, 109], negative_contact(index=1))),
+                                    tuple(sum(x) for x in zip([158, 109], negative_contact(index=1))),
+                                    tuple(sum(x) for x in zip([93, 136], negative_contact(index=1))),
+                                    tuple(sum(x) for x in zip([107, 136], negative_contact(index=1)))),
+                                   (tuple(sum(x) for x in zip([92, 143], negative_contact(index=2)))),
+                                   (tuple(sum(x) for x in zip([88, 67], negative_contact(index=3))),
+                                    tuple(sum(x) for x in zip([106, 67], negative_contact(index=3)))),
+                                   (tuple(sum(x) for x in zip([99, 67], negative_contact(index=4))),
+                                    tuple(sum(x) for x in zip([77, 97], negative_contact(index=4))),
+                                    tuple(sum(x) for x in zip([121, 97], negative_contact(index=4))))
+                                   )
+
+
+def boss_move():
+    current_boss = bosses.head
+    while current_boss:
+        # Update Move
+        if current_boss.position[1] < current_boss.y_axis:
+            current_boss.position[1] += STANDARD_MOVE_SPEED
+            if current_boss.position[1] > BIG_BOSS_SPAWN[0] - STANDARD_MOVE_SPEED:
+                current_boss.active = True
+        else:
+            current_boss.position[0] += current_boss.speed * current_boss.direction
+            if current_boss.position[0] <= BOUNDARY_LEFT:
+                current_boss.position[0] = BOUNDARY_LEFT
+                current_boss.direction = - current_boss.direction
+            elif current_boss.position[0] >= BOUNDARY_RIGHT - BIG_BOSS_SIZE:
+                current_boss.position[0] = BOUNDARY_RIGHT - BIG_BOSS_SIZE
+                current_boss.direction = - current_boss.direction
+        # Update Center Information
+        current_boss.center = [sum(x) for x in zip(current_boss.position, [BIG_BOSS_SIZE / 2, BIG_BOSS_SIZE / 2])]
+        # Next Element
+        current_boss = current_boss.next
+
 
 ##################################################
 # Create Block
@@ -350,6 +420,16 @@ def reset_screen():
     miniboss.delete_list()
     enemies.delete_list()
 
+
+##################################################
+# Supplemental Function
+##################################################
+def negative_contact(index):
+    return [-x for x in list(enemy_armory.index_at(index=index).contact[0]).copy()]
+
+
+def bullet_collision(enemy_list, bullet_list):
+    print("Here")
 
 ##################################################
 # Main Function
