@@ -292,6 +292,24 @@ def boss_create():
                                     contact_point(point=[77, 97], index=4),
                                     contact_point(point=[121, 97], index=4))
                                    )
+    elif boss_type == 1:  # Type 1 Big Boss
+        current_boss.each_weapon_amount = (4, 4, 2, 1, 4)
+        current_boss.fire_shift = ((contact_point(point=[34, 107], index=0),
+                                    contact_point(point=[164, 107], index=0),
+                                    contact_point(point=[68, 160], index=0),
+                                    contact_point(point=[130, 160], index=0)),
+                                   (contact_point(point=[82, 129], index=1),
+                                    contact_point(point=[117, 129], index=1),
+                                    contact_point(point=[60, 77], index=1),
+                                    contact_point(point=[139, 77], index=1)),
+                                   (contact_point(point=[63, 184], index=2),
+                                    contact_point(point=[122, 184], index=2)),
+                                   (contact_point(point=[97, 117], index=3)),
+                                   (contact_point(point=[51, 150], index=4),
+                                    contact_point(point=[147, 150], index=4),
+                                    contact_point(point=[99, 117], index=4),
+                                    contact_point(point=[99, 78], index=4))
+                                   )
 
 
 ##################################################
