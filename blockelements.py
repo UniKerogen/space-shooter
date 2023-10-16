@@ -21,8 +21,6 @@ player = PlayerBlock(name='player',
                      health=PLAYER_HEALTH)
 player.shield_image = pygame.image.load('resources/player/shield.png')
 player.invincible_image = pygame.image.load('resources/player/invincible.png')
-# Explosion
-explosion_img = pygame.image.load('resources/explosion.png')
 
 ##################################################
 # Player Armory Block
@@ -367,6 +365,13 @@ buttons.name(name='restart').rect.topleft = (150, 420)
 buttons.name(name='main_menu').rect.topleft = (150, 480)
 buttons.name(name='score_board').rect.topleft = (150, 540)
 buttons.name(name='quit').rect.topleft = (150, 600)
+
+##################################################
+# Explosion Image Block
+##################################################
+explosion = ImageList()
+for number in range(0, EXPLOSION_IMAGE_NUMBER):
+    explosion.append(name='explosion' + str(number), number=number)
 
 ##################################################
 # Screen Element Storage

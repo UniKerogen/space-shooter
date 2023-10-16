@@ -97,7 +97,7 @@ class BulletList:
             current = current.next
         current.next = new_node
 
-    def delete(self, current_bullet):   # TODO Delete Block Information
+    def delete(self, current_bullet):  # TODO Delete Block Information
         if not self.head:
             return
         if self.head == current_bullet:
@@ -234,7 +234,6 @@ class EnemyBlock:
         self.y_axis = None
         self.each_weapon_amount = None
         self.fire_shift = None
-
 
 
 class EnemyList:
@@ -409,6 +408,42 @@ class ButtonList:
         while current:
             if current.name == name:
                 return current
+            current = current.next
+        return False
+
+
+##################################################
+# Image Storage Function
+##################################################
+class ImageBlock:
+    def __init__(self, name, number):
+        self.name = name
+        self.number = number
+        self.image = pygame.image.load('resources/explosion/explosion' + str(number) + ".png")
+        # Linkage
+        self.next = None
+
+
+class ImageList:
+    def __init__(self):
+        self.head = None
+
+    def append(self, name, number):
+        new_node = ImageBlock(name=name, number=number)
+        if not self.head:
+            self.head = new_node
+        else:
+            current = self.head
+            while current.next:
+                current = current.next
+            current.next = new_node
+
+    def get(self):  # Select a random explosion image from list
+        number = random.randint(0, EXPLOSION_IMAGE_NUMBER - 1)
+        current = self.head
+        while current:
+            if current.number == number:
+                return current.image
             current = current.next
         return False
 

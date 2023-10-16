@@ -40,7 +40,7 @@ BULLET_COOLDOWN_BASE = 100  # Base for bullet cooldown
 
 # Explosion
 EXPLOSION_TIME = 0.5  # second
-EXPLOSION_IMAGE_NUMBER = 1  # Number of explosion images
+EXPLOSION_IMAGE_NUMBER = 5  # Number of explosion images
 
 # Enemy Modification
 ENEMY_SIZE = 50  # Enemy Image Size 50x50 Pixel

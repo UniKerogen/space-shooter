@@ -136,14 +136,14 @@ def bullet_collision(block_list, bullet_list, spawn):
                         # Update Score and Crate
                         if spawn == ENEMY_SPAWN:
                             score += 1
-                            current_block.image = explosion_img  # Set Explosion Image
+                            current_block.image = pygame.transform.scale(explosion.get(), (ENEMY_SIZE, ENEMY_SIZE))  # Set Explosion Image
                         elif spawn == MINI_BOSS_SPAWN:
                             score += 5
-                            current_block.image = pygame.transform.scale(explosion_img, (MINI_BOSS_SIZE, MINI_BOSS_SIZE))
+                            current_block.image = pygame.transform.scale(explosion.get(), (MINI_BOSS_SIZE, MINI_BOSS_SIZE))
                             crate_generate(enemy_block=current_block, chance=100)  # Additional Crate
                         elif spawn == BIG_BOSS_SPAWN:
                             score += 15
-                            current_block.image = pygame.transform.scale(explosion_img, (BIG_BOSS_SIZE, BIG_BOSS_SIZE))
+                            current_block.image = pygame.transform.scale(explosion.get(), (BIG_BOSS_SIZE, BIG_BOSS_SIZE))
                             crate_generate(enemy_block=current_block, chance=100)  # Additional Crate
                             crate_generate(enemy_block=current_block, chance=100)  # Additional Crate
                             crate_generate(enemy_block=current_block, chance=50)  # 50% Chance of Additional Crate
@@ -352,7 +352,7 @@ def main():
                     player.health[1] += shield
                 # Player Health Check
                 if player.health[1] <= 0:  # Explode when No Health
-                    player.image = explosion_img  # Set Explosion Image
+                    player.image = pygame.transform.scale(explosion.get(), (PLAYER_SIZE, PLAYER_SIZE))
                     player.explode_at = time.time()  # Set Explosion Time
                     player.active = False  # De-active Player
                     player.health_show = False  # Hide Health Bar
