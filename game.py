@@ -155,8 +155,9 @@ def bullet_collision(block_list, bullet_list, spawn):
 
 
 # Continuous Shooting - TODO Continuous Shooting General Function
-def continuous_shooting(block_list):
+def enemy_shooting(block_list):
     print("Here")
+
 
 ####################################################################################################
 # Main Function

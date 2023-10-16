@@ -96,7 +96,7 @@ class BulletList:
             current = current.next
         current.next = new_node
 
-    def delete(self, current_bullet):
+    def delete(self, current_bullet):   # TODO Delete Block Information
         if not self.head:
             return
         if self.head == current_bullet:
@@ -278,7 +278,7 @@ class EnemyList:
             current = current.next
         return False
 
-    # Delete a Enemy
+    # Delete a Enemy - TODO Delete Block Information
     def delete(self, enemy_block):
         if not self.head:
             return
@@ -373,7 +373,7 @@ class CrateList:
                 current = current.next
             current.next = new_node
 
-    # Delete a Enemy
+    # Delete a Crate - TODO Delete Information
     def delete(self, crate_block):
         if not self.head:
             return
