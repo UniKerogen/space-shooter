@@ -253,7 +253,7 @@ def boss_create():
     # Create New Big Boss
     num_increase = 0 if len(bosses) == 0 else 1
     boss_type = random.randint(0, BIG_BOSS_TYPE - 1)
-    bosses.append(name='big_boss',
+    bosses.append(name='big_boss' + str(bosses.get_last_index() + num_increase),
                   index=bosses.get_last_index() + num_increase,
                   position=[random.randint(BOUNDARY_LEFT, BOUNDARY_RIGHT - BIG_BOSS_SIZE), -BIG_BOSS_SIZE],
                   speed=random.randint(1, BIG_BOSS_SPEED_MAX) / 1000,

@@ -34,9 +34,9 @@ background_rect3.topleft = (0, -SCREEN_HEIGHT * 2)
 
 
 ##################################################
-# Structures Setting
+# Structures Variable
 ##################################################
-
+create_boss, create_miniboss = True, True
 
 ####################################################################################################
 # Function Prototype
@@ -176,14 +176,21 @@ def main():
     global enemies, miniboss, bosses
     global player_armory, player_bullets, enemy_bullets
     global BULLET_FIRE, end_screen
+    global create_boss, create_miniboss
     ################################################################################
     ################################################################################
-    # Mini Boss Spawn
-    if score > 0 and score % 100 % 30 == 0 and len(miniboss) == 0:
-        miniboss_create()
-    # Boss Spawn - TODO Boss not spawn with score jump i.e. 98 -> 103
-    if score > 0 and score % 100 == 0 and len(bosses) == 0:
+    # Boss Creation - Big Boss
+    if score > 10 and 0 <= score % 100 <= 5 and create_boss:
         boss_create()
+        create_boss = False
+    elif score > 10 and 5 < score % 100 < 10:
+        create_boss = True
+    # Boss Creation - Mini Boss
+    if score > 10 and 0 <= score % 25 <= 5 and score % 100 != 0 and create_miniboss:
+        miniboss_create()
+        create_miniboss = False
+    elif score > 10 and 5 < score % 25 < 10:
+        create_miniboss = True
     ################################################################################
     ################################################################################
     # Find Active Bullet
@@ -601,7 +608,7 @@ if __name__ == "__main__":
             screen.blit(buttons.name('quit').image, buttons.name('score_board').rect.topleft)
         ################################################################################
         ################################################################################
-        elif level_screen:  # Level Selection - TODO Create Level Selection Screen
+        elif level_screen:  # Level Selection
             # Show Title
             level_title = font36.render("Select Level", True, WHITE)
             level_title_rect = level_title.get_rect()
