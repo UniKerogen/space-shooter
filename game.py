@@ -123,7 +123,7 @@ def bullet_collision(block_list, bullet_list, spawn):
     while current_block:  # Iteration of Block List
         if len(bullet_list) > 0 and current_block.active:
             current_bullet = bullet_list.head
-            while current_bullet and current_block.position[1] <= spawn[1]:
+            while current_bullet and current_block.position[1] < spawn[1] + BOUNDARY_MARGIN:
                 if collide_enemy(enemy_block=current_block, bullet_block=current_bullet):  # Check Collision
                     # Health Decrease
                     current_block.health[1] -= player_armory.index_at(index=current_bullet.index).damage
@@ -192,7 +192,7 @@ def main():
     ################################################################################
     # Continuous Shooting - Player
     if BULLET_FIRE and player.active:
-        if active_bullet.cooldown[1] == 0:
+        if active_bullet.cooldown[1] <= 0:
             # Bullet Fire at Current Player x position
             player_bullets.append(index=active_bullet.index,
                                   position=[player.position[0], BULLET_ORIGIN_Y],
@@ -504,6 +504,25 @@ if __name__ == "__main__":
                     intro_screen = True
                 elif error_screen and buttons.name('score_board').rect.collidepoint(event.pos):
                     RUNNING = False
+                # Level Screen
+                elif level_screen:
+                    if buttons.name('easy').rect.collidepoint(event.pos):
+                        level_set = 1
+                        level_screen = False
+                    elif buttons.name('medium').rect.collidepoint(event.pos):
+                        level_set = 2
+                        level_screen = False
+                    elif buttons.name('hard').rect.collidepoint(event.pos):
+                        level_set = 3
+                        level_screen = False
+                    elif buttons.name('hell').rect.collidepoint(event.pos):
+                        level_set = 4
+                        level_screen = False
+                    elif buttons.name('score_board').rect.collidepoint(event.pos):
+                        level_screen = False
+                        intro_screen = True
+                    elif buttons.name('quit').rect.collidepoint(event.pos):
+                        RUNNING = False
             # Event of Key Press
             if event.type == pygame.KEYDOWN and not intro_screen and not end_screen:
                 # Player Movement
@@ -583,7 +602,18 @@ if __name__ == "__main__":
         ################################################################################
         ################################################################################
         elif level_screen:  # Level Selection - TODO Create Level Selection Screen
-            print("Level Screen")
+            # Show Title
+            level_title = font36.render("Select Level", True, WHITE)
+            level_title_rect = level_title.get_rect()
+            level_title_rect.center = (200, 150)
+            screen.blit(level_title, level_title_rect)
+            # Show Button
+            screen.blit(buttons.name('easy').image, buttons.name('easy').rect.topleft)
+            screen.blit(buttons.name('medium').image, buttons.name('medium').rect.topleft)
+            screen.blit(buttons.name('hard').image, buttons.name('hard').rect.topleft)
+            screen.blit(buttons.name('hell').image, buttons.name('hell').rect.topleft)
+            screen.blit(buttons.name('main_menu').image, buttons.name('score_board').rect.topleft)
+            screen.blit(buttons.name('quit').image, buttons.name('quit').rect.topleft)
         ################################################################################
         ################################################################################
         else:  # Normal Game

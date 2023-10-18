@@ -13,6 +13,7 @@ BOUNDARY_RIGHT = SCREEN_WIDTH - BOUNDARY_LEFT
 BACKGROUND_SCROLL_SPEED = 1  # Pixel
 BACKGROUND_REFRESH_TIME = 0.1  # Second
 STANDARD_MOVE_SPEED = 0.1  # Standard Movement Speed
+BOUNDARY_MARGIN = 3  # Pixel of Margin for calculation
 
 # Create
 CRATE_SIZE = 40  # Pixel

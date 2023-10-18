@@ -98,7 +98,8 @@ def enemy_generate(number=ENEMY_NUMBER):
                        weapon=random.randint(0, ENEMY_WEAPON_TYPE - 1),
                        hit_range=ENEMY_SIZE / 2 * ENEMY_HIT_RANGE)
         current_enemy = enemies.index_at(index=num_enemy)
-        current_enemy.fire_cooldown = random.randint(10, enemy_armory.index_at(index=current_enemy.weapon).cooldown * 0.2)
+        current_enemy.fire_cooldown = random.randint(10,
+                                                     enemy_armory.index_at(index=current_enemy.weapon).cooldown * 0.2)
         current_enemy.y_axis = random.randint(ENEMY_SPAWN[0], ENEMY_SPAWN[1])
         current_enemy.indicator = pygame.image.load('resources/enemy/bullet3_indicator.png')
 
@@ -354,7 +355,8 @@ def crate_movement():
 # Button Block
 ##################################################
 buttons = ButtonList()
-button_names = ['endless', 'level', 'main_menu', 'quit', 'restart', 'score_board']
+button_names = ['endless', 'level', 'main_menu', 'quit', 'restart', 'score_board',
+                'easy', 'medium', 'hard', 'hell']
 for item in button_names:
     buttons.append(name=item)
 # Intro Screen
@@ -365,6 +367,11 @@ buttons.name(name='restart').rect.topleft = (150, 420)
 buttons.name(name='main_menu').rect.topleft = (150, 480)
 buttons.name(name='score_board').rect.topleft = (150, 540)
 buttons.name(name='quit').rect.topleft = (150, 600)
+# Level Menu
+buttons.name(name='easy').rect.topleft = (150, 240)
+buttons.name(name='medium').rect.topleft = (150, 300)
+buttons.name(name='hard').rect.topleft = (150, 360)
+buttons.name(name='hell').rect.topleft = (150, 420)
 
 ##################################################
 # Explosion Image Block
