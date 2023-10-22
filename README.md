@@ -5,10 +5,13 @@ A Simple Game using Pygame Module. Just keep shooting and scoring.
 
 - **Image Resources are coming from internet**
 
-### Game Screen
+## Game Screen
+|                                      Intro Screen                                      |                                     Game Screen                                        |
+|:--------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------:|
+|![](https://github.com/UniKerogen/space-shooter/blob/main/supplements/intro_screen.png) | ![](https://github.com/UniKerogen/space-shooter/blob/main/supplements/endless_run.png) | 
 
 
-### Files
+## Files
 - settings - Storage for various settings and parameters
 - structure - Storage for customized structure
 - blockelements - Initialization of some structure and function
@@ -16,10 +19,10 @@ A Simple Game using Pygame Module. Just keep shooting and scoring.
 - resources - Storage for used resources
 - supplement - Supplemental material for ReadMe
 
-### Usage
+## Usage
 Place all files in the same folder and run game.py
 
-### Updates
+## Updates
 - [x] vA5 - Mini Boss Generation
 - [x] vA6 - Player Modification
 - [x] vA7 - Enemy/Crate Generation
