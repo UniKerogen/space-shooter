@@ -1,5 +1,5 @@
 # Block Element File
-# Version - Alpha 9
+# Version - Beta 1
 # Storage for block elements
 
 ##################################################
@@ -95,27 +95,45 @@ def enemy_generate(number=ENEMY_NUMBER):
                            'resources/enemy/enemy' + str(random.randint(0, ENEMY_TYPE - 1)) + '.png'),
                        health=random.randint(ENEMY_BASE_HEALTH[0], ENEMY_BASE_HEALTH[1]),
                        direction=-1 if random.randint(0, 1) == 0 else 1,
-                       weapon=random.randint(0, ENEMY_WEAPON_TYPE - 1),
+                       weapon=random.sample([i for i in range(ENEMY_WEAPON_TYPE)], ENEMY_WEAPON_AMOUNT),
                        hit_range=ENEMY_SIZE / 2 * ENEMY_HIT_RANGE)
         current_enemy = enemies.index_at(index=num_enemy)
-        current_enemy.fire_cooldown = random.randint(10,
-                                                     enemy_armory.index_at(index=current_enemy.weapon).cooldown * 0.2)
+        # Each Weapon Amount
+        current_enemy.each_weapon_amount = (1, 1, 1, 1, 1)
+        current_enemy.fire_shift = ((0, 0),
+                                    (0, 0),
+                                    (0, 0),
+                                    (0, 0),
+                                    (0, 0))
+        # Set Cooldown
+        current_enemy.fire_cooldown = [0] * ENEMY_WEAPON_AMOUNT
+        for weapon in current_enemy.weapon:
+            index = current_enemy.weapon.index(weapon)
+            max_cooldown = enemy_armory.index_at(index=weapon).cooldown
+            current_enemy.fire_cooldown[index] = random.randint(BULLET_COOLDOWN_MINIMUM, max_cooldown)
+        # Target Y Axis
         current_enemy.y_axis = random.randint(ENEMY_SPAWN[0], ENEMY_SPAWN[1])
-        current_enemy.indicator = pygame.image.load('resources/enemy/bullet3_indicator.png')
+        # Load Indicator
+        current_enemy.indicator3 = pygame.image.load('resources/enemy/bullet3_indicator.png')
+        current_enemy.indicator3_shift = current_enemy.fire_shift[3]
 
 
 # Enemy Reset
 def enemy_reset(enemy_block):
     # Reset Enemy Information
-    enemy_block.direction = -1 if random.randint(0, 1) == 0 else 1
     enemy_block.position = [random.randint(BOUNDARY_LEFT, BOUNDARY_RIGHT - ENEMY_SIZE), -ENEMY_SIZE]
     enemy_block.speed = random.randint(1, ENEMY_SPEED_MAX) / 1000
+    enemy_block.active = False
     enemy_block.image = pygame.image.load('resources/enemy/enemy' + str(random.randint(0, ENEMY_TYPE - 1)) + '.png'),
     enemy_block.image = enemy_block.image[0]
-    enemy_block.health[1] = enemy_block.health[0]
-    enemy_block.weapon = random.randint(0, ENEMY_WEAPON_TYPE - 1)
-    enemy_block.active = False
-    enemy_block.fire_cooldown = random.randint(0, enemy_armory.index_at(index=enemy_block.weapon).cooldown)
+    enemy_block.health = [random.randint(ENEMY_BASE_HEALTH[0], ENEMY_BASE_HEALTH[1])] * 2
+    enemy_block.direction = -1 if random.randint(0, 1) == 0 else 1
+    enemy_block.weapon = random.sample([i for i in range(ENEMY_WEAPON_TYPE)], ENEMY_WEAPON_AMOUNT)
+    # Fire Cooldown
+    for weapon in enemy_block.weapon:
+        index = enemy_block.weapon.index(weapon)
+        max_cooldown = enemy_armory.index_at(index=weapon).cooldown
+        enemy_block.fire_cooldown[index] = random.randint(BULLET_COOLDOWN_MINIMUM, max_cooldown)
     # Self Start Element Reset
     enemy_block.explode_at = None
     enemy_block.health_show = True
@@ -209,7 +227,7 @@ def miniboss_create():
         for weapon in current_miniboss.weapon:
             index = current_miniboss.weapon.index(weapon)
             max_cooldown = enemy_armory.index_at(index=weapon).cooldown
-            current_miniboss.fire_cooldown[index] = random.randint(0, max_cooldown)
+            current_miniboss.fire_cooldown[index] = random.randint(BULLET_COOLDOWN_MINIMUM, max_cooldown)
         # Set Mini Boss Y Axis
         current_miniboss.y_axis = random.randint(MINI_BOSS_SPAWN[0], MINI_BOSS_SPAWN[1])
         # Type Specific Adjustment
@@ -241,6 +259,9 @@ def miniboss_create():
                                            (25, 49),
                                            (25, 24),
                                            ((11, 7), (39, 7)))
+        # Load Indicator
+        current_miniboss.indicator3 = pygame.image.load('resources/enemy/bullet3_indicator.png')
+        current_miniboss.indicator3_shift = current_miniboss.fire_shift[3]
 
 
 ##################################################
@@ -271,7 +292,7 @@ def boss_create():
     for weapon in current_boss.weapon:
         index = current_boss.weapon.index(weapon)
         max_cooldown = enemy_armory.index_at(index=weapon).cooldown
-        current_boss.fire_cooldown[index] = random.randint(0, max_cooldown)
+        current_boss.fire_cooldown[index] = random.randint(BULLET_COOLDOWN_MINIMUM, max_cooldown)
     # Target y_axis
     current_boss.y_axis = random.randint(BIG_BOSS_SPAWN[0], BIG_BOSS_SPAWN[1])
     # Type Specific Adjustment
@@ -310,6 +331,9 @@ def boss_create():
                                     contact_point(point=[99, 117], index=4),
                                     contact_point(point=[99, 78], index=4))
                                    )
+    # Load Indicator
+    current_boss.indicator3 = pygame.image.load('resources/enemy/bullet3_indicator.png')
+    current_boss.indicator3_shift = current_boss.fire_shift[3]
 
 
 ##################################################

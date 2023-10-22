@@ -1,6 +1,6 @@
 # Top Down Shooter Game
 # A Simple Top Down Shooter for Raiden Mockup
-# Version - Alpha 9
+# Version - Beta 1
 
 
 ####################################################################################################
@@ -32,11 +32,11 @@ background_rect1.topleft = (0, 0)
 background_rect2.topleft = (0, -SCREEN_HEIGHT)
 background_rect3.topleft = (0, -SCREEN_HEIGHT * 2)
 
-
 ##################################################
 # Structures Variable
 ##################################################
 create_boss, create_miniboss = True, True
+
 
 ####################################################################################################
 # Function Prototype
@@ -84,8 +84,13 @@ def show_enemy(enemy_list, health_bar=ENEMY_HEALTH_BAR):
     while enemy_block:
         screen.blit(enemy_block.image, (enemy_block.position[0], enemy_block.position[1]))
         # Type 3 Weapon Indicator - Regular Enemy
-        if enemy_block.weapon == 3 and enemy_block.explode_at is None:
-            screen.blit(enemy_block.indicator, (enemy_block.position[0], enemy_block.position[1]))
+        if 3 in enemy_block.weapon and enemy_block.explode_at is None:
+            if enemy_block.each_weapon_amount[3] > 1:
+                for position in enemy_block.indicator3_shift:
+                    screen.blit(enemy_block.indicator3, [sum(x) for x in zip(position, enemy_block.position)])
+            else:
+                screen.blit(enemy_block.indicator3,
+                            [sum(x) for x in zip(enemy_block.indicator3_shift, enemy_block.position)])
         # Show Health
         if enemy_block.health_show:
             pygame.draw.rect(screen,
@@ -136,14 +141,17 @@ def bullet_collision(block_list, bullet_list, spawn):
                         # Update Score and Crate
                         if spawn == ENEMY_SPAWN:
                             score += 1
-                            current_block.image = pygame.transform.scale(explosion.get(), (ENEMY_SIZE, ENEMY_SIZE))  # Set Explosion Image
+                            current_block.image = pygame.transform.scale(explosion.get(), (
+                            ENEMY_SIZE, ENEMY_SIZE))  # Set Explosion Image
                         elif spawn == MINI_BOSS_SPAWN:
                             score += 5
-                            current_block.image = pygame.transform.scale(explosion.get(), (MINI_BOSS_SIZE, MINI_BOSS_SIZE))
+                            current_block.image = pygame.transform.scale(explosion.get(),
+                                                                         (MINI_BOSS_SIZE, MINI_BOSS_SIZE))
                             crate_generate(enemy_block=current_block, chance=100)  # Additional Crate
                         elif spawn == BIG_BOSS_SPAWN:
                             score += 15
-                            current_block.image = pygame.transform.scale(explosion.get(), (BIG_BOSS_SIZE, BIG_BOSS_SIZE))
+                            current_block.image = pygame.transform.scale(explosion.get(),
+                                                                         (BIG_BOSS_SIZE, BIG_BOSS_SIZE))
                             crate_generate(enemy_block=current_block, chance=100)  # Additional Crate
                             crate_generate(enemy_block=current_block, chance=100)  # Additional Crate
                             crate_generate(enemy_block=current_block, chance=50)  # 50% Chance of Additional Crate
@@ -161,9 +169,35 @@ def bullet_collision(block_list, bullet_list, spawn):
         current_block = current_block.next  # Next Block
 
 
-# Continuous Shooting - TODO Continuous Shooting General Function
+# Continuous Shooting
 def enemy_shooting(block_list):
-    print("Here")
+    global enemy_bullets
+    current_enemy = block_list.head
+    while current_enemy:
+        if current_enemy.active:
+            # Fire Bullet at current position
+            for current_weapon in current_enemy.weapon:
+                weapon_index = current_enemy.weapon.index(current_weapon)
+                if current_enemy.fire_cooldown[weapon_index] <= 0:
+                    # Fire Bullet
+                    for shot_number in range(current_enemy.each_weapon_amount[current_weapon]):
+                        if current_enemy.each_weapon_amount[current_weapon] > 1:
+                            fire_shift = current_enemy.fire_shift[current_weapon][shot_number]
+                        else:
+                            fire_shift = current_enemy.fire_shift[current_weapon]
+                        fire_position = [sum(x) for x in zip(current_enemy.position, fire_shift)]
+                        contact = [list(item) for item in enemy_armory.index_at(index=current_weapon).contact]
+                        contact = [[sum(x) for x in zip(item, fire_position)] for item in contact]
+                        # Add to Enemy Bullet
+                        enemy_bullets.append(index=current_weapon, position=fire_position, contact=contact)
+                    # Set Cooldown
+                    current_enemy.fire_cooldown[current_enemy.weapon.index(current_weapon)] = enemy_armory.index_at(
+                        index=current_weapon).cooldown
+                else:
+                    # Decrease Cooldown
+                    current_enemy.fire_cooldown[weapon_index] -= 1
+        # Next Block
+        current_enemy = current_enemy.next
 
 
 ####################################################################################################
@@ -185,7 +219,7 @@ def main():
         create_boss = False
     elif score > 10 and 5 < score % 100 < 10:
         create_boss = True
-    # Boss Creation - Mini Boss
+    # Boss Creation - Mini Boss - TODO Generation Error
     if score > 10 and 0 <= score % 25 <= 5 and score % 100 != 0 and create_miniboss:
         miniboss_create()
         create_miniboss = False
@@ -216,81 +250,15 @@ def main():
     ################################################################################
     ################################################################################
     # Continuous Shooting - Enemy
-    current_enemy = enemies.head
-    while current_enemy:
-        if current_enemy.active and current_enemy.fire_cooldown <= 0:  # When Able to Fire
-            # Fire Bullet at Current Enemy Position
-            enemy_bullets.append(index=current_enemy.weapon,
-                                 position=current_enemy.position.copy(),
-                                 contact=[list(item) for item in
-                                          enemy_armory.index_at(index=current_enemy.weapon).contact])
-            # Reset CoolDown
-            current_enemy.fire_cooldown = enemy_armory.index_at(index=current_enemy.weapon).cooldown
-            # Set Bullet Contact
-            new_bullet = enemy_bullets.get_last_element()
-            for item in new_bullet.contact:
-                item[0] = new_bullet.position[0] + item[0]
-                item[1] = new_bullet.position[1] + item[1]
-        else:  # When Already fired  - in cooldown
-            current_enemy.fire_cooldown -= 1
-        # Next Enemy
-        current_enemy = current_enemy.next
+    enemy_shooting(block_list=enemies)
     ################################################################################
     ################################################################################
     # Continuous Shooting - Miniboss
-    current_miniboss = miniboss.head
-    while current_miniboss:
-        if current_miniboss.active:
-            # Fire Bullet at current miniboss position
-            for current_weapon in current_miniboss.weapon:
-                weapon_index = current_miniboss.weapon.index(current_weapon)
-                if current_miniboss.fire_cooldown[weapon_index] <= 0:
-                    for shot_number in range(current_miniboss.each_weapon_amount[current_weapon]):
-                        if current_miniboss.each_weapon_amount[current_weapon] > 1:
-                            fire_shift = current_miniboss.fire_shift[current_weapon][shot_number]
-                            fire_position = [sum(x) for x in zip(current_miniboss.position, fire_shift)]
-                        else:
-                            fire_shift = current_miniboss.fire_shift[current_weapon]
-                            fire_position = [sum(x) for x in zip(current_miniboss.position, fire_shift)]
-                        contact_point = [list(item) for item in enemy_armory.index_at(index=current_weapon).contact]
-                        contact_point = [[sum(x) for x in zip(item, fire_position)] for item in contact_point]
-                        # Add Enemy Bullet
-                        enemy_bullets.append(index=current_weapon, position=fire_position, contact=contact_point)
-                    # Reset Cooldown
-                    current_miniboss.fire_cooldown[
-                        current_miniboss.weapon.index(current_weapon)] = enemy_armory.index_at(
-                        index=current_weapon).cooldown
-                else:
-                    current_miniboss.fire_cooldown[weapon_index] -= 1
-        # Next Miniboss
-        current_miniboss = current_miniboss.next
+    enemy_shooting(block_list=miniboss)
     ################################################################################
     ################################################################################
     # Continuous Shooting - Big Boss
-    current_boss = bosses.head
-    while current_boss:
-        if current_boss.active:
-            # Fire Bullet at current big boss position
-            for current_weapon in current_boss.weapon:
-                weapon_index = current_boss.weapon.index(current_weapon)
-                if current_boss.fire_cooldown[weapon_index] <= 0:
-                    for shot_number in range(current_boss.each_weapon_amount[current_weapon]):
-                        if current_boss.each_weapon_amount[current_weapon] > 1:
-                            fire_shift = current_boss.fire_shift[current_weapon][shot_number]
-                        else:
-                            fire_shift = current_boss.fire_shift[current_weapon]
-                        fire_position = [sum(x) for x in zip(current_boss.position, fire_shift)]
-                        contact_point = [list(item) for item in enemy_armory.index_at(index=current_weapon).contact]
-                        contact_point = [[sum(x) for x in zip(item, fire_position)] for item in contact_point]
-                        # Add Enemy Bullet
-                        enemy_bullets.append(index=current_weapon, position=fire_position, contact=contact_point)
-                    # Reset Cooldown
-                    current_boss.fire_cooldown[current_boss.weapon.index(current_weapon)] = enemy_armory.index_at(
-                        index=current_weapon).cooldown
-                else:
-                    current_boss.fire_cooldown[weapon_index] -= 1
-        # Next Big Boss
-        current_boss = current_boss.next
+    enemy_shooting(block_list=bosses)
     ################################################################################
     ################################################################################
     # Player Movement
