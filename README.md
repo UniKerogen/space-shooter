@@ -33,6 +33,7 @@ Place all files in the same folder and run game.py
 - [x] vA9 - More Resources
 - [x] vB1 - Structure Update
 
-
+## Future Update
+- [ ] Dynamic Hardness for Endless Run
 - [ ] Vertical Player Movement
 - [ ] Multiple High Score Display
