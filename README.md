@@ -6,9 +6,11 @@ A Simple Game using Pygame Module. Just keep shooting and scoring.
 - **Image Resources are coming from internet**
 
 ## Game Screen
-|                                      Intro Screen                                      |                                     Game Screen                                        |
-|:--------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------:|
-|![](https://github.com/UniKerogen/space-shooter/blob/main/supplements/intro_screen.png) | ![](https://github.com/UniKerogen/space-shooter/blob/main/supplements/endless_run.png) | 
+|                                      Intro Screen                                       |                                      Game Screen                                       |
+|:---------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------:|
+| ![](https://github.com/UniKerogen/space-shooter/blob/main/supplements/intro_screen.png) | ![](https://github.com/UniKerogen/space-shooter/blob/main/supplements/endless_run.png) | 
+|                                      Level Screen                                       |                                       End Screen                                       |
+| ![](https://github.com/UniKerogen/space-shooter/blob/main/supplements/level_screen.png) | ![](https://github.com/UniKerogen/space-shooter/blob/main/supplements/end_screen.png)  |
 
 
 ## Files
