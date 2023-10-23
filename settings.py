@@ -91,6 +91,7 @@ BLACK = (0, 0, 0)
 # Button Size
 BUTTON_SIZE_INTRO = (100, 50)
 BUTTON_SIZE_END = (150, 50)
+BUTTON_SIZE_ON_SCREEN = (25, 25)
 
 
 ##################################################

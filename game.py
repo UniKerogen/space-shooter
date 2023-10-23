@@ -142,7 +142,7 @@ def bullet_collision(block_list, bullet_list, spawn):
                         if spawn == ENEMY_SPAWN:
                             score += 1
                             current_block.image = pygame.transform.scale(explosion.get(), (
-                            ENEMY_SIZE, ENEMY_SIZE))  # Set Explosion Image
+                                ENEMY_SIZE, ENEMY_SIZE))  # Set Explosion Image
                         elif spawn == MINI_BOSS_SPAWN:
                             score += 5
                             current_block.image = pygame.transform.scale(explosion.get(),
@@ -263,7 +263,7 @@ def main():
     ################################################################################
     # Player Movement
     player.update()
-    # Movement of Each Enemy
+    # Movement of Enemy
     movement(block_list=enemies, spawn=ENEMY_SPAWN, size=ENEMY_SIZE)
     # Movement of Mini Boss
     movement(block_list=miniboss, spawn=MINI_BOSS_SPAWN, size=MINI_BOSS_SIZE)
@@ -404,7 +404,7 @@ if __name__ == "__main__":
     # Variable
     RUNNING, BULLET_FIRE = True, False
     enemy_exist = False
-    intro_screen, end_screen, score_board, error_screen, level_screen = True, False, False, False, False
+    intro_screen, end_screen, score_board, error_screen, level_screen, pause_screen = True, False, False, False, False, False
     background_timer = time.time()
     # Storage
     highest_score = 0
@@ -439,46 +439,50 @@ if __name__ == "__main__":
             # Event of Mouse Click
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # Intro Screen
-                if intro_screen and buttons.name('level').rect.collidepoint(event.pos):
-                    intro_screen = False
-                    level_screen = True
-                elif intro_screen and buttons.name('endless').rect.collidepoint(event.pos):
-                    intro_screen = False
+                if intro_screen:
+                    if buttons.name('level').rect.collidepoint(event.pos):
+                        intro_screen = False
+                        level_screen = True
+                    elif buttons.name('endless').rect.collidepoint(event.pos):
+                        intro_screen = False
                 # End Screen
-                elif end_screen and buttons.name('restart').rect.collidepoint(event.pos):
-                    # Restart Endless Run
-                    end_screen = False
-                    # Reset Player
-                    score = 0
-                    player.life[1] = player.life[0]
-                    player.reset()
-                    player.invincible_at = time.time()
-                    # Reset Enemy and Bullets
-                    reset_screen()
-                    enemy_exist = False
-                elif end_screen and buttons.name('main_menu').rect.collidepoint(event.pos):
-                    # Back to Main Menu/Intro Menu
-                    end_screen = False
-                    intro_screen = True
-                elif end_screen and buttons.name('score_board').rect.collidepoint(event.pos):
-                    # Show Score Board
-                    end_screen = False
-                    score_board = True
-                elif end_screen and buttons.name('quit').rect.collidepoint(event.pos):
-                    # Quit Game
-                    RUNNING = False
+                elif end_screen:
+                    if buttons.name('restart').rect.collidepoint(event.pos):
+                        # Restart Endless Run
+                        end_screen = False
+                        # Reset Player
+                        score = 0
+                        player.life[1] = player.life[0]
+                        player.reset()
+                        player.invincible_at = time.time()
+                        # Reset Enemy and Bullets
+                        reset_screen()
+                        enemy_exist = False
+                    elif buttons.name('main_menu').rect.collidepoint(event.pos):
+                        # Back to Main Menu/Intro Menu
+                        end_screen = False
+                        intro_screen = True
+                    elif buttons.name('score_board').rect.collidepoint(event.pos):
+                        # Show Score Board
+                        end_screen = False
+                        score_board = True
+                    elif buttons.name('quit').rect.collidepoint(event.pos):
+                        # Quit Game
+                        RUNNING = False
                 # Score Board Screen
-                elif score_board and buttons.name('main_menu').rect.collidepoint(event.pos):
-                    score_board = False
-                    intro_screen = True
-                elif score_board and buttons.name('quit').rect.collidepoint(event.pos):
-                    RUNNING = False
+                elif score_board:
+                    if buttons.name('main_menu').rect.collidepoint(event.pos):
+                        score_board = False
+                        intro_screen = True
+                    elif buttons.name('quit').rect.collidepoint(event.pos):
+                        RUNNING = False
                 # Error Screen
-                elif error_screen and buttons.name('main_menu').rect.collidepoint(event.pos):
-                    error_screen = False
-                    intro_screen = True
-                elif error_screen and buttons.name('score_board').rect.collidepoint(event.pos):
-                    RUNNING = False
+                elif error_screen:
+                    if buttons.name('main_menu').rect.collidepoint(event.pos):
+                        error_screen = False
+                        intro_screen = True
+                    elif buttons.name('score_board').rect.collidepoint(event.pos):
+                        RUNNING = False
                 # Level Screen
                 elif level_screen:
                     if buttons.name('easy').rect.collidepoint(event.pos):
@@ -497,6 +501,20 @@ if __name__ == "__main__":
                         level_screen = False
                         intro_screen = True
                     elif buttons.name('quit').rect.collidepoint(event.pos):
+                        RUNNING = False
+                # Pause Screen
+                elif pause_screen:
+                    if buttons.name('score_board').rect.collidepoint(event.pos):
+                        RUNNING = False
+                    elif buttons.name('resume').rect.collidepoint(event.pos):
+                        pause_screen = False
+                # Game Screen
+                else:
+                    if buttons.name('back').rect.collidepoint(event.pos):
+                        intro_screen = True
+                    elif buttons.name('pause').rect.collidepoint(event.pos):
+                        pause_screen = True
+                    elif buttons.name('exit').rect.collidepoint(event.pos):
                         RUNNING = False
             # Event of Key Press
             if event.type == pygame.KEYDOWN and not intro_screen and not end_screen:
@@ -591,6 +609,17 @@ if __name__ == "__main__":
             screen.blit(buttons.name('quit').image, buttons.name('quit').rect.topleft)
         ################################################################################
         ################################################################################
+        elif pause_screen:
+            # Show Score
+            score_text = font36.render("Current Score : " + str(score), True, WHITE)
+            score_text_rect = score_text.get_rect()
+            score_text_rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 50)
+            screen.blit(score_text, score_text_rect)
+            # Button
+            screen.blit(buttons.name('resume').image, buttons.name('resume').rect.topleft)
+            screen.blit(buttons.name('quit').image, buttons.name('score_board').rect.topleft)
+        ################################################################################
+        ################################################################################
         else:  # Normal Game
             # Generate Enemy - Level Selection
             if not enemy_exist:
@@ -606,6 +635,8 @@ if __name__ == "__main__":
                     enemy_generate(number=ENEMY_NUMBER)
                 enemy_exist = True
             # Endless Run
+            screen.blit(buttons.name('exit').image, buttons.name('exit').rect.topleft)
+            screen.blit(buttons.name('pause').image, buttons.name('pause').rect.topleft)
             main()  # Main Game Function - Endless Run
         # Update Pygame Screen
         pygame.display.update()

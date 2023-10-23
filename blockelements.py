@@ -380,7 +380,9 @@ def crate_movement():
 ##################################################
 buttons = ButtonList()
 button_names = ['endless', 'level', 'main_menu', 'quit', 'restart', 'score_board',
-                'easy', 'medium', 'hard', 'hell']
+                'easy', 'medium', 'hard', 'hell',
+                'back', 'exit', 'pause',
+                'resume']
 for item in button_names:
     buttons.append(name=item)
 # Intro Screen
@@ -396,6 +398,12 @@ buttons.name(name='easy').rect.topleft = (150, 240)
 buttons.name(name='medium').rect.topleft = (150, 300)
 buttons.name(name='hard').rect.topleft = (150, 360)
 buttons.name(name='hell').rect.topleft = (150, 420)
+# On Screen
+buttons.name(name='back').rect.topleft = (5, SCREEN_WIDTH - 20 - BUTTON_SIZE_ON_SCREEN[0] * 3)
+buttons.name(name='pause').rect.topleft = (5, SCREEN_WIDTH - 15 - BUTTON_SIZE_ON_SCREEN[0] * 2)
+buttons.name(name='exit').rect.topleft = (5, SCREEN_WIDTH - 10 - BUTTON_SIZE_ON_SCREEN[0])
+# Pause Screen
+buttons.name(name='resume').rect.topleft = (150, 480)
 
 ##################################################
 # Explosion Image Block
