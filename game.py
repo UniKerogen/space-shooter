@@ -596,7 +596,7 @@ if __name__ == "__main__":
         ################################################################################
         elif level_screen:  # Level Selection
             # Show Title
-            level_title = font36.render("Select Level", True, WHITE)
+            level_title = font36.render("Select Game Difficulty", True, WHITE)
             level_title_rect = level_title.get_rect()
             level_title_rect.center = (200, 150)
             screen.blit(level_title, level_title_rect)
