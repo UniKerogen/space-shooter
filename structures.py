@@ -384,10 +384,22 @@ class CrateList:
 class Button:
     def __init__(self, name):
         self.name = name
+        # Image
         self.image = pygame.image.load('resources/button/button_' + str(name) + '.png')
+        self.image_hovered = pygame.image.load('resources/button/button_' + str(name) + '_hovered.png')
+        # Image Rect
         self.rect = self.image.get_rect()
         # Connect
         self.next = None
+        # Self Identifier
+        self.hovered = False
+
+    # Show Button
+    def draw(self):
+        if self.hovered:
+            return self.image_hovered
+        else:
+            return self.image
 
 
 class ButtonList:

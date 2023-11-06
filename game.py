@@ -171,6 +171,7 @@ def bullet_collision(block_list, bullet_list, spawn):
 
 # Continuous Shooting
 def enemy_shooting(block_list):
+    # noinspection PyGlobalUndefined
     global enemy_bullets
     current_enemy = block_list.head
     while current_enemy:
@@ -186,8 +187,8 @@ def enemy_shooting(block_list):
                         else:
                             fire_shift = current_enemy.fire_shift[current_weapon]
                         fire_position = [sum(x) for x in zip(current_enemy.position, fire_shift)]
-                        contact = [list(item) for item in enemy_armory.index_at(index=current_weapon).contact]
-                        contact = [[sum(x) for x in zip(item, fire_position)] for item in contact]
+                        contact = [list(item0) for item0 in enemy_armory.index_at(index=current_weapon).contact]
+                        contact = [[sum(x) for x in zip(item1, fire_position)] for item1 in contact]
                         # Add to Enemy Bullet
                         enemy_bullets.append(index=current_weapon, position=fire_position, contact=contact)
                     # Set Cooldown
@@ -203,6 +204,7 @@ def enemy_shooting(block_list):
 ####################################################################################################
 # Main Function
 ####################################################################################################
+# noinspection PyGlobalUndefined
 def main():
     # Global Variable
     global screen, score, crates
@@ -217,13 +219,13 @@ def main():
     if score > 10 and 0 <= score % 100 <= 5 and create_boss:
         boss_create()
         create_boss = False
-    elif score > 10 and 5 < score % 100 < 10:
+    elif score > 10 > score % 100 > 5:
         create_boss = True
     # Boss Creation - Mini Boss - TODO Generation Error
-    if score > 10 and 0 <= score % 25 <= 5 and score % 100 != 0 and create_miniboss:
+    if score > 10 and 5 >= score % 25 >= 0 != score % 100 and create_miniboss:
         miniboss_create()
         create_miniboss = False
-    elif score > 10 and 5 < score % 25 < 10:
+    elif score > 10 > score % 25 > 5:
         create_miniboss = True
     ################################################################################
     ################################################################################
@@ -237,13 +239,13 @@ def main():
             # Bullet Fire at Current Player x position
             player_bullets.append(index=active_bullet.index,
                                   position=[player.position[0], BULLET_ORIGIN_Y],
-                                  contact=[list(item) for item in active_bullet.contact])
+                                  contact=[list(item2) for item2 in active_bullet.contact])
             # Reset CoolDown
             active_bullet.cooldown[1] = active_bullet.cooldown[0]
             # Bullet contact set
             new_bullet = player_bullets.get_last_element()
-            for item in new_bullet.contact:
-                item[0] = player.position[0] + item[0] - BULLET_ORIGIN_X
+            for item3 in new_bullet.contact:
+                item3[0] = player.position[0] + item3[0] - BULLET_ORIGIN_X
     # Cool Down for Bullet
     if active_bullet.cooldown[1] > 0:
         active_bullet.cooldown[1] -= 1
@@ -275,8 +277,8 @@ def main():
     current_bullet = player_bullets.head
     while current_bullet:
         current_bullet.position[1] -= active_bullet.speed  # Update Position
-        for item in current_bullet.contact:  # Update Contact Point
-            item[1] -= active_bullet.speed
+        for item4 in current_bullet.contact:  # Update Contact Point
+            item4[1] -= active_bullet.speed
         # Reset Bullet
         if current_bullet.position[1] <= 0:  # Delete Bullet After Moves Off Screen
             player_bullets.delete(current_bullet=current_bullet)
@@ -285,11 +287,11 @@ def main():
     current_bullet = enemy_bullets.head
     while current_bullet:
         current_bullet.position[1] += enemy_armory.index_at(index=current_bullet.index).speed  # Update Position
-        for item in current_bullet.contact:  # Update Contact
+        for item5 in current_bullet.contact:  # Update Contact
             if current_bullet.index == 3:  # Special Case of Type 3 Weapon
-                item[1] = player.center[1]
+                item5[1] = player.center[1]
             else:
-                item[1] += enemy_armory.index_at(index=current_bullet.index).speed
+                item5[1] += enemy_armory.index_at(index=current_bullet.index).speed
         if current_bullet.position[1] >= SCREEN_HEIGHT:  # Remove After Off-Screen
             enemy_bullets.delete(current_bullet=current_bullet)
         current_bullet = current_bullet.next
@@ -391,8 +393,8 @@ def main():
         for bullet_index in range(0, len(enemy_bullets)):
             fire_bullet_enemy(bullet_block=enemy_bullets.get_element_at(position=bullet_index))
     # Update Display Element
-    score_text = font24.render("Score: " + str(score), True, WHITE)
-    screen.blit(score_text, (10, 10))
+    current_score = font24.render("Score: " + str(score), True, WHITE)
+    screen.blit(current_score, (10, 10))
     life_text = font18.render("Life X " + str(player.life[1]), True, WHITE)
     screen.blit(life_text, (10, SCREEN_HEIGHT - 5 - 18))
 
@@ -404,7 +406,8 @@ if __name__ == "__main__":
     # Variable
     RUNNING, BULLET_FIRE = True, False
     enemy_exist = False
-    intro_screen, end_screen, score_board, error_screen, level_screen, pause_screen = True, False, False, False, False, False
+    intro_screen, end_screen, score_board, error_screen, level_screen, pause_screen = (
+        True, False, False, False, False, False)
     background_timer = time.time()
     # Storage
     highest_score = 0
@@ -554,8 +557,8 @@ if __name__ == "__main__":
             # Show Texts
             screen.blit(intro_text, intro_text_rect)
             # Intro Screen Button
-            screen.blit(buttons.name('level').image, buttons.name('level').rect.topleft)
-            screen.blit(buttons.name('endless').image, buttons.name('endless').rect.topleft)
+            button_show(screen=screen, name='level')
+            button_show(screen=screen, name='endless')
         ################################################################################
         ################################################################################
         elif end_screen:
@@ -564,11 +567,11 @@ if __name__ == "__main__":
             score_text_end_rect = score_text_end.get_rect()
             score_text_end_rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 50)
             screen.blit(score_text_end, score_text_end_rect)
-            # Render Button
-            screen.blit(buttons.name('restart').image, buttons.name('restart').rect.topleft)
-            screen.blit(buttons.name('main_menu').image, buttons.name('main_menu').rect.topleft)
-            screen.blit(buttons.name('score_board').image, buttons.name('score_board').rect.topleft)
-            screen.blit(buttons.name('quit').image, buttons.name('quit').rect.topleft)
+            # End Screen Button
+            button_show(screen=screen, name='restart')
+            button_show(screen=screen, name='main_menu')
+            button_show(screen=screen, name='score_board')
+            button_show(screen=screen, name='quit')
         ################################################################################
         ################################################################################
         elif score_board:
@@ -579,8 +582,8 @@ if __name__ == "__main__":
             score_board_text_rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 50)
             screen.blit(score_board_text, score_board_text_rect)
             # Show Button
-            screen.blit(buttons.name('main_menu').image, buttons.name('main_menu').rect.topleft)
-            screen.blit(buttons.name('quit').image, buttons.name('score_board').rect.topleft)
+            button_show(screen=screen, name='main_menu')
+            button_show(screen=screen, name='quit', position_name='score_board')
         ################################################################################
         ################################################################################
         elif error_screen:
@@ -590,8 +593,8 @@ if __name__ == "__main__":
             error_text_rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 50)
             screen.blit(error_text, error_text_rect)
             # Show Button
-            screen.blit(buttons.name('main_menu').image, buttons.name('main_menu').rect.topleft)
-            screen.blit(buttons.name('quit').image, buttons.name('score_board').rect.topleft)
+            button_show(screen=screen, name='main_menu')
+            button_show(screen=screen, name='quit', position_name='score_board')
         ################################################################################
         ################################################################################
         elif level_screen:  # Level Selection
@@ -601,12 +604,12 @@ if __name__ == "__main__":
             level_title_rect.center = (200, 150)
             screen.blit(level_title, level_title_rect)
             # Show Button
-            screen.blit(buttons.name('easy').image, buttons.name('easy').rect.topleft)
-            screen.blit(buttons.name('medium').image, buttons.name('medium').rect.topleft)
-            screen.blit(buttons.name('hard').image, buttons.name('hard').rect.topleft)
-            screen.blit(buttons.name('hell').image, buttons.name('hell').rect.topleft)
-            screen.blit(buttons.name('main_menu').image, buttons.name('score_board').rect.topleft)
-            screen.blit(buttons.name('quit').image, buttons.name('quit').rect.topleft)
+            button_show(screen=screen, name='easy')
+            button_show(screen=screen, name='medium')
+            button_show(screen=screen, name='hard')
+            button_show(screen=screen, name='hell')
+            button_show(screen=screen, name='main_menu', position_name='score_board')
+            button_show(screen=screen, name='quit')
         ################################################################################
         ################################################################################
         elif pause_screen:
@@ -616,8 +619,8 @@ if __name__ == "__main__":
             score_text_rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 50)
             screen.blit(score_text, score_text_rect)
             # Button
-            screen.blit(buttons.name('resume').image, buttons.name('resume').rect.topleft)
-            screen.blit(buttons.name('quit').image, buttons.name('score_board').rect.topleft)
+            button_show(screen=screen, name='resume')
+            button_show(screen=screen, name='quit', position_name='score_board')
         ################################################################################
         ################################################################################
         else:  # Normal Game
@@ -635,8 +638,8 @@ if __name__ == "__main__":
                     enemy_generate(number=ENEMY_NUMBER)
                 enemy_exist = True
             # Endless Run
-            screen.blit(buttons.name('exit').image, buttons.name('exit').rect.topleft)
-            screen.blit(buttons.name('pause').image, buttons.name('pause').rect.topleft)
+            button_show(screen=screen, name='exit')
+            button_show(screen=screen, name='pause')
             main()  # Main Game Function - Endless Run
         # Update Pygame Screen
         pygame.display.update()

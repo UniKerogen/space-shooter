@@ -405,6 +405,28 @@ buttons.name(name='exit').rect.topleft = (5, SCREEN_WIDTH - 10 - BUTTON_SIZE_ON_
 # Pause Screen
 buttons.name(name='resume').rect.topleft = (150, 480)
 
+
+# Hover Collision
+def hover_collide(name, position, position_name=None):
+    global buttons
+    current_button = buttons.name(name=name)
+    if position_name is not None:
+        current_button.hovered = buttons.name(name=position_name).rect.collidepoint(position)
+    else:
+        current_button.hovered = current_button.rect.collidepoint(position)
+
+
+# Draw Buttons
+def button_show(screen, name, position_name=None):
+    # Hover Effect
+    hover_collide(name=name, position=pygame.mouse.get_pos(), position_name=position_name)
+    # Show Buttons on Screen
+    if position_name is None:
+        screen.blit(buttons.name(name=name).draw(), buttons.name(name=name).rect.topleft)
+    else:
+        screen.blit(buttons.name(name=name).draw(), buttons.name(name=position_name).rect.topleft)
+
+
 ##################################################
 # Explosion Image Block
 ##################################################
