@@ -1,5 +1,5 @@
 # Block Element File
-# Version - Beta 1
+# Version - Beta 2
 # Storage for block elements
 
 ##################################################
@@ -25,16 +25,13 @@ player.invincible_image = pygame.image.load('resources/player/invincible.png')
 ##################################################
 # Player Armory Block
 ##################################################
-BULLET_ORIGIN_X = player.position[0]
-BULLET_ORIGIN_Y = player.position[1]
 player_armory = Armory()
 player_armory.append(name='bullet0',
                      index=0,
-                     position=[BULLET_ORIGIN_X, BULLET_ORIGIN_Y],
+                     position=[0, 0],
                      speed=BULLET_SPEED_BASE,
                      exp_range=0,
-                     contact=[[BULLET_ORIGIN_X + 28, BULLET_ORIGIN_Y],
-                              [BULLET_ORIGIN_X + 32, BULLET_ORIGIN_Y]],
+                     contact=[[28, 0], [32, 0]],
                      active=True,
                      image=pygame.image.load('resources/player/bullet0.png'),
                      cooldown=[BULLET_COOLDOWN_BASE, BULLET_COOLDOWN_BASE],
@@ -42,11 +39,10 @@ player_armory.append(name='bullet0',
                      )
 player_armory.append(name='bullet1',
                      index=1,
-                     position=[BULLET_ORIGIN_X, BULLET_ORIGIN_Y],
+                     position=[0, 0],
                      speed=BULLET_SPEED_BASE * 1.1,
                      exp_range=2,
-                     contact=[[BULLET_ORIGIN_X + 18, BULLET_ORIGIN_Y + 20],
-                              [BULLET_ORIGIN_X + 42, BULLET_ORIGIN_Y + 20]],
+                     contact=[[18, 20], [42, 20]],
                      active=False,
                      image=pygame.image.load('resources/player/bullet1.png'),
                      cooldown=[BULLET_COOLDOWN_BASE * 0.5, BULLET_COOLDOWN_BASE * 0.5],
@@ -54,23 +50,21 @@ player_armory.append(name='bullet1',
                      )  # TODO Separate Bullet into 2 Elements
 player_armory.append(name='bullet2',
                      index=2,
-                     position=[BULLET_ORIGIN_X, BULLET_ORIGIN_Y],
+                     position=[0, 0],
                      speed=BULLET_SPEED_BASE * 1.5,
                      exp_range=2,
-                     contact=[[BULLET_ORIGIN_X + 26, BULLET_ORIGIN_Y],
-                              [BULLET_ORIGIN_X + 34, BULLET_ORIGIN_Y]],
+                     contact=[[26, 0], [34, 0]],
                      active=False,
                      image=pygame.image.load('resources/player/bullet2.png'),
                      cooldown=[BULLET_COOLDOWN_BASE * 1.1, BULLET_COOLDOWN_BASE * 1.1],
                      damage=80
                      )
-player_armory.append(name='bullet10',
-                     index=10,
-                     position=[BULLET_ORIGIN_X, BULLET_ORIGIN_Y],
+player_armory.append(name='bullet9',
+                     index=9,
+                     position=[0, 0],
                      speed=BULLET_SPEED_BASE * 1.5,
                      exp_range=2,
-                     contact=[[BULLET_ORIGIN_X + 26, BULLET_ORIGIN_Y],
-                              [BULLET_ORIGIN_X + 34, BULLET_ORIGIN_Y]],
+                     contact=[[26, 0], [34, 0]],
                      active=False,
                      image=pygame.image.load('resources/player/bullet2.png'),
                      cooldown=[BULLET_COOLDOWN_BASE * 0.2, BULLET_COOLDOWN_BASE * 0.2],

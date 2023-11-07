@@ -31,9 +31,9 @@ Place all files in the same folder and run game.py
 - [x] vA7 - Game Screen Resources
 - [x] vA8 - Boss Generation
 - [x] vA9 - More Resources
-- [x] vB1 - Structure Update
+- [x] vB1 - UI Modification
+- [x] vB2 - Vertical Player Movement
 
-## Future Update
+## Potential Update
 - [ ] Dynamic Hardness for Endless Run
-- [ ] Vertical Player Movement
 - [ ] Multiple High Score Display

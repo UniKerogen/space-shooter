@@ -1,6 +1,6 @@
 # Top Down Shooter Game
 # A Simple Top Down Shooter for Raiden Mockup
-# Version - Beta 1
+# Version - Beta 2
 
 
 ####################################################################################################
@@ -234,18 +234,18 @@ def main():
     ################################################################################
     ################################################################################
     # Continuous Shooting - Player
-    if BULLET_FIRE and player.active:
-        if active_bullet.cooldown[1] <= 0:
-            # Bullet Fire at Current Player x position
-            player_bullets.append(index=active_bullet.index,
-                                  position=[player.position[0], BULLET_ORIGIN_Y],
-                                  contact=[list(item2) for item2 in active_bullet.contact])
-            # Reset CoolDown
-            active_bullet.cooldown[1] = active_bullet.cooldown[0]
-            # Bullet contact set
-            new_bullet = player_bullets.get_last_element()
-            for item3 in new_bullet.contact:
-                item3[0] = player.position[0] + item3[0] - BULLET_ORIGIN_X
+    if BULLET_FIRE and player.active and player.weapon_amount[active_bullet.index] > 0:
+        for fire_amount in range(0, player.weapon_amount[active_bullet.index]):
+            if active_bullet.cooldown[1] <= 0:
+                # Bullet contact set
+                bullet_contact = [list(item2) for item2 in active_bullet.contact]
+                bullet_contact = [[sum(x) for x in zip(player.position, item6)] for item6 in bullet_contact]
+                # Bullet Fire at Current Player
+                player_bullets.append(index=active_bullet.index,
+                                      position=player.position.copy(),
+                                      contact=bullet_contact)
+                # Reset CoolDown
+                active_bullet.cooldown[1] = active_bullet.cooldown[0]
     # Cool Down for Bullet
     if active_bullet.cooldown[1] > 0:
         active_bullet.cooldown[1] -= 1
@@ -288,7 +288,8 @@ def main():
     while current_bullet:
         current_bullet.position[1] += enemy_armory.index_at(index=current_bullet.index).speed  # Update Position
         for item5 in current_bullet.contact:  # Update Contact
-            if current_bullet.index == 3:  # Special Case of Type 3 Weapon
+            if current_bullet.index == 3 and current_bullet.position[1] < player.position[1] + PLAYER_SIZE:
+                # Special Case of Type 3 Weapon
                 item5[1] = player.center[1]
             else:
                 item5[1] += enemy_armory.index_at(index=current_bullet.index).speed
@@ -313,12 +314,15 @@ def main():
     current_bullet = enemy_bullets.head
     while current_bullet and player.active and not player.invincible:
         explosion_range = enemy_armory.index_at(index=current_bullet.index).exp_range
-        # Set Danger Zone
+        # Set Danger Zone - Vertical - To Active Collision Calculation
         if current_bullet.index == 3:
-            danger_range = [0, SCREEN_HEIGHT - ENEMY_SIZE]
+            danger_range_y = [0, SCREEN_HEIGHT - ENEMY_SIZE]
         else:
-            danger_range = [player.position[1] - explosion_range * 2, player.position[1] + PLAYER_SIZE]
-        if danger_range[0] < current_bullet.position[1] < danger_range[1]:
+            danger_range_y = [player.position[1] - explosion_range * 2, player.position[1] + PLAYER_SIZE]
+        # Set Danger Zone - Horizontal - To Active Collision Calculation
+        danger_range_x = [player.position[0] - BULLET_SIZE, player.position[0] + PLAYER_SIZE + BULLET_SIZE]
+        if (danger_range_x[0] < current_bullet.position[0] < danger_range_x[1] and
+                danger_range_y[0] < current_bullet.position[1] < danger_range_y[1]):
             if collide_player(player_block=player, bullet_block=current_bullet):  # Check Collision
                 # Decrease Player Shield and Health
                 shield = player.shield - enemy_armory.index_at(index=current_bullet.index).damage
@@ -528,6 +532,12 @@ if __name__ == "__main__":
                 elif event.key == pygame.K_RIGHT:
                     if player.active:
                         player.x_change = player.speed
+                elif event.key == pygame.K_UP:
+                    if player.active:
+                        player.y_change = -player.speed
+                elif event.key == pygame.K_DOWN:
+                    if player.active:
+                        player.y_change = player.speed
                 # Fire Bullet
                 elif event.key == pygame.K_SPACE:
                     if player.active:
@@ -535,7 +545,7 @@ if __name__ == "__main__":
                 # Weapon Switch -- TO BE DISABLED
                 elif event.key == pygame.K_0 and not intro_screen:
                     player_armory.search_active().active = False
-                    player_armory.index_at(index=10).active = True
+                    player_armory.index_at(index=9).active = True
                 # Always Invincible
                 elif event.key == pygame.K_9 and not intro_screen:
                     player.always_invincible = not player.always_invincible
@@ -545,6 +555,9 @@ if __name__ == "__main__":
                 # Stop Player Movement
                 if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                     player.x_change = 0
+                if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
+                    player.y_change = 0
+                # Fire Bullet
                 if event.key == pygame.K_SPACE:
                     BULLET_FIRE = False
         ################################################################################

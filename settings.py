@@ -1,5 +1,5 @@
 # Settings File
-# Version - Beta 1
+# Version - Beta 2
 # Store settings for game
 
 ##################################################
@@ -33,12 +33,14 @@ PLAYER_INVINCIBLE_TIME = 5  # Player Invincible Time
 PLAYER_HEALTH = 150  # Player Health
 PLAYER_SHIELD_MAX = 300  # Player Max Shield
 PLAYER_HIT_RANGE = 0.83  # Player Got Hit Range Multiplier
+PLAYER_Y_RANGE = (SCREEN_HEIGHT - 128 - 150, SCREEN_HEIGHT - 128)  # Player Vertical Move Range
 
 # Bullet Modification
 BULLET_SPEED_BASE = 2  # Bullet Moving Speed
 BULLET_TYPE = 2  # Total Number of Bullet
 BULLET_COOLDOWN_BASE = 100  # Base for bullet cooldown
 BULLET_COOLDOWN_MINIMUM = 10  # Minimum Cooldown for Bullet
+BULLET_SIZE = 50  # Bullet Image Size - Enemy
 
 # Explosion
 EXPLOSION_TIME = 0.5  # second

@@ -1,5 +1,5 @@
 # Structure File
-# Version - Beta 1
+# Version - Beta 2
 # A Modified Linked List for Storage
 
 from settings import *
@@ -35,18 +35,27 @@ class PlayerBlock:
         self.always_invincible = False
         # Storage Information
         self.x_change = 0
+        self.y_change = 0
+        self.weapon_amount = (1, 1, 1, 0, 0, 0, 0, 0, 0, 1)
         # Save Input Data
         self.data = [name, position, image, speed, health]
 
     # Update Center
     def update(self):
+        # Update Position & Center
         self.position[0] += self.x_change
+        self.position[1] += self.y_change
         self.center = [sum(x) for x in zip(self.position, [PLAYER_SIZE / 2, PLAYER_SIZE / 2])]
-        # Check Boundary
+        # Check Boundary - Horizontal
         if self.position[0] < 0:
             self.position[0] = 0
         elif self.position[0] >= SCREEN_WIDTH - PLAYER_SIZE:
             self.position[0] = SCREEN_WIDTH - PLAYER_SIZE
+        # Check Boundary - Vertical
+        if self.position[1] < PLAYER_Y_RANGE[0]:
+            self.position[1] = PLAYER_Y_RANGE[0]
+        elif self.position[1] >= PLAYER_Y_RANGE[1]:
+            self.position[1] = PLAYER_Y_RANGE[1]
 
     # Reset Player
     def reset(self):
@@ -121,14 +130,6 @@ class BulletList:
             current = current.next
             index += 1
         return None  # Position out of range
-
-    def get_last_element(self):
-        if not self.head:
-            return None  # The list is empty
-        current = self.head
-        while current.next:
-            current = current.next
-        return current
 
     # Delete All Elements
     def delete_list(self):
