@@ -109,16 +109,14 @@ def show_enemy(enemy_list, health_bar=ENEMY_HEALTH_BAR):
 def fire_bullet_player(bullet_block):
     # noinspection PyGlobalUndefined
     global screen, player_armory
-    screen.blit(player_armory.index_at(index=bullet_block.index).image,
-                (bullet_block.position[0], bullet_block.position[1]))
+    screen.blit(bullet_block.image, (bullet_block.position[0], bullet_block.position[1]))
 
 
 # Enemy Fire Bullet
 def fire_bullet_enemy(bullet_block):
     # noinspection PyGlobalUndefined
     global screen, enemy_armory
-    screen.blit(enemy_armory.index_at(index=bullet_block.index).image,
-                (bullet_block.position[0], bullet_block.position[1]))
+    screen.blit(bullet_block.image, (bullet_block.position[0], bullet_block.position[1]))
 
 
 # Bullet Collision
@@ -131,7 +129,7 @@ def bullet_collision(block_list, bullet_list, spawn):
             while current_bullet and current_block.position[1] < spawn[1] + BOUNDARY_MARGIN:
                 if collide_enemy(enemy_block=current_block, bullet_block=current_bullet):  # Check Collision
                     # Health Decrease
-                    current_block.health[1] -= player_armory.index_at(index=current_bullet.index).damage
+                    current_block.health[1] -= current_bullet.damage
                     # Health Check
                     if current_block.health[1] <= 0:
                         current_block.speed = 0  # Stop Moving
@@ -190,7 +188,10 @@ def enemy_shooting(block_list):
                         contact = [list(item0) for item0 in enemy_armory.index_at(index=current_weapon).contact]
                         contact = [[sum(x) for x in zip(item1, fire_position)] for item1 in contact]
                         # Add to Enemy Bullet
-                        enemy_bullets.append(index=current_weapon, position=fire_position, contact=contact)
+                        enemy_bullets.append(index=current_weapon,
+                                             position=fire_position,
+                                             contact=contact,
+                                             armory=enemy_armory)
                     # Set Cooldown
                     current_enemy.fire_cooldown[current_enemy.weapon.index(current_weapon)] = enemy_armory.index_at(
                         index=current_weapon).cooldown
@@ -230,25 +231,35 @@ def main():
     ################################################################################
     ################################################################################
     # Find Active Bullet
-    active_bullet = player_armory.search_active()
+    active_bullet_list = player_armory.search_active()
+    if 9 in active_bullet_list:
+        active_bullet_list = [9]
     ################################################################################
     ################################################################################
     # Continuous Shooting - Player
-    if BULLET_FIRE and player.active and player.weapon_amount[active_bullet.index] > 0:
-        for fire_amount in range(0, player.weapon_amount[active_bullet.index]):
-            if active_bullet.cooldown[1] <= 0:
-                # Bullet contact set
-                bullet_contact = [list(item2) for item2 in active_bullet.contact]
-                bullet_contact = [[sum(x) for x in zip(player.position, item6)] for item6 in bullet_contact]
-                # Bullet Fire at Current Player
-                player_bullets.append(index=active_bullet.index,
-                                      position=player.position.copy(),
-                                      contact=bullet_contact)
-                # Reset CoolDown
-                active_bullet.cooldown[1] = active_bullet.cooldown[0]
-    # Cool Down for Bullet
-    if active_bullet.cooldown[1] > 0:
-        active_bullet.cooldown[1] -= 1
+    for active_bullet_index in active_bullet_list:
+        active_bullet = player_armory.index_at(index=active_bullet_index)
+        if BULLET_FIRE and player.active and player.weapon_amount[active_bullet.index] > 0:
+            for fire_amount in range(0, player.weapon_amount[active_bullet.index]):
+                if active_bullet.cooldown[1] <= 0:
+                    if player.weapon_amount[active_bullet.index] > 1:
+                        fire_shift = player.fire_shift[active_bullet.index][fire_amount]
+                    else:
+                        fire_shift = player.fire_shift[active_bullet.index]
+                    fire_position = [sum(x) for x in zip(player.position, fire_shift)]
+                    # Bullet contact set
+                    bullet_contact = [list(item2) for item2 in active_bullet.contact]
+                    bullet_contact = [[sum(x) for x in zip(fire_position, item6)] for item6 in bullet_contact]
+                    # Bullet Fire at Current Player
+                    player_bullets.append(index=active_bullet.index,
+                                          position=fire_position,
+                                          contact=bullet_contact,
+                                          armory=player_armory)
+                    # Reset CoolDown
+                    active_bullet.cooldown[1] = active_bullet.cooldown[0]
+        # Cool Down for Bullet
+        if active_bullet.cooldown[1] > 0:
+            active_bullet.cooldown[1] -= 1
     ################################################################################
     ################################################################################
     # Continuous Shooting - Enemy
@@ -276,9 +287,9 @@ def main():
     # Player Bullet Movement
     current_bullet = player_bullets.head
     while current_bullet:
-        current_bullet.position[1] -= active_bullet.speed  # Update Position
+        current_bullet.position[1] -= current_bullet.speed  # Update Position
         for item4 in current_bullet.contact:  # Update Contact Point
-            item4[1] -= active_bullet.speed
+            item4[1] -= current_bullet.speed
         # Reset Bullet
         if current_bullet.position[1] <= 0:  # Delete Bullet After Moves Off Screen
             player_bullets.delete(current_bullet=current_bullet)
@@ -286,13 +297,13 @@ def main():
     # Enemy Bullet Movement
     current_bullet = enemy_bullets.head
     while current_bullet:
-        current_bullet.position[1] += enemy_armory.index_at(index=current_bullet.index).speed  # Update Position
+        current_bullet.position[1] += current_bullet.speed  # Update Position
         for item5 in current_bullet.contact:  # Update Contact
             if current_bullet.index == 3 and current_bullet.position[1] < player.position[1] + PLAYER_SIZE:
                 # Special Case of Type 3 Weapon
                 item5[1] = player.center[1]
             else:
-                item5[1] += enemy_armory.index_at(index=current_bullet.index).speed
+                item5[1] += current_bullet.speed
         if current_bullet.position[1] >= SCREEN_HEIGHT:  # Remove After Off-Screen
             enemy_bullets.delete(current_bullet=current_bullet)
         current_bullet = current_bullet.next
@@ -325,7 +336,7 @@ def main():
                 danger_range_y[0] < current_bullet.position[1] < danger_range_y[1]):
             if collide_player(player_block=player, bullet_block=current_bullet):  # Check Collision
                 # Decrease Player Shield and Health
-                shield = player.shield - enemy_armory.index_at(index=current_bullet.index).damage
+                shield = player.shield - current_bullet.damage
                 if shield >= 0:  # Has Shield Remaining
                     player.shield = shield
                 else:  # Decrease Health after Shield Consumption
@@ -367,7 +378,11 @@ def main():
             elif current_crate.category == 2:  # Clear Enemy Bullet
                 enemy_bullets = BulletList()
             elif current_crate.category == 3:  # Weapon Create
-                player_armory.search_active().active = False
+                for active_bullet_index in player_armory.search_active():
+                    if active_bullet_index < WEAPON_TYPE_1_AMOUNT and current_crate.info < WEAPON_TYPE_1_AMOUNT:
+                        player_armory.index_at(index=active_bullet_index).active = False
+                    elif WEAPON_TYPE_1_AMOUNT - 1 < active_bullet_index < WEAPON_TYPE_1_AMOUNT + WEAPON_TYPE_2_AMOUNT and WEAPON_TYPE_1_AMOUNT - 1 < current_crate.info < WEAPON_TYPE_1_AMOUNT + WEAPON_TYPE_2_AMOUNT:
+                        player_armory.index_at(index=active_bullet_index).active = False
                 player_armory.index_at(index=current_crate.info).active = True
             elif current_crate.category == 4:  # Shield
                 player.shield += current_crate.info
@@ -544,8 +559,7 @@ if __name__ == "__main__":
                         BULLET_FIRE = True
                 # Weapon Switch -- TO BE DISABLED
                 elif event.key == pygame.K_0 and not intro_screen:
-                    player_armory.search_active().active = False
-                    player_armory.index_at(index=9).active = True
+                    player_armory.index_at(index=9).active = not player_armory.index_at(index=9).active
                 # Always Invincible
                 elif event.key == pygame.K_9 and not intro_screen:
                     player.always_invincible = not player.always_invincible

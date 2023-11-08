@@ -36,7 +36,13 @@ class PlayerBlock:
         # Storage Information
         self.x_change = 0
         self.y_change = 0
-        self.weapon_amount = (1, 1, 1, 0, 0, 0, 0, 0, 0, 1)
+        # Weapon System
+        self.weapon_amount = (1, 1, 1, 1, 2, 2, 2, 0, 0, 1)
+        self.fire_shift = [(0, 0)] * 10
+        self.fire_shift[4] = ((0, 0), (24, 0))
+        self.fire_shift[5] = ((0, 0), (44, 0))
+        self.fire_shift[6] = ((0, 0), (56, 0))
+        self.fire_shift = tuple(self.fire_shift)
         # Save Input Data
         self.data = [name, position, image, speed, health]
 
@@ -74,13 +80,17 @@ class PlayerBlock:
 # Class Prototype - Bullet
 ##################################################
 class BulletBlock:
-    def __init__(self, index, position, contact):
+    def __init__(self, index, position, contact, armory):
         # Linkage
         self.next = None
         # Information
         self.index = index
         self.position = position
         self.contact = contact
+        # Self Start Information
+        self.speed = armory.index_at(index=index).speed
+        self.damage = armory.index_at(index=index).damage
+        self.image = armory.index_at(index=index).image
 
 
 class BulletList:
@@ -96,8 +106,8 @@ class BulletList:
             current = current.next
         return count
 
-    def append(self, index, position, contact):
-        new_node = BulletBlock(index=index, position=position, contact=contact)
+    def append(self, index, position, contact, armory):
+        new_node = BulletBlock(index=index, position=position, contact=contact, armory=armory)
         if not self.head:
             self.head = new_node
             return
@@ -188,7 +198,7 @@ class Armory:
             current = current.next
         current.next = new_node
 
-    # Search via Index
+    # Search via Index - Return Bullet Block
     def index_at(self, index):
         current = self.head
         while current:
@@ -197,14 +207,15 @@ class Armory:
             current = current.next
         return False
 
-    # Search via Active
+    # Search via Active - Return Bullet Block
     def search_active(self):
+        active_list = []
         current = self.head
         while current:
             if current.active:
-                return current
+                active_list.append(current.index)
             current = current.next
-        return self.head
+        return active_list
 
 
 ##################################################

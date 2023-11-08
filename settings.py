@@ -34,10 +34,12 @@ PLAYER_HEALTH = 150  # Player Health
 PLAYER_SHIELD_MAX = 300  # Player Max Shield
 PLAYER_HIT_RANGE = 0.83  # Player Got Hit Range Multiplier
 PLAYER_Y_RANGE = (SCREEN_HEIGHT - 128 - 150, SCREEN_HEIGHT - 128)  # Player Vertical Move Range
+WEAPON_TYPE_1_AMOUNT = 4  # Number of Type 1 Weapon for Player
+WEAPON_TYPE_2_AMOUNT = 3  # Number of Type 2 Weapon for Player
 
 # Bullet Modification
 BULLET_SPEED_BASE = 2  # Bullet Moving Speed
-BULLET_TYPE = 2  # Total Number of Bullet
+BULLET_TYPE = 6  # Total Number of Player Bullet
 BULLET_COOLDOWN_BASE = 100  # Base for bullet cooldown
 BULLET_COOLDOWN_MINIMUM = 10  # Minimum Cooldown for Bullet
 BULLET_SIZE = 50  # Bullet Image Size - Enemy
