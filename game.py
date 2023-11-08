@@ -1,6 +1,6 @@
 # Top Down Shooter Game
 # A Simple Top Down Shooter for Raiden Mockup
-# Version - Beta 2
+# Version - Beta 3
 
 
 ####################################################################################################
@@ -41,6 +41,7 @@ create_boss, create_miniboss = True, True
 ####################################################################################################
 # Function Prototype
 ####################################################################################################
+# Show Player
 def show_player(player_block):
     global screen
     # Invincible Coat
@@ -240,8 +241,8 @@ def main():
     for active_bullet_index in active_bullet_list:
         active_bullet = player_armory.index_at(index=active_bullet_index)
         if BULLET_FIRE and player.active and player.weapon_amount[active_bullet.index] > 0:
-            for fire_amount in range(0, player.weapon_amount[active_bullet.index]):
-                if active_bullet.cooldown[1] <= 0:
+            if active_bullet.cooldown[1] <= 0:
+                for fire_amount in range(0, player.weapon_amount[active_bullet.index]):
                     if player.weapon_amount[active_bullet.index] > 1:
                         fire_shift = player.fire_shift[active_bullet.index][fire_amount]
                     else:
@@ -255,8 +256,8 @@ def main():
                                           position=fire_position,
                                           contact=bullet_contact,
                                           armory=player_armory)
-                    # Reset CoolDown
-                    active_bullet.cooldown[1] = active_bullet.cooldown[0]
+                # Reset CoolDown
+                active_bullet.cooldown[1] = active_bullet.cooldown[0]
         # Cool Down for Bullet
         if active_bullet.cooldown[1] > 0:
             active_bullet.cooldown[1] -= 1

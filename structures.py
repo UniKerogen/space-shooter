@@ -1,5 +1,5 @@
 # Structure File
-# Version - Beta 2
+# Version - Beta 3
 # A Modified Linked List for Storage
 
 from settings import *
@@ -14,28 +14,28 @@ class PlayerBlock:
     def __init__(self, name, position, image, speed, health):
         # Input Information
         self.name = name
-        self.position = position
-        self.image = image
-        self.speed = speed
-        self.health = [health, health]
+        self.position = position  # Player Position
+        self.image = image  # Player Image
+        self.speed = speed  # Player Speed
+        self.health = [health, health]  # Player Health
         # Self Start Element
         self.center = [sum(x) for x in zip(position, [PLAYER_SIZE / 2, PLAYER_SIZE / 2])]
         # Background Information
-        self.hit_range = round(PLAYER_SIZE / 2 * PLAYER_HIT_RANGE)
-        self.shield = 0
-        self.shield_image = None
-        self.invincible = False
+        self.hit_range = round(PLAYER_SIZE / 2 * PLAYER_HIT_RANGE)  # Player Got Hit Range
+        self.shield = 0  # Player Shield
+        self.shield_image = None  # Player Shield Image
+        self.invincible = False  # Player Invincible
         self.invincible_image = None
-        self.health_show = True
-        self.active = True
-        self.life = [3, 3]
-        self.explode_at = None
-        self.invincible_at = None
-        self.health_bar = PLAYER_HEALTH_BAR
-        self.always_invincible = False
+        self.health_show = True  # Display Player Health
+        self.active = True  # Player Active or Not
+        self.life = [PLAYER_LIFE, PLAYER_LIFE]  # Player Life
+        self.explode_at = None  # Player Exploded or Not
+        self.invincible_at = None  # Player Invincible Timer
+        self.health_bar = PLAYER_HEALTH_BAR  # Player Health Bar Size
+        self.always_invincible = False  # Player Invincible Cheat
         # Storage Information
-        self.x_change = 0
-        self.y_change = 0
+        self.x_change = 0  # Player Horizontal Move Value
+        self.y_change = 0  # Player Vertical Move Value
         # Weapon System
         self.weapon_amount = (1, 1, 1, 1, 2, 2, 2, 0, 0, 1)
         self.fire_shift = [(0, 0)] * 10
@@ -84,13 +84,13 @@ class BulletBlock:
         # Linkage
         self.next = None
         # Information
-        self.index = index
-        self.position = position
-        self.contact = contact
+        self.index = index  # Bullet Index
+        self.position = position  # Bullet Position
+        self.contact = contact  # Bullet Contact Point
         # Self Start Information
-        self.speed = armory.index_at(index=index).speed
-        self.damage = armory.index_at(index=index).damage
-        self.image = armory.index_at(index=index).image
+        self.speed = armory.index_at(index=index).speed  # Bullet Speed
+        self.damage = armory.index_at(index=index).damage  # Bullet Damage
+        self.image = armory.index_at(index=index).image  # Bullet Image
 
 
 class BulletList:
@@ -224,29 +224,29 @@ class Armory:
 class EnemyBlock:
     def __init__(self, name, index, position, speed, active, image, health, direction, weapon, hit_range):
         self.name = name
-        self.index = index
+        self.index = index  # Enemy Index
         # To Update Element
-        self.direction = direction
-        self.position = position
+        self.direction = direction  # Enemy Move Direction
+        self.position = position  # Enemy Position
         self.center = [sum(x) for x in zip(position, [ENEMY_SIZE / 2, ENEMY_SIZE / 2])]
-        self.speed = speed
-        self.active = active
-        self.image = image
-        self.health = [health, health]
-        self.weapon = weapon
-        self.hit_range = round(hit_range)
+        self.speed = speed  # Enemy Speed
+        self.active = active  # Enemy Active or Not
+        self.image = image  # Enemy Image
+        self.health = [health, health]  # Enemy Health
+        self.weapon = weapon  # Enemy Weapon
+        self.hit_range = round(hit_range)  # Enemy Got Hit Range
         # Self Start Element
-        self.explode_at = None
-        self.health_show = True
-        self.fire_cooldown = 0
-        self.indicator3 = None
-        self.indicator3_shift = None
+        self.explode_at = None  # Enemy Exploded or not
+        self.health_show = True  # Show Enemy Health
+        self.fire_cooldown = 0  # Enemy Firing Cooldown
+        self.indicator3 = None  # Weapon 3 Indicator
+        self.indicator3_shift = None  # Weapon 3 Indicator Shift
         # Connection
         self.next = None
         # Boss Configuration
-        self.y_axis = None
-        self.each_weapon_amount = None
-        self.fire_shift = None
+        self.y_axis = None  # Enemy Target Y Axis
+        self.each_weapon_amount = None  # Enemy Each Weapon Amount
+        self.fire_shift = None  # Enemy Fire Weapon Shift
 
 
 class EnemyList:
@@ -325,8 +325,8 @@ class EnemyList:
 class Crate:
     def __init__(self, category, position):
         # Input Element
-        self.category = category
-        self.position = position
+        self.category = category  # Crate Category
+        self.position = position  # Crate Position
         self.next = None
         # Self Start Element
         if self.category == 0:  # Add Life - 10 Chance
@@ -348,9 +348,9 @@ class Crate:
             self.info = random.randint(CRATE_HEALTH[0], CRATE_HEALTH[1])
             self.image = pygame.image.load('resources/create/health_create.png')
         # Storage
-        self.contact = [sum(x) for x in zip(position, [CRATE_SIZE / 2, CRATE_SIZE / 2])]
-        self.direction = 1 if random.randint(0, 1) == 0 else -1
-        self.collect_range = CRATE_COLLECT_RANGE
+        self.contact = [sum(x) for x in zip(position, [CRATE_SIZE / 2, CRATE_SIZE / 2])]  # Crate Contact Point
+        self.direction = 1 if random.randint(0, 1) == 0 else -1  # Crate Move Direction
+        self.collect_range = CRATE_COLLECT_RANGE  # Crate Collecting Range
 
 
 class CrateList:

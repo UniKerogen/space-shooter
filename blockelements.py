@@ -1,5 +1,5 @@
 # Block Element File
-# Version - Beta 2
+# Version - Beta 3
 # Storage for block elements
 
 ##################################################
@@ -122,6 +122,7 @@ player_armory.append(name='bullet9',
 enemies = EnemyList()
 
 
+# Enemy Generation
 def enemy_generate(number=ENEMY_NUMBER):
     for num_enemy in range(number):
         enemies.append(name='enemy' + str(num_enemy),
@@ -239,6 +240,7 @@ enemy_armory.append(name='bullet4',
 miniboss = EnemyList()
 
 
+# Miniboss Generation
 def miniboss_create():
     num_increase = 0 if len(miniboss) == 0 else 1
     for mini_boss_number in range(0, random.randint(0, MINI_BOSS_MAX_AMOUNT)):
@@ -308,6 +310,7 @@ def miniboss_create():
 bosses = EnemyList()
 
 
+# Boss Creation
 def boss_create():
     # Create New Big Boss
     num_increase = 0 if len(bosses) == 0 else 1
@@ -380,6 +383,7 @@ def boss_create():
 crates = CrateList()
 
 
+# Crate Generation
 def crate_generate(enemy_block, chance=CRATE_CHANCE):
     if random.randint(0, 100) < chance:
         max_chance = CRATE_SUB_CHANCE.copy()  # Calculate Dice Region
@@ -392,6 +396,7 @@ def crate_generate(enemy_block, chance=CRATE_CHANCE):
                 break  # Exit Loop when Crate Created
 
 
+# Crate Movement
 def crate_movement():
     current_crate = crates.head
     while current_crate:
@@ -444,7 +449,7 @@ buttons.name(name='exit').rect.topleft = (5, SCREEN_WIDTH - 10 - BUTTON_SIZE_ON_
 buttons.name(name='resume').rect.topleft = (150, 480)
 
 
-# Hover Collision
+# Mouse Hover Collision
 def hover_collide(name, position, position_name=None):
     global buttons
     current_button = buttons.name(name=name)
@@ -480,6 +485,7 @@ player_bullets = BulletList()
 enemy_bullets = BulletList()
 
 
+# Reset Screen to Empty
 def reset_screen():
     enemy_bullets.delete_list()
     player_bullets.delete_list()
@@ -490,10 +496,12 @@ def reset_screen():
 ##################################################
 # Supplemental Function
 ##################################################
+# Negate Contact Point For Calculation
 def negative_contact(index):
     return [-x for x in list(enemy_armory.index_at(index=index).contact[0]).copy()]
 
 
+# Calculate Contact Point
 def contact_point(point, index):
     return tuple(sum(x) for x in zip(point, negative_contact(index=index)))
 
@@ -530,7 +538,7 @@ def collide_crate(player_block, crate_block):
     return False
 
 
-# Movement
+# Block Movement
 def movement(block_list, spawn, size):
     current_block = block_list.head
     while current_block:

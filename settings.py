@@ -1,5 +1,5 @@
 # Settings File
-# Version - Beta 2
+# Version - Beta 3
 # Store settings for game
 
 ##################################################
@@ -30,6 +30,7 @@ PLAYER_SPEED = 0.5  # Player Movement Speed
 PLAYER_SIZE = 60  # Player Image Size 50x50 Pixel
 PLAYER_HEALTH_BAR = (PLAYER_SIZE, 5, PLAYER_SIZE + 5)  # Width x Height x Shift
 PLAYER_INVINCIBLE_TIME = 5  # Player Invincible Time
+PLAYER_LIFE = 5  # Player Life Amount
 PLAYER_HEALTH = 150  # Player Health
 PLAYER_SHIELD_MAX = 300  # Player Max Shield
 PLAYER_HIT_RANGE = 0.83  # Player Got Hit Range Multiplier
@@ -86,11 +87,11 @@ BIG_BOSS_HEALTH_BAR = (BIG_BOSS_SIZE, 5, 50)  # Big Boss Health Bar Region WxHxS
 BIG_BOSS_HIT_RANGE = 0.9  # Big Boss Got Hit Range Multiplier
 
 # Colors
-WHITE = (255, 255, 255)
-RED = (255, 0, 0)
-GREEN = (0, 255, 0)
-GREY = (213, 213, 213)
-BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)  # RGB Value for Color White
+RED = (255, 0, 0)  # RGB Value for Color Red
+GREEN = (0, 255, 0)  # RGB Value for Color Green
+GREY = (213, 213, 213)  # RGB Value for Color Grey
+BLACK = (0, 0, 0)  # RGB Value for Color Black
 
 # Button Size
 BUTTON_SIZE_INTRO = (100, 50)

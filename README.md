@@ -24,15 +24,20 @@ A Simple Game using Pygame Module. Just keep shooting and scoring.
 ## Usage
 Place all files in the same folder and run game.py
 
-## Updates
+## Past Generation Updates
+- [x] vA1 - Initial Game Structure
+- [x] vA2 - Initial Enemy Generation
+- [x] vA3 - Initial Player/Enemy Movement
+- [x] vA4 - Continuous Shooting
 - [x] vA5 - Mini Boss Generation
 - [x] vA6 - Player Modification
-- [x] vA7 - Enemy/Crate Generation
-- [x] vA7 - Game Screen Resources
-- [x] vA8 - Boss Generation
-- [x] vA9 - More Resources
+- [x] vA7 - Enemy & Crate Generation Update
+- [x] vA7 - On Screen Resources
+- [x] vA8 - Big Boss Generation
+- [x] vA9 - More Game Resources
 - [x] vB1 - UI Modification
 - [x] vB2 - Vertical Player Movement
+- [x] vB3 - Player Armory Adjustment
 
 ## Potential Update
 - [ ] Dynamic Hardness for Endless Run
