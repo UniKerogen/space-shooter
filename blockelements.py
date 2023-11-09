@@ -114,6 +114,28 @@ player_armory.append(name='bullet9',
                      cooldown=[BULLET_COOLDOWN_BASE * 0.2, BULLET_COOLDOWN_BASE * 0.2],
                      damage=100
                      )
+player_armory.append(name='rocket0',
+                     index=10,
+                     position=[0, 0],
+                     speed=BULLET_SPEED_BASE * 1.25,
+                     exp_range=10,
+                     contact=[[28, 2], [31, 2]],
+                     active=False,
+                     image=pygame.image.load('resources/player/rocket0.png'),
+                     cooldown=[BULLET_COOLDOWN_BASE * 1.2, BULLET_COOLDOWN_BASE * 1.2],
+                     damage=800
+                     )
+player_armory.append(name='rocket1',
+                     index=11,
+                     position=[0, 0],
+                     speed=BULLET_SPEED_BASE * 1.25,
+                     exp_range=15,
+                     contact=[[29, 9], [32, 9]],
+                     active=False,
+                     image=pygame.image.load('resources/player/rocket1.png'),
+                     cooldown=[BULLET_COOLDOWN_BASE * 1.2, BULLET_COOLDOWN_BASE * 1.2],
+                     damage=1000
+                     )
 
 ##################################################
 # Enemy Block
