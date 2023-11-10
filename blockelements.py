@@ -414,7 +414,10 @@ def crate_generate(enemy_block, chance=CRATE_CHANCE):
         dice = random.randint(0, max(max_chance))  # Roll the Dice
         for crate_type in max_chance:
             if dice < crate_type:
-                crates.append(category=max_chance.index(crate_type), position=enemy_block.center.copy())
+                position = enemy_block.center.copy()
+                position[0] += random.randint(-1, 1) * 10  # Shift Crate Horizontal Spawn by 10 Pixel
+                position[1] += random.randint(-1, 1) * 10  # Shift Crate Vertical Spawn by 10 Pixel
+                crates.append(category=max_chance.index(crate_type), position=position)
                 break  # Exit Loop when Crate Created
 
 
