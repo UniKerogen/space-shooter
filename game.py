@@ -378,17 +378,20 @@ def main():
                 player.invincible = True
             elif current_crate.category == 2:  # Clear Enemy Bullet
                 enemy_bullets = BulletList()
-            elif current_crate.category == 3:  # Weapon Create
+            elif current_crate.category == 3: # Rocket Crate
+                if player.rocket[current_crate.info] < 3:
+                    player.rocket[current_crate.info] += 1
+            elif current_crate.category == 4:  # Weapon Create
                 for active_bullet_index in player_armory.search_active():
                     if active_bullet_index < WEAPON_TYPE_1_AMOUNT and current_crate.info < WEAPON_TYPE_1_AMOUNT:
                         player_armory.index_at(index=active_bullet_index).active = False
                     elif WEAPON_TYPE_1_AMOUNT - 1 < active_bullet_index < WEAPON_TYPE_1_AMOUNT + WEAPON_TYPE_2_AMOUNT and WEAPON_TYPE_1_AMOUNT - 1 < current_crate.info < WEAPON_TYPE_1_AMOUNT + WEAPON_TYPE_2_AMOUNT:
                         player_armory.index_at(index=active_bullet_index).active = False
                 player_armory.index_at(index=current_crate.info).active = True
-            elif current_crate.category == 4:  # Shield
+            elif current_crate.category == 5:  # Shield
                 player.shield += current_crate.info
                 player.shield = player.shield if player.shield <= PLAYER_SHIELD_MAX else PLAYER_SHIELD_MAX
-            elif current_crate.category == 5:  # Collect Health
+            elif current_crate.category == 6:  # Collect Health
                 player.health[1] += current_crate.info
                 player.health[1] = player.health[1] if player.health[1] < player.health[0] else player.health[0]
             crates.delete(crate_block=current_crate)  # Delete Collected Crate

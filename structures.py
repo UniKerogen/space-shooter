@@ -344,13 +344,13 @@ class Crate:
         elif self.category == 3 :  # Rocket Crate - 40 Chance
             self.info = random.randint(0, ROCKET_TYPE)
             self.image = pygame.image.load('resources/crate/rocket' + str(self.info) + '.png')
-        elif self.category == 5:  # Weapon Crate - 50 Chance
+        elif self.category == 4:  # Weapon Crate - 50 Chance
             self.info = random.randint(0, BULLET_TYPE)
             self.image = pygame.image.load('resources/crate/bullet' + str(self.info) + '.png')
-        elif self.category == 6:  # Shield - 60 Chance
+        elif self.category == 5:  # Shield - 60 Chance
             self.info = random.randint(CRATE_SHIELD[0], CRATE_SHIELD[1])
             self.image = pygame.image.load('resources/crate/shield_crate.png')
-        elif self.category == 7:  # Health - 70 Chance
+        elif self.category == 6:  # Health - 70 Chance
             self.info = random.randint(CRATE_HEALTH[0], CRATE_HEALTH[1])
             self.image = pygame.image.load('resources/crate/health_crate.png')
         # Storage
