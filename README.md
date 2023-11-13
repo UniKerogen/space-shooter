@@ -38,10 +38,10 @@ Place all files in the same folder and run game.py
 - [x] vB1 - UI Modification
 - [x] vB2 - Vertical Player Movement
 - [x] vB3 - Player Armory Adjustment
+- [ ] vB4 - Player Type 4 Weapon - Rockets
 
 ## Potential Update
 - [ ] Player Type 3 Weapon with High Power
-- [ ] Player Type 4 Weapon - Rockets
 - [ ] Player Rockets
 - [ ] Dynamic Hardness for Endless Run
 - [ ] Multiple High Score Display

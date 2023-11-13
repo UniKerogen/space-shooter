@@ -1,5 +1,5 @@
 # Settings File
-# Version - Beta 3
+# Version - Beta 4
 # Store settings for game
 
 ##################################################
@@ -18,11 +18,11 @@ BOUNDARY_MARGIN = 3  # Pixel of Margin for calculation
 # Create
 CRATE_SIZE = 40  # Pixel
 CRATE_CHANCE = 10  # % of Chance generating crate
-CRATE_SUB_CHANCE = [10, 20, 30, 40, 50, 60]  # Each Crate Chance
+CRATE_SUB_CHANCE = [10, 20, 30, 40, 50, 60, 70]  # Each Crate Chance
 CRATE_SPEED = 0.1  # Crate Movement Speed
 CRATE_HEALTH = (10, 50)  # Crate Health Range
 CRATE_SHIELD = (25, 75)  # Crate Shield Range
-CRATE_TYPE_AMOUNT = 6  # Total Types of Crate
+CRATE_TYPE_AMOUNT = len(CRATE_SUB_CHANCE)  # Total Types of Crate
 CRATE_COLLECT_RANGE = 30  # pixel of range for crate collection
 
 # Player Modification
@@ -44,6 +44,9 @@ BULLET_TYPE = 6  # Total Number of Player Bullet
 BULLET_COOLDOWN_BASE = 100  # Base for bullet cooldown
 BULLET_COOLDOWN_MINIMUM = 10  # Minimum Cooldown for Bullet
 BULLET_SIZE = 50  # Bullet Image Size - Enemy
+
+# Rocket Information
+ROCKET_TYPE = 2  # Types of Rocket
 
 # Explosion
 EXPLOSION_TIME = 0.5  # second

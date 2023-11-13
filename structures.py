@@ -1,5 +1,5 @@
 # Structure File
-# Version - Beta 3
+# Version - Beta 4
 # A Modified Linked List for Storage
 
 from settings import *
@@ -43,6 +43,8 @@ class PlayerBlock:
         self.fire_shift[5] = ((0, 0), (44, 0))
         self.fire_shift[6] = ((0, 0), (56, 0))
         self.fire_shift = tuple(self.fire_shift)
+        # Rocket Storage
+        self.rocket = [0, 0]
         # Save Input Data
         self.data = [name, position, image, speed, health]
 
@@ -52,6 +54,7 @@ class PlayerBlock:
         self.position[0] += self.x_change
         self.position[1] += self.y_change
         self.center = [sum(x) for x in zip(self.position, [PLAYER_SIZE / 2, PLAYER_SIZE / 2])]
+        self.rocket = [0, 0]
         # Check Boundary - Horizontal
         if self.position[0] < 0:
             self.position[0] = 0
@@ -331,22 +334,25 @@ class Crate:
         # Self Start Element
         if self.category == 0:  # Add Life - 10 Chance
             self.info = 1
-            self.image = pygame.image.load('resources/create/life_create.png')
+            self.image = pygame.image.load('resources/crate/life_crate.png')
         elif self.category == 1:  # Invincible - 20 Chance
             self.info = PLAYER_INVINCIBLE_TIME
-            self.image = pygame.image.load('resources/create/invincible_create.png')
+            self.image = pygame.image.load('resources/crate/invincible_crate.png')
         elif self.category == 2:  # Clear All Enemy Bullet - 30 Chance
             self.info = 0
-            self.image = pygame.image.load('resources/create/clear_bullet_create.png')
-        elif self.category == 3:  # Weapon Create - 40 Chance
+            self.image = pygame.image.load('resources/crate/clear_bullet_crate.png')
+        elif self.category == 3 :  # Rocket Crate - 40 Chance
+            self.info = random.randint(0, ROCKET_TYPE)
+            self.image = pygame.image.load('resources/crate/rocket' + str(self.info) + '.png')
+        elif self.category == 5:  # Weapon Crate - 50 Chance
             self.info = random.randint(0, BULLET_TYPE)
-            self.image = pygame.image.load('resources/create/bullet' + str(self.info) + '.png')
-        elif self.category == 4:  # Shield - 50 Chance
+            self.image = pygame.image.load('resources/crate/bullet' + str(self.info) + '.png')
+        elif self.category == 6:  # Shield - 60 Chance
             self.info = random.randint(CRATE_SHIELD[0], CRATE_SHIELD[1])
-            self.image = pygame.image.load('resources/create/shield_create.png')
-        elif self.category == 5:  # Health - 60 Chance
+            self.image = pygame.image.load('resources/crate/shield_crate.png')
+        elif self.category == 7:  # Health - 70 Chance
             self.info = random.randint(CRATE_HEALTH[0], CRATE_HEALTH[1])
-            self.image = pygame.image.load('resources/create/health_create.png')
+            self.image = pygame.image.load('resources/crate/health_crate.png')
         # Storage
         self.contact = [sum(x) for x in zip(position, [CRATE_SIZE / 2, CRATE_SIZE / 2])]  # Crate Contact Point
         self.direction = 1 if random.randint(0, 1) == 0 else -1  # Crate Move Direction
