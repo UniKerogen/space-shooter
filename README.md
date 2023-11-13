@@ -40,7 +40,8 @@ Place all files in the same folder and run game.py
 - [x] vB3 - Player Armory Adjustment
 
 ## Potential Update
-- [ ] Player Type 3 Weapon with High Power - Rockets
+- [ ] Player Type 3 Weapon with High Power
+- [ ] Player Type 4 Weapon - Rockets
 - [ ] Player Rockets
 - [ ] Dynamic Hardness for Endless Run
 - [ ] Multiple High Score Display
