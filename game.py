@@ -113,6 +113,24 @@ def fire_bullet_player(bullet_block):
     screen.blit(bullet_block.image, (bullet_block.position[0], bullet_block.position[1]))
 
 
+# Player Fire Rocket
+def rocket_fire(type):
+    global player, player_armory, player_bullets
+    firing_rocket = player_armory.index_at(index=10 + type)  # Obtain Rocket
+    if player.active and firing_rocket.cooldown[1] <= 0:
+        fire_position = player.position.copy()  # Set Fire Position
+        # Set Rocket Contact Position
+        rocket_contact = [list(item7) for item7 in firing_rocket.contact]
+        rocket_contact = [[sum(x) for x in zip(fire_position, item8)] for item8 in rocket_contact]
+        # Add to Bullet List
+        player_bullets.append(index=firing_rocket.index,
+                              position=fire_position,
+                              contact=rocket_contact,
+                              armory=player_armory)
+        # Reset Cooldown
+        player.rocket_cooldown[type] = firing_rocket.cooldown[0]
+
+
 # Enemy Fire Bullet
 def fire_bullet_enemy(bullet_block):
     # noinspection PyGlobalUndefined
@@ -378,7 +396,7 @@ def main():
                 player.invincible = True
             elif current_crate.category == 2:  # Clear Enemy Bullet
                 enemy_bullets = BulletList()
-            elif current_crate.category == 3: # Rocket Crate
+            elif current_crate.category == 3:  # Rocket Crate
                 if player.rocket[current_crate.info] < 3:
                     player.rocket[current_crate.info] += 1
             elif current_crate.category == 4:  # Weapon Create
@@ -561,6 +579,13 @@ if __name__ == "__main__":
                 elif event.key == pygame.K_SPACE:
                     if player.active:
                         BULLET_FIRE = True
+                # Fire Rocket
+                elif event.key == pygame.K_z and player.rocket[0] > 0 and player.rocket_cooldown[0] <= 0:
+                    rocket_fire(type=0)
+                    player.rocket[0] -= 1
+                elif event.key == pygame.K_x and player.rocket[1] > 0 and player.rocket_cooldown[1] <= 0:
+                    rocket_fire(type=1)
+                    player.rocket[1] -= 1
                 # Weapon Switch -- TO BE DISABLED
                 elif event.key == pygame.K_0 and not intro_screen:
                     player_armory.index_at(index=9).active = not player_armory.index_at(index=9).active

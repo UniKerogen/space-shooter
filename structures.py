@@ -45,6 +45,7 @@ class PlayerBlock:
         self.fire_shift = tuple(self.fire_shift)
         # Rocket Storage
         self.rocket = [0, 0]
+        self.rocket_cooldown = [0, 0]
         # Save Input Data
         self.data = [name, position, image, speed, health]
 
@@ -65,6 +66,10 @@ class PlayerBlock:
             self.position[1] = PLAYER_Y_RANGE[0]
         elif self.position[1] >= PLAYER_Y_RANGE[1]:
             self.position[1] = PLAYER_Y_RANGE[1]
+        # Rocket Cooldown
+        for rocket_index in range(0, len(self.rocket_cooldown)):
+            if self.rocket_cooldown[rocket_index] > 0:
+                self.rocket_cooldown[rocket_index] -= 1
 
     # Reset Player
     def reset(self):
