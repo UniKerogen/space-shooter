@@ -46,7 +46,7 @@ BULLET_COOLDOWN_MINIMUM = 10  # Minimum Cooldown for Bullet
 BULLET_SIZE = 50  # Bullet Image Size - Enemy
 
 # Rocket Information
-ROCKET_TYPE = 2  # Types of Rocket
+ROCKET_TYPE = 1  # Types of Rocket
 
 # Explosion
 EXPLOSION_TIME = 0.5  # second

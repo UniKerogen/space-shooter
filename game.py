@@ -117,7 +117,7 @@ def fire_bullet_player(bullet_block):
 def rocket_fire(type):
     global player, player_armory, player_bullets
     firing_rocket = player_armory.index_at(index=10 + type)  # Obtain Rocket
-    if player.active and firing_rocket.cooldown[1] <= 0:
+    if player.active and player.rocket_cooldown[1] <= 0:
         fire_position = player.position.copy()  # Set Fire Position
         # Set Rocket Contact Position
         rocket_contact = [list(item7) for item7 in firing_rocket.contact]
@@ -438,6 +438,8 @@ def main():
     screen.blit(current_score, (10, 10))
     life_text = font18.render("Life X " + str(player.life[1]), True, WHITE)
     screen.blit(life_text, (10, SCREEN_HEIGHT - 5 - 18))
+    rocket_indicator = font18.render("Rocket: [ " + str(player.rocket[0]) + " , " + str(player.rocket[1]) + " ]", True, WHITE)
+    screen.blit(rocket_indicator, (SCREEN_WIDTH - 95, SCREEN_HEIGHT - (5 + 18)))
 
 
 ####################################################################################################
@@ -445,6 +447,7 @@ def main():
 ####################################################################################################
 if __name__ == "__main__":
     # Variable
+    global player_bullets
     RUNNING, BULLET_FIRE = True, False
     enemy_exist = False
     intro_screen, end_screen, score_board, error_screen, level_screen, pause_screen = (
@@ -593,6 +596,9 @@ if __name__ == "__main__":
                 elif event.key == pygame.K_9 and not intro_screen:
                     player.always_invincible = not player.always_invincible
                     player.invincible = not player.invincible
+                # Add Rocket
+                elif event.key == pygame.K_8 and not intro_screen:
+                    player.rocket[1] += 1
             # Event of Key Release
             if event.type == pygame.KEYUP and not intro_screen and not end_screen:
                 # Stop Player Movement
@@ -697,6 +703,8 @@ if __name__ == "__main__":
             button_show(screen=screen, name='exit')
             button_show(screen=screen, name='pause')
             main()  # Main Game Function - Endless Run
+            # Screen Element Rendering
+
         # Update Pygame Screen
         pygame.display.update()
     # Store and Update Scores - TODO Update and store highest scores

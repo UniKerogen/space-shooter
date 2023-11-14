@@ -55,7 +55,6 @@ class PlayerBlock:
         self.position[0] += self.x_change
         self.position[1] += self.y_change
         self.center = [sum(x) for x in zip(self.position, [PLAYER_SIZE / 2, PLAYER_SIZE / 2])]
-        self.rocket = [0, 0]
         # Check Boundary - Horizontal
         if self.position[0] < 0:
             self.position[0] = 0
@@ -78,6 +77,7 @@ class PlayerBlock:
         self.image = self.data[2]
         self.speed = self.data[3]
         self.health = [self.data[4], self.data[4]]
+        self.rocket = [0, 0]
         self.invincible = True
         self.explode_at = None
         self.active = True
