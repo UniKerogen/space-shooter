@@ -23,6 +23,8 @@ font18 = pygame.font.Font(None, 18)
 font24 = pygame.font.Font(None, 24)
 font30 = pygame.font.Font(None, 30)
 font36 = pygame.font.Font(None, 36)
+font42 = pygame.font.Font(None, 42)
+font48 = pygame.font.Font(None, 48)
 # Background
 background = pygame.image.load('resources/background.png')
 background_rect1 = background.get_rect()
@@ -613,19 +615,22 @@ if __name__ == "__main__":
         ################################################################################
         if intro_screen:
             # Intro Texts and Locations
-            intro_text = font36.render("Space Shooter", True, WHITE)
+            intro_text = font48.render("Space Shooter", True, WHITE)
             intro_text_rect = intro_text.get_rect()
-            intro_text_rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 50)
+            intro_text_rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 80)
             # Show Texts
             screen.blit(intro_text, intro_text_rect)
+            # Show Tutorial Block if Hover over Help Button
+
             # Intro Screen Button
             button_show(screen=screen, name='level')
             button_show(screen=screen, name='endless')
+            button_show(screen=screen, name='help')
         ################################################################################
         ################################################################################
         elif end_screen:
             # Show Score
-            score_text_end = font36.render("Score : " + str(score), True, WHITE)
+            score_text_end = font42.render("Score : " + str(score), True, WHITE)
             score_text_end_rect = score_text_end.get_rect()
             score_text_end_rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 50)
             screen.blit(score_text_end, score_text_end_rect)
@@ -661,7 +666,7 @@ if __name__ == "__main__":
         ################################################################################
         elif level_screen:  # Level Selection
             # Show Title
-            level_title = font36.render("Select Game Difficulty", True, WHITE)
+            level_title = font42.render("Select Game Difficulty", True, WHITE)
             level_title_rect = level_title.get_rect()
             level_title_rect.center = (200, 150)
             screen.blit(level_title, level_title_rect)
@@ -676,7 +681,7 @@ if __name__ == "__main__":
         ################################################################################
         elif pause_screen:
             # Show Score
-            score_text = font36.render("Current Score : " + str(score), True, WHITE)
+            score_text = font42.render("Current Score : " + str(score), True, WHITE)
             score_text_rect = score_text.get_rect()
             score_text_rect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 50)
             screen.blit(score_text, score_text_rect)
