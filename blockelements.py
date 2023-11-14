@@ -450,7 +450,7 @@ buttons = ButtonList()
 button_names = ['endless', 'level', 'help',
                 'main_menu', 'quit', 'restart', 'score_board',
                 'easy', 'medium', 'hard', 'hell',
-                'back', 'exit', 'pause',
+                'back', 'exit', 'pause', 'info',
                 'resume']
 for item in button_names:
     buttons.append(name=item)
@@ -469,9 +469,10 @@ buttons.name(name='medium').rect.topleft = (150, 300)
 buttons.name(name='hard').rect.topleft = (150, 360)
 buttons.name(name='hell').rect.topleft = (150, 420)
 # On Screen
-buttons.name(name='back').rect.topleft = (5, SCREEN_WIDTH - 20 - BUTTON_SIZE_ON_SCREEN[0] * 3)
-buttons.name(name='pause').rect.topleft = (5, SCREEN_WIDTH - 15 - BUTTON_SIZE_ON_SCREEN[0] * 2)
-buttons.name(name='exit').rect.topleft = (5, SCREEN_WIDTH - 10 - BUTTON_SIZE_ON_SCREEN[0])
+buttons.name(name='back').rect.topleft = (5, SCREEN_WIDTH - 20 - BUTTON_SIZE_ON_SCREEN[0] * 3)  # 305
+buttons.name(name='pause').rect.topleft = (5, SCREEN_WIDTH - 15 - BUTTON_SIZE_ON_SCREEN[0] * 2)  # 335
+buttons.name(name='exit').rect.topleft = (5, SCREEN_WIDTH - 10 - BUTTON_SIZE_ON_SCREEN[0])  # 365
+buttons.name(name='info').rect.topleft = (5, SCREEN_WIDTH - 5)  # 395
 # Pause Screen
 buttons.name(name='resume').rect.topleft = (150, 480)
 

@@ -26,7 +26,7 @@ font36 = pygame.font.Font(None, 36)
 font42 = pygame.font.Font(None, 42)
 font48 = pygame.font.Font(None, 48)
 # Background
-background = pygame.image.load('resources/background.png')
+background = pygame.image.load('resources/images/background.png')
 background_rect1 = background.get_rect()
 background_rect2 = background.get_rect()
 background_rect3 = background.get_rect()
@@ -561,6 +561,8 @@ if __name__ == "__main__":
                 else:
                     if buttons.name('back').rect.collidepoint(event.pos):
                         intro_screen = True
+                        reset_screen()
+                        enemy_exist = False
                     elif buttons.name('pause').rect.collidepoint(event.pos):
                         pause_screen = True
                     elif buttons.name('exit').rect.collidepoint(event.pos):
@@ -622,7 +624,7 @@ if __name__ == "__main__":
             screen.blit(intro_text, intro_text_rect)
             # Show Tutorial Block if Hover over Help Button
             if buttons.name(name='help').rect.collidepoint(pygame.mouse.get_pos()):
-                screen.blit(pygame.image.load('resources/tutorial_block.png'), (0, 0))
+                screen.blit(pygame.image.load('resources/images/tutorial_block.png'), (0, 0))
             # Intro Screen Button
             button_show(screen=screen, name='level')
             button_show(screen=screen, name='endless')
@@ -706,8 +708,13 @@ if __name__ == "__main__":
                     enemy_generate(number=ENEMY_NUMBER)
                 enemy_exist = True
             # Endless Run
+            button_show(screen=screen, name='back')
             button_show(screen=screen, name='exit')
             button_show(screen=screen, name='pause')
+            button_show(screen=screen, name='info')
+            # Show Tutorial Block if Hover over Help Button
+            if buttons.name(name='info').rect.collidepoint(pygame.mouse.get_pos()):
+                screen.blit(pygame.image.load('resources/images/info_block.png'), (0, 0))
             main()  # Main Game Function - Endless Run
             # Screen Element Rendering
 
