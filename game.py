@@ -1,7 +1,7 @@
 # Top Down Shooter Game
 # A Simple Top Down Shooter for Raiden Mockup
 # Version - Beta 4
-
+import pygame.mouse
 
 ####################################################################################################
 # Libraries
@@ -621,7 +621,8 @@ if __name__ == "__main__":
             # Show Texts
             screen.blit(intro_text, intro_text_rect)
             # Show Tutorial Block if Hover over Help Button
-
+            if buttons.name(name='help').rect.collidepoint(pygame.mouse.get_pos()):
+                screen.blit(pygame.image.load('resources/tutorial_block.png'), (0, 0))
             # Intro Screen Button
             button_show(screen=screen, name='level')
             button_show(screen=screen, name='endless')
