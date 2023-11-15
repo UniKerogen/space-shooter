@@ -5,6 +5,15 @@ A Simple Game using Pygame Module. Just keep shooting and scoring.
 
 - **Image Resources are coming from internet**
 
+## Game Highlights
+- Game difficulty selection for four pre-set difficulties
+- Mouse hover action for every button and tip/info during gameplay
+- In-game crate system to power up player spaceship
+- Player spawn protection when needed
+- Multiple weapon systems for player to shoot at the same time
+- Randomized enemy spawn and randomized enemy weapon system
+- Score based enemy mini-boss and enemy big-boss spawning
+
 ## Game Screen
 |                                           Intro Screen                                           |                                       Game Screen                                        |
 |:------------------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------------:|
