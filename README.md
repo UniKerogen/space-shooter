@@ -20,7 +20,7 @@ A Simple Game using Pygame Module. Just keep shooting and scoring.
 - structure - Storage for customized structure
 - blockelements - Initialization of some structure and function
 - game - Main game function
-- resources - Storage for used resources
+- resources - Storage for in-game resources
 - supplement - Supplemental material for ReadMe
 
 ## Usage
@@ -44,6 +44,5 @@ Place all files in the same folder and run game.py
 
 ## Potential Update
 - [ ] Player Type 3 Weapon with High Power
-- [ ] Player Rockets
 - [ ] Dynamic Hardness for Endless Run
 - [ ] Multiple High Score Display
