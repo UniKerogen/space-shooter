@@ -5,7 +5,7 @@ A Simple Game using Pygame Module. Just keep shooting and scoring.
 
 - **Image Resources are coming from internet**
 
-## Game Highlights
+## Game Features
 - Game difficulty selection for four pre-set difficulties
 - Mouse hover action for every button and tip/info during gameplay
 - In-game crate system to power up player spaceship
