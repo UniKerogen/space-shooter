@@ -33,7 +33,11 @@ A Simple Game using Pygame Module. Just keep shooting and scoring.
 - supplement - Supplemental material for ReadMe
 
 ## Usage
-Place all files in the same folder and run game.py
+- Libraries Requirements: Python3, pygame
+- Built and tested on anaconda with Python 3.11.5 and pygame 2.5.2
+### Instructions:
+1. Place all files in the same folder
+2. Run game.py
 
 ## Past Generation Updates
 - [x] vA1 - Initial Game Structure
