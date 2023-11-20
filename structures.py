@@ -3,8 +3,9 @@
 # A Modified Linked List for Storage
 
 from settings import *
-import random
 import pygame
+import random
+import warnings
 
 
 ##################################################
@@ -184,45 +185,27 @@ class AmoryBlock:
 
 class Armory:
     def __init__(self):
-        self.head = None
-
-    # Length of the List
-    def __len__(self):
-        count = 0
-        current = self.head
-        while current:
-            count += 1
-            current = current.next
-        return count
+        self.armory_item = ()
+        self.armory_index = ()
 
     # Add Element at the end
     def append(self, name, index, position, speed, exp_range, contact, active, image, cooldown, damage):
-        new_node = AmoryBlock(name, index, position, speed, exp_range, contact, active, image, cooldown, damage)
-        if not self.head:
-            self.head = new_node
-            return
-        current = self.head
-        while current.next:
-            current = current.next
-        current.next = new_node
+        new_weapon = AmoryBlock(name, index, position, speed, exp_range, contact, active, image, cooldown, damage)
+        self.armory_item += (new_weapon, )
+        self.armory_index += (index, )
 
     # Search via Index - Return Bullet Block
     def index_at(self, index):
-        current = self.head
-        while current:
-            if current.index == index:
-                return current
-            current = current.next
+        if index < len(self.armory_item):
+            return self.armory_item[index]
         return False
 
     # Search via Active - Return Bullet Block
     def search_active(self):
         active_list = []
-        current = self.head
-        while current:
-            if current.active:
-                active_list.append(current.index)
-            current = current.next
+        for weapon in self.armory_item:
+            if weapon.active:
+                active_list.append(weapon.index)
         return active_list
 
 
@@ -427,24 +410,16 @@ class Button:
 
 class ButtonList:
     def __init__(self):
-        self.head = None
+        self.button_set = []
+        self.button_names = []
 
     def append(self, name):
-        new_node = Button(name=name)
-        if not self.head:
-            self.head = new_node
-        else:
-            current = self.head
-            while current.next:
-                current = current.next
-            current.next = new_node
+        self.button_set.append(Button(name=name))
+        self.button_names.append(name)
 
     def name(self, name):
-        current = self.head
-        while current:
-            if current.name == name:
-                return current
-            current = current.next
+        if name in self.button_names:
+            return self.button_set[self.button_names.index(name)]
         return False
 
 
@@ -456,32 +431,55 @@ class ImageBlock:
         self.name = name
         self.number = number
         self.image = pygame.image.load('resources/explosion/explosion' + str(number) + ".png")
-        # Linkage
-        self.next = None
 
 
 class ImageList:
     def __init__(self):
-        self.head = None
+        self.image_set = ()
 
     def append(self, name, number):
-        new_node = ImageBlock(name=name, number=number)
-        if not self.head:
-            self.head = new_node
-        else:
-            current = self.head
-            while current.next:
-                current = current.next
-            current.next = new_node
+        self.image_set += (ImageBlock(name=name, number=number), )
 
     def get(self):  # Select a random explosion image from list
-        number = random.randint(0, EXPLOSION_IMAGE_NUMBER - 1)
-        current = self.head
-        while current:
-            if current.number == number:
-                return current.image
-            current = current.next
-        return False
+        return self.image_set[random.randint(0, len(self.image_set) - 1)]
+
+##################################################
+# Class Prototype - Controller
+##################################################
+class Controller:
+    def __init__(self, name, status=False):
+        self.name = name
+        self.status = status
+
+    def on(self):
+        self.status = True
+
+    def off(self):
+        self.status = False
+
+class ControllerSet:
+    def __init__(self):
+        self.controller_set = []
+        self.controller_name = []
+
+    def fuse(self, name, status=False):
+        self.controller_set.append(Controller(name=name, status=status))
+        self.controller_name.append(name)
+
+    def on(self, name):
+        if name in self.controller_name:
+            # Turn on/off controller
+            for controller in self.controller_set:
+                if controller.name == name:
+                    controller.on()
+                else:
+                    controller.off()
+        else:
+            # Turn off all controller
+            for controller in self.controller_set:
+                controller.off()
+            warnings.warn("Unable to find controller with the name " + name)
+
 
 
 ##################################################

@@ -506,6 +506,11 @@ for number in range(0, EXPLOSION_IMAGE_NUMBER):
     explosion.append(name='explosion' + str(number), number=number)
 
 ##################################################
+# Controller Block
+##################################################
+
+
+##################################################
 # Screen Element Storage
 ##################################################
 # On Screen Bullet Storage
