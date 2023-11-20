@@ -152,14 +152,6 @@ class BulletList:
 
     # Delete All Elements
     def delete_list(self):
-        current = self.head
-        while current:
-            previous = current.next
-            del current.index
-            del current.position
-            del current.contact
-            del current.next
-            current = previous
         self.head = None
 
 
@@ -243,6 +235,7 @@ class EnemyBlock:
 class EnemyList:
     def __init__(self):
         self.head = None
+        self.hash_index = {}
 
     def __len__(self):
         count = 0
@@ -261,14 +254,13 @@ class EnemyList:
             while current.next:
                 current = current.next
             current.next = new_node
+        # Update Hash Table
+        self.hash_index[len(self.hash_index)] = new_node
 
     # Search via Index
     def index_at(self, index):
-        current = self.head
-        while current:
-            if current.index == index:
-                return current
-            current = current.next
+        if index < len(self.hash_index):
+            return self.hash_index.get(index)
         return False
 
     # Delete a Enemy
@@ -286,27 +278,13 @@ class EnemyList:
             current = current.next
 
     def get_last_index(self):
-        if not self.head:
-            return 0  # The list is empty
-        current = self.head
-        while current.next:
-            current = current.next
-        return current.index
+        if len(self.hash_index) == 0:
+            return 0
+        else:
+            return self.hash_index.get(len(self.hash_index) - 1)
 
-        # Delete All Elements
-
+    # Delete All Elements
     def delete_list(self):
-        current = self.head
-        while current:
-            previous = current.next
-            del current.name, current.index
-            del current.direction, current.position, current.center, current.speed
-            del current.active, current.image, current.health
-            del current.weapon, current.hit_range
-            del current.explode_at, current.health_show, current.fire_cooldown
-            del current.next
-            del current.y_axis, current.each_weapon_amount, current.fire_shift
-            current = previous
         self.head = None
 
 
