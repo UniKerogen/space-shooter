@@ -459,6 +459,10 @@ class ControllerSet:
                 controller.off()
             warnings.warn("Unable to find controller with the name " + name)
 
+    def is_on(self, name):
+        if name in self.controller_name:
+            return self.controller_set[self.controller_name.index(name)].status
+
 
 
 ##################################################

@@ -501,7 +501,10 @@ for number in range(0, EXPLOSION_IMAGE_NUMBER):
 ##################################################
 # Controller Block
 ##################################################
-
+controller = ControllerSet()
+controller_names = ("intro", "end", "score_board", "error", "level", "pause", "game")
+for screen_name in controller_names:
+    controller.fuse(name=screen_name)
 
 ##################################################
 # Screen Element Storage

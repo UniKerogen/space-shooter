@@ -233,7 +233,7 @@ def main():
     global player
     global enemies, miniboss, bosses
     global player_armory, player_bullets, enemy_bullets
-    global BULLET_FIRE, end_screen
+    global bullet_fire
     global create_boss, create_miniboss
     ################################################################################
     ################################################################################
@@ -260,7 +260,7 @@ def main():
     # Continuous Shooting - Player
     for active_bullet_index in active_bullet_list:
         active_bullet = player_armory.index_at(index=active_bullet_index)
-        if BULLET_FIRE and player.active and player.weapon_amount[active_bullet.index] > 0:
+        if bullet_fire.status and player.active and player.weapon_amount[active_bullet.index] > 0:
             if active_bullet.cooldown[1] <= 0:
                 for fire_amount in range(0, player.weapon_amount[active_bullet.index]):
                     if player.weapon_amount[active_bullet.index] > 1:
@@ -380,7 +380,7 @@ def main():
                 player.reset()
                 player.invincible_at = time.time()
             else:  # With No Life Left
-                end_screen = True
+                controller.on(name="end")
     # Reset Invincibility
     if player.invincible and not player.always_invincible:
         if time.time() - player.invincible_at > PLAYER_INVINCIBLE_TIME:
@@ -450,16 +450,16 @@ def main():
 if __name__ == "__main__":
     # Variable
     global player_bullets
-    RUNNING, BULLET_FIRE = True, False
+    program_run = Controller(name="program_run", status=True)
+    bullet_fire = Controller(name="bullet_fire")
     enemy_exist = False
-    intro_screen, end_screen, score_board, error_screen, level_screen, pause_screen = (
-        True, False, False, False, False, False)
+    controller.on(name="intro")
     background_timer = time.time()
     # Storage
     highest_score = 0
     level_set = 0
     # Running Loop
-    while RUNNING:
+    while program_run.status:
         ################################################################################
         ################################################################################
         # Background Infinite Scroll Settings
@@ -484,21 +484,20 @@ if __name__ == "__main__":
         for event in pygame.event.get():
             # Event of Quiting
             if event.type == pygame.QUIT:
-                RUNNING = False
+                program_run.off()
             # Event of Mouse Click
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # Intro Screen
-                if intro_screen:
+                if controller.is_on(name="intro"):
                     if buttons.name('level').rect.collidepoint(event.pos):
-                        intro_screen = False
-                        level_screen = True
+                        controller.on(name="level")
                     elif buttons.name('endless').rect.collidepoint(event.pos):
-                        intro_screen = False
+                        controller.on("game")
                 # End Screen
-                elif end_screen:
+                elif controller.is_on(name="end"):
                     if buttons.name('restart').rect.collidepoint(event.pos):
                         # Restart Endless Run
-                        end_screen = False
+                        controller.on(name="game")
                         # Reset Player
                         score = 0
                         player.life[1] = player.life[0]
@@ -509,66 +508,61 @@ if __name__ == "__main__":
                         enemy_exist = False
                     elif buttons.name('main_menu').rect.collidepoint(event.pos):
                         # Back to Main Menu/Intro Menu
-                        end_screen = False
-                        intro_screen = True
+                        controller.on(name="intro")
                     elif buttons.name('score_board').rect.collidepoint(event.pos):
                         # Show Score Board
-                        end_screen = False
-                        score_board = True
+                        controller.on(name="score_board")
                     elif buttons.name('quit').rect.collidepoint(event.pos):
                         # Quit Game
-                        RUNNING = False
+                        program_run.off()
                 # Score Board Screen
-                elif score_board:
+                elif controller.is_on(name="score_board"):
                     if buttons.name('main_menu').rect.collidepoint(event.pos):
-                        score_board = False
-                        intro_screen = True
+                        controller.on(name="intro")
                     elif buttons.name('quit').rect.collidepoint(event.pos):
-                        RUNNING = False
+                        program_run.off()
                 # Error Screen
-                elif error_screen:
+                elif controller.is_on(name="error"):
                     if buttons.name('main_menu').rect.collidepoint(event.pos):
-                        error_screen = False
-                        intro_screen = True
+                        controller.on(name="intro")
                     elif buttons.name('score_board').rect.collidepoint(event.pos):
-                        RUNNING = False
+                        program_run.off()
                 # Level Screen
-                elif level_screen:
+                elif controller.is_on(name="level"):
                     if buttons.name('easy').rect.collidepoint(event.pos):
                         level_set = 1
-                        level_screen = False
+                        controller.on(name="game")
                     elif buttons.name('medium').rect.collidepoint(event.pos):
                         level_set = 2
-                        level_screen = False
+                        controller.on(name="game")
                     elif buttons.name('hard').rect.collidepoint(event.pos):
                         level_set = 3
-                        level_screen = False
+                        controller.on(name="game")
                     elif buttons.name('hell').rect.collidepoint(event.pos):
                         level_set = 4
-                        level_screen = False
+                        controller.on(name="game")
                     elif buttons.name('score_board').rect.collidepoint(event.pos):
-                        level_screen = False
-                        intro_screen = True
+                        controller.on(name="intro")
                     elif buttons.name('quit').rect.collidepoint(event.pos):
-                        RUNNING = False
+                        program_run.off()
                 # Pause Screen
-                elif pause_screen:
+                elif controller.is_on(name="pause"):
                     if buttons.name('score_board').rect.collidepoint(event.pos):
-                        RUNNING = False
+                        program_run.off()
                     elif buttons.name('resume').rect.collidepoint(event.pos):
-                        pause_screen = False
+                        controller.on(name="game")
                 # Game Screen
-                else:
+                elif controller.is_on(name="game"):
                     if buttons.name('back').rect.collidepoint(event.pos):
-                        intro_screen = True
+                        controller.on(name="intro")
                         reset_screen()
                         enemy_exist = False
                     elif buttons.name('pause').rect.collidepoint(event.pos):
-                        pause_screen = True
+                        controller.on(name="pause")
                     elif buttons.name('exit').rect.collidepoint(event.pos):
-                        RUNNING = False
+                        program_run.off()
             # Event of Key Press
-            if event.type == pygame.KEYDOWN and not intro_screen and not end_screen:
+            if event.type == pygame.KEYDOWN and controller.is_on(name="game"):
                 # Player Movement
                 if event.key == pygame.K_LEFT:
                     if player.active:
@@ -585,7 +579,7 @@ if __name__ == "__main__":
                 # Fire Bullet
                 elif event.key == pygame.K_SPACE:
                     if player.active:
-                        BULLET_FIRE = True
+                        bullet_fire.on()
                 # Fire Rocket
                 elif event.key == pygame.K_z and player.rocket[0] > 0 and player.rocket_cooldown[0] <= 0:
                     rocket_fire(type=0)
@@ -593,18 +587,20 @@ if __name__ == "__main__":
                 elif event.key == pygame.K_x and player.rocket[1] > 0 and player.rocket_cooldown[1] <= 0:
                     rocket_fire(type=1)
                     player.rocket[1] -= 1
+                #################################################################
                 # Weapon Switch -- TO BE DISABLED
-                elif event.key == pygame.K_0 and not intro_screen:
+                elif event.key == pygame.K_0:
                     player_armory.index_at(index=9).active = not player_armory.index_at(index=9).active
                 # Always Invincible
-                elif event.key == pygame.K_9 and not intro_screen:
+                elif event.key == pygame.K_9:
                     player.always_invincible = not player.always_invincible
                     player.invincible = not player.invincible
                 # Add Rocket
-                elif event.key == pygame.K_8 and not intro_screen:
+                elif event.key == pygame.K_8:
                     player.rocket[1] += 1
+                ################################################################
             # Event of Key Release
-            if event.type == pygame.KEYUP and not intro_screen and not end_screen:
+            if event.type == pygame.KEYUP and controller.is_on(name="game"):
                 # Stop Player Movement
                 if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                     player.x_change = 0
@@ -612,10 +608,10 @@ if __name__ == "__main__":
                     player.y_change = 0
                 # Fire Bullet
                 if event.key == pygame.K_SPACE:
-                    BULLET_FIRE = False
+                    bullet_fire.off()
         ################################################################################
         ################################################################################
-        if intro_screen:
+        if controller.is_on(name="intro"):
             # Intro Texts and Locations
             intro_text = font48.render("Space Shooter", True, WHITE)
             intro_text_rect = intro_text.get_rect()
@@ -631,7 +627,7 @@ if __name__ == "__main__":
             button_show(screen=screen, name='help')
         ################################################################################
         ################################################################################
-        elif end_screen:
+        elif controller.is_on(name="end"):
             # Show Score
             score_text_end = font42.render("Score : " + str(score), True, WHITE)
             score_text_end_rect = score_text_end.get_rect()
@@ -644,7 +640,7 @@ if __name__ == "__main__":
             button_show(screen=screen, name='quit')
         ################################################################################
         ################################################################################
-        elif score_board:
+        elif controller.is_on(name="score_board"):
             # Show Score Board - TODO Show Multiple High Scores
             highest_score = score if highest_score < score else highest_score
             score_board_text = font36.render("Current High Score : " + str(highest_score), True, WHITE)
@@ -656,7 +652,7 @@ if __name__ == "__main__":
             button_show(screen=screen, name='quit', position_name='score_board')
         ################################################################################
         ################################################################################
-        elif error_screen:
+        elif controller.is_on(name="error"):
             # Show Text
             error_text = font36.render("Oops! Something went Wrong!", True, WHITE)
             error_text_rect = error_text.get_rect()
@@ -667,7 +663,7 @@ if __name__ == "__main__":
             button_show(screen=screen, name='quit', position_name='score_board')
         ################################################################################
         ################################################################################
-        elif level_screen:  # Level Selection
+        elif controller.is_on(name="level"):  # Level Selection
             # Show Title
             level_title = font42.render("Select Game Difficulty", True, WHITE)
             level_title_rect = level_title.get_rect()
@@ -682,7 +678,7 @@ if __name__ == "__main__":
             button_show(screen=screen, name='quit')
         ################################################################################
         ################################################################################
-        elif pause_screen:
+        elif controller.is_on(name="pause"):
             # Show Score
             score_text = font42.render("Current Score : " + str(score), True, WHITE)
             score_text_rect = score_text.get_rect()
@@ -693,7 +689,7 @@ if __name__ == "__main__":
             button_show(screen=screen, name='quit', position_name='score_board')
         ################################################################################
         ################################################################################
-        else:  # Normal Game
+        elif controller.is_on(name="game"):  # Game
             # Generate Enemy - Level Selection
             if not enemy_exist:
                 if level_set == 1:  # Easy Mode
