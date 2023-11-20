@@ -1,6 +1,6 @@
 # Top Down Shooter Game
 # A Simple Top Down Shooter for Raiden Mockup
-# Version - Beta 4
+# Version - Beta 5
 import pygame.mouse
 
 ####################################################################################################
@@ -457,7 +457,6 @@ if __name__ == "__main__":
     background_timer = time.time()
     # Storage
     highest_score = 0
-    level_set = 0
     # Running Loop
     while program_run.status:
         ################################################################################
@@ -492,7 +491,8 @@ if __name__ == "__main__":
                     if buttons.name('level').rect.collidepoint(event.pos):
                         controller.on(name="level")
                     elif buttons.name('endless').rect.collidepoint(event.pos):
-                        controller.on("game")
+                        difficulty.on(name="endless")
+                        controller.on(name="game")
                 # End Screen
                 elif controller.is_on(name="end"):
                     if buttons.name('restart').rect.collidepoint(event.pos):
@@ -530,16 +530,16 @@ if __name__ == "__main__":
                 # Level Screen
                 elif controller.is_on(name="level"):
                     if buttons.name('easy').rect.collidepoint(event.pos):
-                        level_set = 1
+                        difficulty.on(name="easy")
                         controller.on(name="game")
                     elif buttons.name('medium').rect.collidepoint(event.pos):
-                        level_set = 2
+                        difficulty.on(name="medium")
                         controller.on(name="game")
                     elif buttons.name('hard').rect.collidepoint(event.pos):
-                        level_set = 3
+                        difficulty.on(name="hard")
                         controller.on(name="game")
                     elif buttons.name('hell').rect.collidepoint(event.pos):
-                        level_set = 4
+                        difficulty.on(name="hell")
                         controller.on(name="game")
                     elif buttons.name('score_board').rect.collidepoint(event.pos):
                         controller.on(name="intro")
@@ -692,15 +692,15 @@ if __name__ == "__main__":
         elif controller.is_on(name="game"):  # Game
             # Generate Enemy - Level Selection
             if not enemy_exist:
-                if level_set == 1:  # Easy Mode
+                if difficulty.is_on(name="easy"):  # Easy Mode
                     batch_enemy_generation(number=2)
-                elif level_set == 2:  # Medium Mode
+                elif difficulty.is_on(name="medium"):  # Medium Mode
                     batch_enemy_generation(number=5)
-                elif level_set == 3:  # Hard Mode
+                elif difficulty.is_on(name="hard"):  # Hard Mode
                     batch_enemy_generation(number=8)
-                elif level_set == 4:  # Death Mode
+                elif difficulty.is_on(name="hell"):  # Death Mode
                     batch_enemy_generation(number=12)
-                else:  # Default Mode
+                elif difficulty.is_on(name="endless"):  # Default Mode
                     batch_enemy_generation(number=ENEMY_NUMBER)
                 enemy_exist = True
             # Endless Run

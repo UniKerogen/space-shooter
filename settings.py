@@ -1,5 +1,5 @@
 # Settings File
-# Version - Beta 4
+# Version - Beta 5
 # Store settings for game
 
 ##################################################

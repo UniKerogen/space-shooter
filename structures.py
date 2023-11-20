@@ -1,5 +1,5 @@
 # Structure File
-# Version - Beta 4
+# Version - Beta 5
 # A Modified Linked List for Storage
 
 from settings import *

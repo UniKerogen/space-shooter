@@ -1,5 +1,5 @@
 # Block Element File
-# Version - Beta 4
+# Version - Beta 5
 # Storage for block elements
 
 ##################################################
@@ -505,6 +505,11 @@ controller = ControllerSet()
 controller_names = ("intro", "end", "score_board", "error", "level", "pause", "game")
 for screen_name in controller_names:
     controller.fuse(name=screen_name)
+
+difficulty = ControllerSet()
+level_names = ("easy", "medium", "hard", "hell", "endless")
+for difficulty_level in level_names:
+    difficulty.fuse(name=difficulty_level)
 
 ##################################################
 # Screen Element Storage
