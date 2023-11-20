@@ -144,61 +144,54 @@ player_armory.append(name='rocket1',
 enemies = EnemyList()
 
 
-# Enemy Generation
-def enemy_generate(number=ENEMY_NUMBER):
+# Enemy Generation - Single
+def enemy_generate(index):
+    enemies.append(name='enemy' + str(index),
+                   index=index,
+                   position=[random.randint(BOUNDARY_LEFT, BOUNDARY_RIGHT - ENEMY_SIZE), -ENEMY_SIZE],
+                   speed=random.randint(1, ENEMY_SPEED_MAX) / 1000,
+                   active=False,
+                   image=pygame.image.load(
+                       'resources/enemy/enemy' + str(random.randint(0, ENEMY_TYPE - 1)) + '.png'),
+                   health=random.randint(ENEMY_BASE_HEALTH[0], ENEMY_BASE_HEALTH[1]),
+                   direction=-1 if random.randint(0, 1) == 0 else 1,
+                   weapon=random.sample([i for i in range(ENEMY_WEAPON_TYPE)], ENEMY_WEAPON_AMOUNT),
+                   hit_range=ENEMY_SIZE / 2 * ENEMY_HIT_RANGE)
+    current_enemy = enemies.index_at(index=index)
+    # Each Weapon Amount
+    current_enemy.each_weapon_amount = (1, 1, 1, 1, 1)
+    current_enemy.fire_shift = ((0, 0),
+                                (0, 0),
+                                (0, 0),
+                                (0, 0),
+                                (0, 0))
+    # Set Cooldown
+    current_enemy.fire_cooldown = [0] * ENEMY_WEAPON_AMOUNT
+    for weapon in current_enemy.weapon:
+        index = current_enemy.weapon.index(weapon)
+        max_cooldown = enemy_armory.index_at(index=weapon).cooldown
+        current_enemy.fire_cooldown[index] = random.randint(BULLET_COOLDOWN_MINIMUM, max_cooldown)
+    # Target Y Axis
+    current_enemy.y_axis = random.randint(ENEMY_SPAWN[0], ENEMY_SPAWN[1])
+    # Load Indicator
+    current_enemy.indicator3 = pygame.image.load('resources/enemy/bullet3_indicator.png')
+    current_enemy.indicator3_shift = current_enemy.fire_shift[3]
+
+# Enemy Generation - Batch
+def batch_enemy_generation(number=ENEMY_NUMBER):
     for num_enemy in range(number):
-        enemies.append(name='enemy' + str(num_enemy),
-                       index=num_enemy,
-                       position=[random.randint(BOUNDARY_LEFT, BOUNDARY_RIGHT - ENEMY_SIZE), -ENEMY_SIZE],
-                       speed=random.randint(1, ENEMY_SPEED_MAX) / 1000,
-                       active=False,
-                       image=pygame.image.load(
-                           'resources/enemy/enemy' + str(random.randint(0, ENEMY_TYPE - 1)) + '.png'),
-                       health=random.randint(ENEMY_BASE_HEALTH[0], ENEMY_BASE_HEALTH[1]),
-                       direction=-1 if random.randint(0, 1) == 0 else 1,
-                       weapon=random.sample([i for i in range(ENEMY_WEAPON_TYPE)], ENEMY_WEAPON_AMOUNT),
-                       hit_range=ENEMY_SIZE / 2 * ENEMY_HIT_RANGE)
-        current_enemy = enemies.index_at(index=num_enemy)
-        # Each Weapon Amount
-        current_enemy.each_weapon_amount = (1, 1, 1, 1, 1)
-        current_enemy.fire_shift = ((0, 0),
-                                    (0, 0),
-                                    (0, 0),
-                                    (0, 0),
-                                    (0, 0))
-        # Set Cooldown
-        current_enemy.fire_cooldown = [0] * ENEMY_WEAPON_AMOUNT
-        for weapon in current_enemy.weapon:
-            index = current_enemy.weapon.index(weapon)
-            max_cooldown = enemy_armory.index_at(index=weapon).cooldown
-            current_enemy.fire_cooldown[index] = random.randint(BULLET_COOLDOWN_MINIMUM, max_cooldown)
-        # Target Y Axis
-        current_enemy.y_axis = random.randint(ENEMY_SPAWN[0], ENEMY_SPAWN[1])
-        # Load Indicator
-        current_enemy.indicator3 = pygame.image.load('resources/enemy/bullet3_indicator.png')
-        current_enemy.indicator3_shift = current_enemy.fire_shift[3]
+        enemy_generate(index=num_enemy)
 
 
 # Enemy Reset
 def enemy_reset(enemy_block):
-    # Reset Enemy Information
-    enemy_block.position = [random.randint(BOUNDARY_LEFT, BOUNDARY_RIGHT - ENEMY_SIZE), -ENEMY_SIZE]
-    enemy_block.speed = random.randint(1, ENEMY_SPEED_MAX) / 1000
-    enemy_block.active = False
-    enemy_block.image = pygame.image.load('resources/enemy/enemy' + str(random.randint(0, ENEMY_TYPE - 1)) + '.png'),
-    enemy_block.image = enemy_block.image[0]
-    enemy_block.health = [random.randint(ENEMY_BASE_HEALTH[0], ENEMY_BASE_HEALTH[1])] * 2
-    enemy_block.direction = -1 if random.randint(0, 1) == 0 else 1
-    enemy_block.weapon = random.sample([i for i in range(ENEMY_WEAPON_TYPE)], ENEMY_WEAPON_AMOUNT)
-    # Fire Cooldown
-    for weapon in enemy_block.weapon:
-        index = enemy_block.weapon.index(weapon)
-        max_cooldown = enemy_armory.index_at(index=weapon).cooldown
-        enemy_block.fire_cooldown[index] = random.randint(BULLET_COOLDOWN_MINIMUM, max_cooldown)
-    # Self Start Element Reset
-    enemy_block.explode_at = None
-    enemy_block.health_show = True
-    enemy_block.y_axis = random.randint(ENEMY_SPAWN[0], ENEMY_SPAWN[1])
+    # Obtain Essential Information
+    index = enemy_block.index
+    # Delete Current Enemy
+    enemies.delete(enemy_block)
+    # Create New Enemy
+    enemy_generate(index=index)
+    del index
 
 
 ##################################################

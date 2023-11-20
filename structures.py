@@ -177,27 +177,25 @@ class AmoryBlock:
 
 class Armory:
     def __init__(self):
-        self.armory_item = ()
-        self.armory_index = ()
+        self.armory_dict = {}
 
     # Add Element at the end
     def append(self, name, index, position, speed, exp_range, contact, active, image, cooldown, damage):
         new_weapon = AmoryBlock(name, index, position, speed, exp_range, contact, active, image, cooldown, damage)
-        self.armory_item += (new_weapon, )
-        self.armory_index += (index, )
+        self.armory_dict[new_weapon.index] = new_weapon
 
     # Search via Index - Return Bullet Block
     def index_at(self, index):
-        if index < len(self.armory_item):
-            return self.armory_item[index]
+        if index in self.armory_dict:
+            return self.armory_dict.get(index)
         return False
 
     # Search via Active - Return Bullet Block
     def search_active(self):
         active_list = []
-        for weapon in self.armory_item:
-            if weapon.active:
-                active_list.append(weapon.index)
+        for armory_index in self.armory_dict:
+            if self.armory_dict.get(armory_index).active:
+                active_list.append(armory_index)
         return active_list
 
 
@@ -255,7 +253,7 @@ class EnemyList:
                 current = current.next
             current.next = new_node
         # Update Hash Table
-        self.hash_index[len(self.hash_index)] = new_node
+        self.hash_index[index] = new_node
 
     # Search via Index
     def index_at(self, index):
@@ -276,16 +274,19 @@ class EnemyList:
                 current.next = current.next.next
                 return
             current = current.next
+        # Delete Hash Table Entry
+        del self.hash_index[enemy_block.index]
 
     def get_last_index(self):
         if len(self.hash_index) == 0:
             return 0
         else:
-            return self.hash_index.get(len(self.hash_index) - 1)
+            return self.hash_index.get(len(self.hash_index) - 1).index
 
     # Delete All Elements
     def delete_list(self):
         self.head = None
+        self.hash_index = {}
 
 
 ##################################################
@@ -419,7 +420,7 @@ class ImageList:
         self.image_set += (ImageBlock(name=name, number=number), )
 
     def get(self):  # Select a random explosion image from list
-        return self.image_set[random.randint(0, len(self.image_set) - 1)]
+        return self.image_set[random.randint(0, len(self.image_set) - 1)].image
 
 ##################################################
 # Class Prototype - Controller

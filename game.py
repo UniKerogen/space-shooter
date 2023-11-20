@@ -697,15 +697,15 @@ if __name__ == "__main__":
             # Generate Enemy - Level Selection
             if not enemy_exist:
                 if level_set == 1:  # Easy Mode
-                    enemy_generate(number=2)
+                    batch_enemy_generation(number=2)
                 elif level_set == 2:  # Medium Mode
-                    enemy_generate(number=5)
+                    batch_enemy_generation(number=5)
                 elif level_set == 3:  # Hard Mode
-                    enemy_generate(number=8)
+                    batch_enemy_generation(number=8)
                 elif level_set == 4:  # Death Mode
-                    enemy_generate(number=12)
+                    batch_enemy_generation(number=12)
                 else:  # Default Mode
-                    enemy_generate(number=ENEMY_NUMBER)
+                    batch_enemy_generation(number=ENEMY_NUMBER)
                 enemy_exist = True
             # Endless Run
             button_show(screen=screen, name='back')
