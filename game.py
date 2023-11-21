@@ -1,12 +1,12 @@
 # Top Down Shooter Game
 # A Simple Top Down Shooter for Raiden Mockup
 # Version - Beta 5
-import pygame.mouse
 
 ####################################################################################################
 # Libraries
 ####################################################################################################
 from blockelements import *
+import pygame.mouse
 import time
 
 ####################################################################################################
@@ -48,9 +48,11 @@ def show_player(player_block):
     global screen
     # Invincible Coat
     if player_block.invincible:
-        screen.blit(player.invincible_image, (player_block.position[0], player_block.position[1]))
+        screen.blit(pygame.image.load(player.invincible_image), (player_block.position[0], player_block.position[1]))
     # Player Self
-    screen.blit(player_block.image, (player_block.position[0], player_block.position[1]))
+    display_image = pygame.image.load(player_block.image)
+    display_image = pygame.transform.scale(display_image, (player_block.size, player_block.size))
+    screen.blit(display_image, (player_block.position[0], player_block.position[1]))
     # Shield
     if player_block.health_show:
         pygame.draw.rect(screen,
@@ -68,7 +70,8 @@ def show_player(player_block):
                              rect=(player_block.position[0], player_block.position[1] + player_block.health_bar[2],
                                    player_block.shield / PLAYER_SHIELD_MAX * player_block.health_bar[0],
                                    player_block.health_bar[1]))
-            screen.blit(player.shield_image, (player_block.position[0], player_block.position[1] - 5))
+            screen.blit(pygame.image.load(player.shield_image),
+                        (player_block.position[0], player_block.position[1] - 5))
 
 
 # Show Each Create
@@ -76,7 +79,8 @@ def show_crate(crate_list):
     global screen
     current_crate = crate_list.head
     while current_crate:
-        screen.blit(current_crate.image, (current_crate.position[0], current_crate.position[1]))
+        display_image = pygame.transform.scale(pygame.image.load(current_crate.image), (CRATE_SIZE, CRATE_SIZE))
+        screen.blit(display_image, (current_crate.position[0], current_crate.position[1]))
         current_crate = current_crate.next  # Next Element
 
 
@@ -85,14 +89,17 @@ def show_enemy(enemy_list, health_bar=ENEMY_HEALTH_BAR):
     global screen
     enemy_block = enemy_list.head
     while enemy_block:
-        screen.blit(enemy_block.image, (enemy_block.position[0], enemy_block.position[1]))
+        display_image = pygame.transform.scale(pygame.image.load(enemy_block.image),
+                                               (enemy_block.size, enemy_block.size))
+        screen.blit(display_image, (enemy_block.position[0], enemy_block.position[1]))
         # Type 3 Weapon Indicator - Regular Enemy
         if 3 in enemy_block.weapon and enemy_block.explode_at is None:
             if enemy_block.each_weapon_amount[3] > 1:
                 for position in enemy_block.indicator3_shift:
-                    screen.blit(enemy_block.indicator3, [sum(x) for x in zip(position, enemy_block.position)])
+                    screen.blit(pygame.image.load(enemy_block.indicator3),
+                                [sum(x) for x in zip(position, enemy_block.position)])
             else:
-                screen.blit(enemy_block.indicator3,
+                screen.blit(pygame.image.load(enemy_block.indicator3),
                             [sum(x) for x in zip(enemy_block.indicator3_shift, enemy_block.position)])
         # Show Health
         if enemy_block.health_show:
@@ -112,7 +119,7 @@ def show_enemy(enemy_list, health_bar=ENEMY_HEALTH_BAR):
 def fire_bullet_player(bullet_block):
     # noinspection PyGlobalUndefined
     global screen, player_armory
-    screen.blit(bullet_block.image, (bullet_block.position[0], bullet_block.position[1]))
+    screen.blit(pygame.image.load(bullet_block.image), (bullet_block.position[0], bullet_block.position[1]))
 
 
 # Player Fire Rocket
@@ -137,7 +144,7 @@ def rocket_fire(type):
 def fire_bullet_enemy(bullet_block):
     # noinspection PyGlobalUndefined
     global screen, enemy_armory
-    screen.blit(bullet_block.image, (bullet_block.position[0], bullet_block.position[1]))
+    screen.blit(pygame.image.load(bullet_block.image), (bullet_block.position[0], bullet_block.position[1]))
 
 
 # Bullet Collision
@@ -160,17 +167,17 @@ def bullet_collision(block_list, bullet_list, spawn):
                         # Update Score and Crate
                         if spawn == ENEMY_SPAWN:
                             score += 1
-                            current_block.image = pygame.transform.scale(explosion.get(), (
-                                ENEMY_SIZE, ENEMY_SIZE))  # Set Explosion Image
+                            current_block.image = explosion.get()  # Set Explosion Image
+                            current_block.size = ENEMY_SIZE
                         elif spawn == MINI_BOSS_SPAWN:
                             score += 5
-                            current_block.image = pygame.transform.scale(explosion.get(),
-                                                                         (MINI_BOSS_SIZE, MINI_BOSS_SIZE))
+                            current_block.image = explosion.get()
+                            current_block.size = MINI_BOSS_SIZE
                             crate_generate(enemy_block=current_block, chance=100)  # Additional Crate
                         elif spawn == BIG_BOSS_SPAWN:
                             score += 15
-                            current_block.image = pygame.transform.scale(explosion.get(),
-                                                                         (BIG_BOSS_SIZE, BIG_BOSS_SIZE))
+                            current_block.image = explosion.get()
+                            current_block.size = BIG_BOSS_SIZE
                             crate_generate(enemy_block=current_block, chance=100)  # Additional Crate
                             crate_generate(enemy_block=current_block, chance=100)  # Additional Crate
                             crate_generate(enemy_block=current_block, chance=50)  # 50% Chance of Additional Crate
@@ -189,9 +196,8 @@ def bullet_collision(block_list, bullet_list, spawn):
 
 
 # Continuous Shooting
-def enemy_shooting(block_list):
+def enemy_shooting(block_list, bullet_list):
     # noinspection PyGlobalUndefined
-    global enemy_bullets
     current_enemy = block_list.head
     while current_enemy:
         if current_enemy.active:
@@ -209,10 +215,10 @@ def enemy_shooting(block_list):
                         contact = [list(item0) for item0 in enemy_armory.index_at(index=current_weapon).contact]
                         contact = [[sum(x) for x in zip(item1, fire_position)] for item1 in contact]
                         # Add to Enemy Bullet
-                        enemy_bullets.append(index=current_weapon,
-                                             position=fire_position,
-                                             contact=contact,
-                                             armory=enemy_armory)
+                        bullet_list.append(index=current_weapon,
+                                           position=fire_position,
+                                           contact=contact,
+                                           armory=enemy_armory)
                     # Set Cooldown
                     current_enemy.fire_cooldown[current_enemy.weapon.index(current_weapon)] = enemy_armory.index_at(
                         index=current_weapon).cooldown
@@ -222,6 +228,108 @@ def enemy_shooting(block_list):
         # Next Block
         current_enemy = current_enemy.next
 
+
+def player_collision(block, block_list, block_armory):
+    current_bullet = block_list.head
+    while current_bullet and block.active and not block.invincible:
+        explosion_range = block_armory.index_at(index=current_bullet.index).exp_range
+        # Set Danger Zone - Vertical - To Active Collision Calculation
+        if current_bullet.index == 3:
+            danger_range_y = [0, SCREEN_HEIGHT - ENEMY_SIZE]
+        else:
+            danger_range_y = [block.position[1] - explosion_range * 2, block.position[1] + block.size]
+        # Set Danger Zone - Horizontal - To Active Collision Calculation
+        danger_range_x = [block.position[0] - BULLET_SIZE, block.position[0] + block.size + BULLET_SIZE]
+        if (danger_range_x[0] < current_bullet.position[0] < danger_range_x[1] and
+                danger_range_y[0] < current_bullet.position[1] < danger_range_y[1]):
+            if collide_player(player_block=block, bullet_block=current_bullet):  # Check Collision
+                # Decrease Player Shield and Health
+                shield = block.shield - current_bullet.damage
+                if shield >= 0:  # Has Shield Remaining
+                    block.shield = shield
+                else:  # Decrease Health after Shield Consumption
+                    block.shield = 0
+                    block.health[1] += shield
+                # Player Health Check
+                if block.health[1] <= 0:  # Explode when No Health
+                    block.image = explosion.get()
+                    block.explode_at = time.time()  # Set Explosion Time
+                    block.active = False  # De-active Player
+                    block.health_show = False  # Hide Health Bar
+                block_list.delete(current_bullet=current_bullet)  # Delete Collided Bullet
+        # Next Element
+        current_bullet = current_bullet.next
+    # Reset Player After a certain time of Explosion
+    if not block.active and block.explode_at is not None:
+        if time.time() - block.explode_at >= EXPLOSION_TIME:
+            block.life[1] -= 1  # Decrease Player Life
+            if block.life[1] > 0:  # With Lives Left
+                block.reset()
+                block.invincible_at = time.time()
+            else:  # With No Life Left
+                controller.on(name="end")
+    # Reset Invincibility
+    if block.invincible and not block.always_invincible:
+        if time.time() - block.invincible_at > PLAYER_INVINCIBLE_TIME:
+            block.invincible = False
+
+
+def crate_collection(block_list, block, block_armory):
+    global enemy_bullets
+    current_crate = block_list.head
+    while current_crate:  # Iteration of Create
+        if collide_crate(player_block=block, crate_block=current_crate):
+            if current_crate.category == 0:  # Add a Life
+                block.life[1] += 1
+            elif current_crate.category == 1:  # Collect Invincible
+                block.invincible_at = time.time()
+                block.invincible = True
+            elif current_crate.category == 2:  # Clear Enemy Bullet
+                enemy_bullets = BulletList()
+            elif current_crate.category == 3:  # Rocket Crate
+                if block.rocket[current_crate.info] < 3:
+                    block.rocket[current_crate.info] += 1
+            elif current_crate.category == 4:  # Weapon Create
+                for active_bullet_index in block_armory.search_active():
+                    if active_bullet_index < WEAPON_TYPE_1_AMOUNT and current_crate.info < WEAPON_TYPE_1_AMOUNT:
+                        block_armory.index_at(index=active_bullet_index).active = False
+                    elif WEAPON_TYPE_1_AMOUNT - 1 < active_bullet_index < WEAPON_TYPE_1_AMOUNT + WEAPON_TYPE_2_AMOUNT and WEAPON_TYPE_1_AMOUNT - 1 < current_crate.info < WEAPON_TYPE_1_AMOUNT + WEAPON_TYPE_2_AMOUNT:
+                        block_armory.index_at(index=active_bullet_index).active = False
+                block_armory.index_at(index=current_crate.info).active = True
+            elif current_crate.category == 5:  # Shield
+                block.shield += current_crate.info
+                block.shield = block.shield if block.shield <= PLAYER_SHIELD_MAX else PLAYER_SHIELD_MAX
+            elif current_crate.category == 6:  # Collect Health
+                block.health[1] += current_crate.info
+                block.health[1] = block.health[1] if block.health[1] < block.health[0] else player.health[0]
+            block_list.delete(crate_block=current_crate)  # Delete Collected Crate
+        current_crate = current_crate.next  # Next Element
+
+
+def player_bullet_movement(block_list):
+    current_bullet = block_list.head
+    while current_bullet:
+        current_bullet.position[1] -= current_bullet.speed  # Update Position
+        for item4 in current_bullet.contact:  # Update Contact Point
+            item4[1] -= current_bullet.speed
+        # Reset Bullet
+        if current_bullet.position[1] <= 0:  # Delete Bullet After Moves Off Screen
+            block_list.delete(current_bullet=current_bullet)
+        current_bullet = current_bullet.next
+
+def enemy_bullet_movement(block_list):
+    current_bullet = block_list.head
+    while current_bullet:
+        current_bullet.position[1] += current_bullet.speed  # Update Position
+        for item5 in current_bullet.contact:  # Update Contact
+            if current_bullet.index == 3 and current_bullet.position[1] < player.position[1] + PLAYER_SIZE:
+                # Special Case of Type 3 Weapon
+                item5[1] = player.center[1]
+            else:
+                item5[1] += current_bullet.speed
+        if current_bullet.position[1] >= SCREEN_HEIGHT:  # Remove After Off-Screen
+            block_list.delete(current_bullet=current_bullet)
+        current_bullet = current_bullet.next
 
 ####################################################################################################
 # Main Function
@@ -284,50 +392,27 @@ def main():
     ################################################################################
     ################################################################################
     # Continuous Shooting - Enemy
-    enemy_shooting(block_list=enemies)
+    enemy_shooting(block_list=enemies, bullet_list=enemy_bullets)
     ################################################################################
     ################################################################################
     # Continuous Shooting - Miniboss
-    enemy_shooting(block_list=miniboss)
+    enemy_shooting(block_list=miniboss, bullet_list=enemy_bullets)
     ################################################################################
     ################################################################################
     # Continuous Shooting - Big Boss
-    enemy_shooting(block_list=bosses)
+    enemy_shooting(block_list=bosses, bullet_list=enemy_bullets)
     ################################################################################
     ################################################################################
-    # Player Movement
-    player.update()
-    # Movement of Enemy
-    movement(block_list=enemies, spawn=ENEMY_SPAWN, size=ENEMY_SIZE)
-    # Movement of Mini Boss
-    movement(block_list=miniboss, spawn=MINI_BOSS_SPAWN, size=MINI_BOSS_SIZE)
-    # Movement of Boss
-    movement(block_list=bosses, spawn=BIG_BOSS_SPAWN, size=BIG_BOSS_SIZE)
-    # Create Movement
-    crate_movement()
-    # Player Bullet Movement
-    current_bullet = player_bullets.head
-    while current_bullet:
-        current_bullet.position[1] -= current_bullet.speed  # Update Position
-        for item4 in current_bullet.contact:  # Update Contact Point
-            item4[1] -= current_bullet.speed
-        # Reset Bullet
-        if current_bullet.position[1] <= 0:  # Delete Bullet After Moves Off Screen
-            player_bullets.delete(current_bullet=current_bullet)
-        current_bullet = current_bullet.next
-    # Enemy Bullet Movement
-    current_bullet = enemy_bullets.head
-    while current_bullet:
-        current_bullet.position[1] += current_bullet.speed  # Update Position
-        for item5 in current_bullet.contact:  # Update Contact
-            if current_bullet.index == 3 and current_bullet.position[1] < player.position[1] + PLAYER_SIZE:
-                # Special Case of Type 3 Weapon
-                item5[1] = player.center[1]
-            else:
-                item5[1] += current_bullet.speed
-        if current_bullet.position[1] >= SCREEN_HEIGHT:  # Remove After Off-Screen
-            enemy_bullets.delete(current_bullet=current_bullet)
-        current_bullet = current_bullet.next
+    th = ThreadController()
+    th.fuse(target=player.update())
+    th.fuse(target=movement(block_list=enemies, spawn=ENEMY_SPAWN, size=ENEMY_SIZE))
+    th.fuse(target=movement(block_list=miniboss, spawn=MINI_BOSS_SPAWN, size=MINI_BOSS_SIZE))
+    th.fuse(target=movement(block_list=bosses, spawn=BIG_BOSS_SPAWN, size=BIG_BOSS_SIZE))
+    th.fuse(target=crate_movement())
+    th.fuse(target=player_bullet_movement(block_list=player_bullets))
+    th.fuse(target=enemy_bullet_movement(block_list=enemy_bullets))
+    # Start Thread
+    th.initiate()
     ################################################################################
     ################################################################################
     # Collision of Enemy & Player Bullet
@@ -343,79 +428,11 @@ def main():
     ################################################################################
     ################################################################################
     # Collision of Player & Enemy Bullet
-    current_bullet = enemy_bullets.head
-    while current_bullet and player.active and not player.invincible:
-        explosion_range = enemy_armory.index_at(index=current_bullet.index).exp_range
-        # Set Danger Zone - Vertical - To Active Collision Calculation
-        if current_bullet.index == 3:
-            danger_range_y = [0, SCREEN_HEIGHT - ENEMY_SIZE]
-        else:
-            danger_range_y = [player.position[1] - explosion_range * 2, player.position[1] + PLAYER_SIZE]
-        # Set Danger Zone - Horizontal - To Active Collision Calculation
-        danger_range_x = [player.position[0] - BULLET_SIZE, player.position[0] + PLAYER_SIZE + BULLET_SIZE]
-        if (danger_range_x[0] < current_bullet.position[0] < danger_range_x[1] and
-                danger_range_y[0] < current_bullet.position[1] < danger_range_y[1]):
-            if collide_player(player_block=player, bullet_block=current_bullet):  # Check Collision
-                # Decrease Player Shield and Health
-                shield = player.shield - current_bullet.damage
-                if shield >= 0:  # Has Shield Remaining
-                    player.shield = shield
-                else:  # Decrease Health after Shield Consumption
-                    player.shield = 0
-                    player.health[1] += shield
-                # Player Health Check
-                if player.health[1] <= 0:  # Explode when No Health
-                    player.image = pygame.transform.scale(explosion.get(), (PLAYER_SIZE, PLAYER_SIZE))
-                    player.explode_at = time.time()  # Set Explosion Time
-                    player.active = False  # De-active Player
-                    player.health_show = False  # Hide Health Bar
-                enemy_bullets.delete(current_bullet=current_bullet)  # Delete Collided Bullet
-        # Next Element
-        current_bullet = current_bullet.next
-    # Reset Player After a certain time of Explosion
-    if not player.active and player.explode_at is not None:
-        if time.time() - player.explode_at >= EXPLOSION_TIME:
-            player.life[1] -= 1  # Decrease Player Life
-            if player.life[1] > 0:  # With Lives Left
-                player.reset()
-                player.invincible_at = time.time()
-            else:  # With No Life Left
-                controller.on(name="end")
-    # Reset Invincibility
-    if player.invincible and not player.always_invincible:
-        if time.time() - player.invincible_at > PLAYER_INVINCIBLE_TIME:
-            player.invincible = False
+    player_collision(block=player, block_list=enemy_bullets, block_armory=enemy_armory)
     ################################################################################
     ################################################################################
     # Create Collection
-    current_crate = crates.head
-    while current_crate:  # Iteration of Create
-        if collide_crate(player_block=player, crate_block=current_crate):
-            if current_crate.category == 0:  # Add a Life
-                player.life[1] += 1
-            elif current_crate.category == 1:  # Collect Invincible
-                player.invincible_at = time.time()
-                player.invincible = True
-            elif current_crate.category == 2:  # Clear Enemy Bullet
-                enemy_bullets = BulletList()
-            elif current_crate.category == 3:  # Rocket Crate
-                if player.rocket[current_crate.info] < 3:
-                    player.rocket[current_crate.info] += 1
-            elif current_crate.category == 4:  # Weapon Create
-                for active_bullet_index in player_armory.search_active():
-                    if active_bullet_index < WEAPON_TYPE_1_AMOUNT and current_crate.info < WEAPON_TYPE_1_AMOUNT:
-                        player_armory.index_at(index=active_bullet_index).active = False
-                    elif WEAPON_TYPE_1_AMOUNT - 1 < active_bullet_index < WEAPON_TYPE_1_AMOUNT + WEAPON_TYPE_2_AMOUNT and WEAPON_TYPE_1_AMOUNT - 1 < current_crate.info < WEAPON_TYPE_1_AMOUNT + WEAPON_TYPE_2_AMOUNT:
-                        player_armory.index_at(index=active_bullet_index).active = False
-                player_armory.index_at(index=current_crate.info).active = True
-            elif current_crate.category == 5:  # Shield
-                player.shield += current_crate.info
-                player.shield = player.shield if player.shield <= PLAYER_SHIELD_MAX else PLAYER_SHIELD_MAX
-            elif current_crate.category == 6:  # Collect Health
-                player.health[1] += current_crate.info
-                player.health[1] = player.health[1] if player.health[1] < player.health[0] else player.health[0]
-            crates.delete(crate_block=current_crate)  # Delete Collected Crate
-        current_crate = current_crate.next  # Next Element
+    crate_collection(block_list=crates, block=player, block_armory=player_armory)
     ################################################################################
     ################################################################################
     # Update Player
@@ -440,7 +457,8 @@ def main():
     screen.blit(current_score, (10, 10))
     life_text = font18.render("Life X " + str(player.life[1]), True, WHITE)
     screen.blit(life_text, (10, SCREEN_HEIGHT - 5 - 18))
-    rocket_indicator = font18.render("Rocket: [ " + str(player.rocket[0]) + " , " + str(player.rocket[1]) + " ]", True, WHITE)
+    rocket_indicator = font18.render("Rocket: [ " + str(player.rocket[0]) + " , " + str(player.rocket[1]) + " ]", True,
+                                     WHITE)
     screen.blit(rocket_indicator, (SCREEN_WIDTH - 95, SCREEN_HEIGHT - (5 + 18)))
 
 

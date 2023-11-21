@@ -3,8 +3,11 @@
 # A Modified Linked List for Storage
 
 from settings import *
+import multiprocessing
 import pygame
 import random
+import threading
+import time
 import warnings
 
 
@@ -34,6 +37,7 @@ class PlayerBlock:
         self.invincible_at = None  # Player Invincible Timer
         self.health_bar = PLAYER_HEALTH_BAR  # Player Health Bar Size
         self.always_invincible = False  # Player Invincible Cheat
+        self.size = PLAYER_SIZE  # Player Size
         # Storage Information
         self.x_change = 0  # Player Horizontal Move Value
         self.y_change = 0  # Player Vertical Move Value
@@ -216,6 +220,7 @@ class EnemyBlock:
         self.health = [health, health]  # Enemy Health
         self.weapon = weapon  # Enemy Weapon
         self.hit_range = round(hit_range)  # Enemy Got Hit Range
+        self.size = ENEMY_SIZE
         # Self Start Element
         self.explode_at = None  # Enemy Exploded or not
         self.health_show = True  # Show Enemy Health
@@ -234,6 +239,7 @@ class EnemyList:
     def __init__(self):
         self.head = None
         self.hash_index = {}
+        self.last_add = None
 
     def __len__(self):
         count = 0
@@ -254,6 +260,7 @@ class EnemyList:
             current.next = new_node
         # Update Hash Table
         self.hash_index[index] = new_node
+        self.last_add = index
 
     # Search via Index
     def index_at(self, index):
@@ -281,7 +288,7 @@ class EnemyList:
         if len(self.hash_index) == 0:
             return 0
         else:
-            return self.hash_index.get(len(self.hash_index) - 1).index
+            return self.last_add
 
     # Delete All Elements
     def delete_list(self):
@@ -301,25 +308,25 @@ class Crate:
         # Self Start Element
         if self.category == 0:  # Add Life - 10 Chance
             self.info = 1
-            self.image = pygame.image.load('resources/crate/life_crate.png')
+            self.image = 'resources/crate/life_crate.png'
         elif self.category == 1:  # Invincible - 20 Chance
             self.info = PLAYER_INVINCIBLE_TIME
-            self.image = pygame.image.load('resources/crate/invincible_crate.png')
+            self.image = 'resources/crate/invincible_crate.png'
         elif self.category == 2:  # Clear All Enemy Bullet - 30 Chance
             self.info = 0
-            self.image = pygame.image.load('resources/crate/clear_bullet_crate.png')
+            self.image = 'resources/crate/clear_bullet_crate.png'
         elif self.category == 3 :  # Rocket Crate - 40 Chance
             self.info = random.randint(0, ROCKET_TYPE)
-            self.image = pygame.image.load('resources/crate/rocket' + str(self.info) + '.png')
+            self.image = 'resources/crate/rocket' + str(self.info) + '.png'
         elif self.category == 4:  # Weapon Crate - 50 Chance
             self.info = random.randint(0, BULLET_TYPE)
-            self.image = pygame.image.load('resources/crate/bullet' + str(self.info) + '.png')
+            self.image = 'resources/crate/bullet' + str(self.info) + '.png'
         elif self.category == 5:  # Shield - 60 Chance
             self.info = random.randint(CRATE_SHIELD[0], CRATE_SHIELD[1])
-            self.image = pygame.image.load('resources/crate/shield_crate.png')
+            self.image = 'resources/crate/shield_crate.png'
         elif self.category == 6:  # Health - 70 Chance
             self.info = random.randint(CRATE_HEALTH[0], CRATE_HEALTH[1])
-            self.image = pygame.image.load('resources/crate/health_crate.png')
+            self.image = 'resources/crate/health_crate.png'
         # Storage
         self.contact = [sum(x) for x in zip(position, [CRATE_SIZE / 2, CRATE_SIZE / 2])]  # Crate Contact Point
         self.direction = 1 if random.randint(0, 1) == 0 else -1  # Crate Move Direction
@@ -409,7 +416,7 @@ class ImageBlock:
     def __init__(self, name, number):
         self.name = name
         self.number = number
-        self.image = pygame.image.load('resources/explosion/explosion' + str(number) + ".png")
+        self.image = 'resources/explosion/explosion' + str(number) + ".png"
 
 
 class ImageList:
@@ -464,6 +471,53 @@ class ControllerSet:
             return self.controller_set[self.controller_name.index(name)].status
 
 
+##################################################
+# Class Prototype - Threading Controller
+##################################################
+class ThreadController:
+    def __init__(self):
+        self.threads = []
+        self.start_time = None
+        self.end_time = None
+
+    def fuse(self, target):
+        self.threads.append(threading.Thread(target=target))
+
+    def initiate(self, show_time=False):
+        self.start_time = time.time()
+        # Start Threads
+        for t in self.threads:
+            t.start()
+        # Wait for Completion
+        for t in self.threads:
+            t.join()
+        # Show Time
+        if show_time:
+            print("Threading Time: " + str(time.time() - self.start_time))
+
+
+##################################################
+# Class Prototype - Multi Processing Controller
+##################################################
+class ProcessingController:
+    def __init__(self):
+        self.processes = []
+        self.start_time = None
+
+    def fuse(self, target, args):
+        self.processes.append(multiprocessing.Process(target=target, args=args))
+
+    def initiate(self, show_time=False):
+        self.start_time = time.time()
+        # Start Process
+        for p in self.processes:
+            p.start()
+        # Wait for Completion
+        for p in self.processes:
+            p.join()
+        # Show Time
+        if show_time:
+            print("Process Time: " + str(time.time() - self.start_time))
 
 ##################################################
 # Main Function
