@@ -403,6 +403,7 @@ def main():
     enemy_shooting(block_list=bosses, bullet_list=enemy_bullets)
     ################################################################################
     ################################################################################
+    # Movement of Elements
     th = ThreadController()
     th.fuse(target=player.update())
     th.fuse(target=movement(block_list=enemies, spawn=ENEMY_SPAWN, size=ENEMY_SIZE))

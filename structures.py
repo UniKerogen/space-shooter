@@ -483,7 +483,10 @@ class ThreadController:
     def fuse(self, target):
         self.threads.append(threading.Thread(target=target))
 
-    def initiate(self, show_time=False):
+    def empty(self):
+        self.threads = []
+
+    def initiate(self, empty=True, show_time=False):
         self.start_time = time.time()
         # Start Threads
         for t in self.threads:
@@ -494,6 +497,9 @@ class ThreadController:
         # Show Time
         if show_time:
             print("Threading Time: " + str(time.time() - self.start_time))
+        # Empty Threads
+        if empty:
+            self.empty()
 
 
 ##################################################
