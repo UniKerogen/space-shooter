@@ -478,13 +478,13 @@ class ThreadController:
     def __init__(self):
         self.threads = []
         self.start_time = None
-        self.end_time = None
 
     def fuse(self, target):
         self.threads.append(threading.Thread(target=target))
 
     def empty(self):
         self.threads = []
+        self.start_time = None
 
     def initiate(self, empty=True, show_time=False):
         self.start_time = time.time()
@@ -513,7 +513,11 @@ class ProcessingController:
     def fuse(self, target, args):
         self.processes.append(multiprocessing.Process(target=target, args=args))
 
-    def initiate(self, show_time=False):
+    def empty(self):
+        self.processes = []
+        self.start_time = None
+
+    def initiate(self, empty=True, show_time=False):
         self.start_time = time.time()
         # Start Process
         for p in self.processes:
@@ -524,6 +528,9 @@ class ProcessingController:
         # Show Time
         if show_time:
             print("Process Time: " + str(time.time() - self.start_time))
+        # Empty Processes
+        if empty:
+            self.empty()
 
 ##################################################
 # Main Function
