@@ -115,13 +115,6 @@ def show_enemy(enemy_list, health_bar=ENEMY_HEALTH_BAR):
         enemy_block = enemy_block.next  # Next Element
 
 
-# Player Fire Bullet
-def fire_bullet_player(bullet_block):
-    # noinspection PyGlobalUndefined
-    global screen, player_armory
-    screen.blit(pygame.image.load(bullet_block.image), (bullet_block.position[0], bullet_block.position[1]))
-
-
 # Player Fire Rocket
 def rocket_fire(type):
     global player, player_armory, player_bullets
@@ -140,12 +133,13 @@ def rocket_fire(type):
         player.rocket_cooldown[type] = firing_rocket.cooldown[0]
 
 
-# Enemy Fire Bullet
-def fire_bullet_enemy(bullet_block):
-    # noinspection PyGlobalUndefined
-    global screen, enemy_armory
-    screen.blit(pygame.image.load(bullet_block.image), (bullet_block.position[0], bullet_block.position[1]))
-
+# Show Fired Bullet
+def show_bullet(block_list):
+    global screen
+    current_block = block_list.head
+    while current_block:
+        screen.blit(pygame.image.load(current_block.image), (current_block.position[0], current_block.position[1]))
+        current_block = current_block.next
 
 # Bullet Collision
 def bullet_collision(block_list, bullet_list, spawn):
@@ -317,6 +311,7 @@ def player_bullet_movement(block_list):
             block_list.delete(current_bullet=current_bullet)
         current_bullet = current_bullet.next
 
+
 def enemy_bullet_movement(block_list):
     current_bullet = block_list.head
     while current_bullet:
@@ -330,6 +325,7 @@ def enemy_bullet_movement(block_list):
         if current_bullet.position[1] >= SCREEN_HEIGHT:  # Remove After Off-Screen
             block_list.delete(current_bullet=current_bullet)
         current_bullet = current_bullet.next
+
 
 ####################################################################################################
 # Main Function
@@ -447,12 +443,8 @@ def main():
     # Update Create
     show_crate(crate_list=crates)
     # Update Bullet when Available
-    if len(player_bullets) > 0:
-        for bullet_index in range(0, len(player_bullets)):
-            fire_bullet_player(bullet_block=player_bullets.get_element_at(position=bullet_index))
-    if len(enemy_bullets) > 0:
-        for bullet_index in range(0, len(enemy_bullets)):
-            fire_bullet_enemy(bullet_block=enemy_bullets.get_element_at(position=bullet_index))
+    show_bullet(block_list=player_bullets)
+    show_bullet(block_list=enemy_bullets)
     # Update Display Element
     current_score = font24.render("Score: " + str(score), True, WHITE)
     screen.blit(current_score, (10, 10))
