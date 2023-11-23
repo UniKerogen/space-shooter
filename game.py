@@ -141,6 +141,7 @@ def show_bullet(block_list):
         screen.blit(pygame.image.load(current_block.image), (current_block.position[0], current_block.position[1]))
         current_block = current_block.next
 
+
 # Bullet Collision
 def bullet_collision(block_list, bullet_list, spawn):
     global score
@@ -360,6 +361,7 @@ def main():
     active_bullet_list = player_armory.search_active()
     if 9 in active_bullet_list:
         active_bullet_list = [9]
+
     ################################################################################
     ################################################################################
     # Continuous Shooting - Player
@@ -387,6 +389,7 @@ def main():
             # Cool Down for Bullet
             if active_bullet.cooldown[1] > 0:
                 active_bullet.cooldown[1] -= 1
+
     player_shooting()
     ################################################################################
     ################################################################################
@@ -411,7 +414,7 @@ def main():
     th.fuse(target=player_bullet_movement(block_list=player_bullets))
     th.fuse(target=enemy_bullet_movement(block_list=enemy_bullets))
     # Start Thread
-    th.initiate(show_time=True)
+    th.initiate(show_time=False)
     ################################################################################
     ################################################################################
     # Collision of Enemy & Player Bullet
