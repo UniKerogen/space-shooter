@@ -339,6 +339,7 @@ def main():
     global player_armory, player_bullets, enemy_bullets
     global bullet_fire
     global create_boss, create_miniboss
+    th = ThreadController()
     ################################################################################
     ################################################################################
     # Boss Creation - Big Boss
@@ -362,29 +363,31 @@ def main():
     ################################################################################
     ################################################################################
     # Continuous Shooting - Player
-    for active_bullet_index in active_bullet_list:
-        active_bullet = player_armory.index_at(index=active_bullet_index)
-        if bullet_fire.status and player.active and player.weapon_amount[active_bullet.index] > 0:
-            if active_bullet.cooldown[1] <= 0:
-                for fire_amount in range(0, player.weapon_amount[active_bullet.index]):
-                    if player.weapon_amount[active_bullet.index] > 1:
-                        fire_shift = player.fire_shift[active_bullet.index][fire_amount]
-                    else:
-                        fire_shift = player.fire_shift[active_bullet.index]
-                    fire_position = [sum(x) for x in zip(player.position, fire_shift)]
-                    # Bullet contact set
-                    bullet_contact = [list(item2) for item2 in active_bullet.contact]
-                    bullet_contact = [[sum(x) for x in zip(fire_position, item6)] for item6 in bullet_contact]
-                    # Bullet Fire at Current Player
-                    player_bullets.append(index=active_bullet.index,
-                                          position=fire_position,
-                                          contact=bullet_contact,
-                                          armory=player_armory)
-                # Reset CoolDown
-                active_bullet.cooldown[1] = active_bullet.cooldown[0]
-        # Cool Down for Bullet
-        if active_bullet.cooldown[1] > 0:
-            active_bullet.cooldown[1] -= 1
+    def player_shooting():
+        for active_bullet_index in active_bullet_list:
+            active_bullet = player_armory.index_at(index=active_bullet_index)
+            if bullet_fire.status and player.active and player.weapon_amount[active_bullet.index] > 0:
+                if active_bullet.cooldown[1] <= 0:
+                    for fire_amount in range(0, player.weapon_amount[active_bullet.index]):
+                        if player.weapon_amount[active_bullet.index] > 1:
+                            fire_shift = player.fire_shift[active_bullet.index][fire_amount]
+                        else:
+                            fire_shift = player.fire_shift[active_bullet.index]
+                        fire_position = [sum(x) for x in zip(player.position, fire_shift)]
+                        # Bullet contact set
+                        bullet_contact = [list(item2) for item2 in active_bullet.contact]
+                        bullet_contact = [[sum(x) for x in zip(fire_position, item6)] for item6 in bullet_contact]
+                        # Bullet Fire at Current Player
+                        player_bullets.append(index=active_bullet.index,
+                                              position=fire_position,
+                                              contact=bullet_contact,
+                                              armory=player_armory)
+                    # Reset CoolDown
+                    active_bullet.cooldown[1] = active_bullet.cooldown[0]
+            # Cool Down for Bullet
+            if active_bullet.cooldown[1] > 0:
+                active_bullet.cooldown[1] -= 1
+    player_shooting()
     ################################################################################
     ################################################################################
     # Continuous Shooting - Enemy
@@ -400,7 +403,6 @@ def main():
     ################################################################################
     ################################################################################
     # Movement of Elements
-    th = ThreadController()
     th.fuse(target=player.update())
     th.fuse(target=movement(block_list=enemies, spawn=ENEMY_SPAWN, size=ENEMY_SIZE))
     th.fuse(target=movement(block_list=miniboss, spawn=MINI_BOSS_SPAWN, size=MINI_BOSS_SIZE))
@@ -409,7 +411,7 @@ def main():
     th.fuse(target=player_bullet_movement(block_list=player_bullets))
     th.fuse(target=enemy_bullet_movement(block_list=enemy_bullets))
     # Start Thread
-    th.initiate()
+    th.initiate(show_time=True)
     ################################################################################
     ################################################################################
     # Collision of Enemy & Player Bullet
