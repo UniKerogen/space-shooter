@@ -1,5 +1,5 @@
 # Block Element File
-# Version - Beta 5
+# Version - Beta 6
 # Storage for block elements
 
 ##################################################
@@ -314,6 +314,17 @@ def miniboss_create():
                                            (25, 49),
                                            (25, 24),
                                            ((11, 7), (39, 7)))
+        elif miniboss_type == 4: # Type 4 MiniBoss
+            current_miniboss.each_weapon_amount = (2, 1, 1, 2, 2)
+            current_miniboss.fire_shift = ((contact_point(point=[37, 94], index=0),
+                                           contact_point(point=[61, 94], index=0)),
+                                           (contact_point(point=[49, 85], index=1)),
+                                           (contact_point(point=[42, 100], index=2)),
+                                           (contact_point(point=[39, 22], index=3),
+                                            contact_point(point=[59, 22], index=3)),
+                                           (contact_point(point=[30, 43], index=4),
+                                            contact_point(point=[68, 43], index=4))
+                                           )
         # Load Indicator
         current_miniboss.indicator3 = 'resources/enemy/bullet3_indicator.png'
         current_miniboss.indicator3_shift = current_miniboss.fire_shift[3]

@@ -54,7 +54,8 @@ A Simple Game using Pygame Module. Just keep shooting and scoring.
 - [x] vB2 - Vertical Player Movement
 - [x] vB3 - Player Armory Adjustment
 - [x] vB4 - Player Type 4 Weapon - Rockets
-- [ ] vB5 - Optimization
+- [x] vB5 - Optimization
+- [ ] vB6 - Resources
 
 ## Potential Update
 - [ ] Player Type 3 Weapon with High Power

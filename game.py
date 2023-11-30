@@ -1,6 +1,6 @@
 # Top Down Shooter Game
 # A Simple Top Down Shooter for Raiden Mockup
-# Version - Beta 5
+# Version - Beta 6
 
 ####################################################################################################
 # Libraries
