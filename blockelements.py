@@ -325,6 +325,15 @@ def miniboss_create():
                                            (contact_point(point=[30, 43], index=4),
                                             contact_point(point=[68, 43], index=4))
                                            )
+        elif miniboss_type == 5: # Type 5 MiniBoss
+            current_miniboss.each_weapon_amount = (2, 1, 1, 1, 2)
+            current_miniboss.fire_shift = ((contact_point(point=[27, 76], index=0),
+                                           contact_point(point=[71, 76], index=0)),
+                                           (contact_point(point=[49, 93], index=1)),
+                                           (contact_point(point=[42, 83], index=2)),
+                                           (contact_point(point=[49, 64], index=3)),
+                                           (contact_point(point=[40, 83], index=4),
+                                            contact_point(point=[58, 83], index=4)))
         # Load Indicator
         current_miniboss.indicator3 = 'resources/enemy/bullet3_indicator.png'
         current_miniboss.indicator3_shift = current_miniboss.fire_shift[3]
